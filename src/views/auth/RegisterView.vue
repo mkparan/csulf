@@ -8,34 +8,53 @@ import RegisterForm from '@/components/auth/RegisterForm.vue';
 
 <template>
     <AppLayout>
-        <template #content>
-              <v-row class="d-flex justify-center">
+            <template #content>
+            <v-row class="d-flex justify-center">
             <v-col cols="12" md="6">
               <v-card
-                class="mx-auto text-white text-center"
-                color="#6A1B9A"
-                max-width="400"
-                prepend-icon="mdi-dog"
-                title="Register"
-                image="/images/Walls.jpg"
+                class="mx-auto bg-surface-light"
+                width="400"
+                elevation="24"
               >
-                <template v-slot:prepend>
+
+            <v-card-title class="">
+                <v-row class="">
+                      <v-col cols="">
+                        <v-img 
+                          src="/images/csulf-logo.png"  
+                          max-width="70"
+                          class="mr-3"
+                        />
+                      </v-col>        
+                      <!-- Column for the text -->
+                      <v-col>
+                        <div>
+                          <h3 class="">Register Here!!!</h3>
+                          <v-card-subtitle class="">CSULF</v-card-subtitle>
+                        </div>
+                      </v-col>
+                </v-row>
+          </v-card-title>
+
+                <!-- <template v-slot:title>
+                  <span class="font-weight-black">Register Here!!!</span>
+                </template> -->
+
+                 <template v-slot:prepend>
                   <v-icon size="x-large"></v-icon>
                 </template>
-                <!-- :width="mobile ? '75%' : '25%'" -->
+              
 
-                <v-card-text class="text-h5 py-2">
-                  <RegisterForm></RegisterForm>
-
-                <v-divider class="my-5"></v-divider>
-                  <h6>
-                           Already have an Account? <RouterLink class="text-danger" to="/login">Click Here to Login</RouterLink>
-                    </h6>
-
+                <v-card-text class="bg-surface-light pt-0">
+                      <RegisterForm></RegisterForm>
+                     
+                  <h4 class="text-center">
+                       Already have an Account? <RouterLink class="text-danger fw-bold" to="/login">Click Here to Login</RouterLink>
+                  </h4>   
                 </v-card-text>
               </v-card>
-            </v-col>
+           </v-col>
           </v-row>
-        </template>
+            </template>
     </AppLayout>
-</template>
+</template> 

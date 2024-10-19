@@ -24,7 +24,7 @@ function onClick() {
           {{ theme === 'light' ? 'Light Mode' : 'Dark Mode' }}
         </v-btn>
       </v-app-bar>
-      <br /><br /><br /><br />
+      <br /><br /><br />
       <v-main>
         <v-container>
           <slot name="content"></slot>

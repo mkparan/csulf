@@ -5,36 +5,35 @@ import LoginForm from '@/components/auth/LoginForm.vue';
 
 <template>
     <AppLayout>
-        <template #content>
-           <v-row class="d-flex justify-center">
+            <template #content>
+            <v-row class="d-flex justify-center">
             <v-col cols="12" md="6">
               <v-card
-                class="mx-auto text-white text-center"
-                color="#6A1B9A"
-                max-width="400"
-                prepend-icon="mdi-dog"
-                title="Login"
-                image="/images/Walls.jpg"
-                elevation="15"
+                class="mx-auto bg-surface-light"
+                width="400" elevation="24"
               >
-                <template v-slot:prepend>
-                  <v-icon size="x-large"></v-icon>
-                </template>
-                
-                <v-card-text class="text-h5 py-2">
-                   <LoginForm></LoginForm>
-                  <v-divider class="my-5"></v-divider>
-                  <h6>
-                         Don't have an Account? <RouterLink class="text-danger" to="/register">Click Here to Register</RouterLink>
-                  </h6>
+               <v-img
+                  src="/images/csulf-logo.png"
+                  :width="200"
+                  alt="CSU Logo"
+                  class="mx-auto my-2 mt-0"
+                ></v-img>
 
+                 <!-- Title -->
+                   <h1 class="mb-4 text-center" style="color: #388E3C;">
+                          CSU<span style="color: #ff9800;">LF</span>
+                   </h1>
+              
+
+                <v-card-text class="pt-4">
+                      <LoginForm></LoginForm>
+                   <h4 class="text-center">
+                         Don't have an Account? <RouterLink class="text-danger" to="/register">Click Here to Register</RouterLink>
+                  </h4>  
                 </v-card-text>
               </v-card>
-            </v-col>
+           </v-col>
           </v-row>
-        </template>
-
+            </template>
     </AppLayout>
-        
-</template>
-
+</template> 
