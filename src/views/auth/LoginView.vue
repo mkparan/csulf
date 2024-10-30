@@ -10,7 +10,8 @@ import LoginForm from '@/components/auth/LoginForm.vue';
             <v-col cols="12" md="6">
               <v-card
                 class="mx-auto bg-surface-light"
-                width="400" elevation="24"
+                max-width="400"
+                elevation="24"
               >
                <v-img
                   src="/images/csulf-logo.png"

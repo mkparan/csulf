@@ -13,7 +13,7 @@ import RegisterForm from '@/components/auth/RegisterForm.vue';
             <v-col cols="12" md="6">
               <v-card
                 class="mx-auto bg-surface-light"
-                width="400"
+                max-width="400"
                 elevation="24"
               >
 
