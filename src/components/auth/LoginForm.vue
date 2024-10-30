@@ -33,9 +33,14 @@ const onFormSubmit = () => {
 
 <template>
      <v-form ref="refVForm" fast-fail @submit.prevent="onFormSubmit">
-        <v-text-field v-model="formData.email" label="Email"  prepend-inner-icon="mdi-email-outline" :rules="[requiredValidator, emailValidator]" variant="outlined"></v-text-field>
+        <v-text-field
+          rounded="xl"
+          v-model="formData.email" label="Email"  prepend-inner-icon="mdi-email-outline" :rules="[requiredValidator, emailValidator]" variant="outlined"
+          ></v-text-field>
+           
         <v-text-field 
-        v-model="formData.password"
+               v-model="formData.password"
+               rounded="xl"
               :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
               :type="visible ? 'text' : 'password'"
               label="Password"

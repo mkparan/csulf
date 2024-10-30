@@ -35,11 +35,12 @@ const onFormSubmit = () => {
 
 <template>
     <v-form ref="refVForm" fast-fail @submit.prevent="onFormSubmit">
-        <v-text-field v-model="formData.firstname" label="Firstname" prepend-inner-icon="mdi-account-outline" variant="outlined" :rules="[requiredValidator]"></v-text-field>
-        <v-text-field v-model="formData.lastname" label="Lastname" prepend-inner-icon="mdi-account-outline" variant="outlined" :rules="[requiredValidator]"></v-text-field>
-        <v-text-field v-model="formData.facebookLink" label="Facebook Link" prepend-inner-icon="mdi-link-variant-plus"  variant="outlined" :rules="[requiredValidator]"></v-text-field>
-        <v-text-field v-model="formData.email" label="Email" prepend-inner-icon="mdi-email-outline" :rules="[requiredValidator, emailValidator]" variant="outlined"></v-text-field>
+        <v-text-field rounded="xl" v-model="formData.firstname" label="Firstname" prepend-inner-icon="mdi-account-outline" variant="outlined" :rules="[requiredValidator]"></v-text-field>
+        <v-text-field rounded="xl" v-model="formData.lastname" label="Lastname" prepend-inner-icon="mdi-account-outline" variant="outlined" :rules="[requiredValidator]"></v-text-field>
+        <v-text-field rounded="xl" v-model="formData.facebookLink" label="Facebook Link" prepend-inner-icon="mdi-link-variant-plus"  variant="outlined" :rules="[requiredValidator]"></v-text-field>
+        <v-text-field rounded="xl" v-model="formData.email" label="Email" prepend-inner-icon="mdi-email-outline" :rules="[requiredValidator, emailValidator]" variant="outlined"></v-text-field>
          <v-text-field 
+              rounded="xl"
               v-model="formData.password"
               :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
               :type="visible ? 'text' : 'password'"
@@ -50,6 +51,7 @@ const onFormSubmit = () => {
               :rules="[requiredValidator, passwordValidator]"
         ></v-text-field>
          <v-text-field 
+              rounded="xl"
               v-model="formData.passwordConfirmation"
               :append-inner-icon="isVisible ? 'mdi-eye-off' : 'mdi-eye'"
               :type="isVisible ? 'text' : 'password'"
