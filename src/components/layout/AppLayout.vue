@@ -12,10 +12,11 @@ function onClick() {
 <template>
   <v-responsive class="border rounded">
     <v-app :theme="theme">
-      <v-app-bar class="px-3" :color="theme === 'light' ? 'grey-lighten-3' : 'grey-darken-4'">
+      <v-app-bar class="px-3 bg-opacity" :color="theme === 'light' ? 'grey-lighten-3' : 'grey-darken-4'">
         <v-spacer></v-spacer>
 
         <v-btn
+        class="bg-opacity"
           :prepend-icon="theme === 'light' ? 'mdi-weather-sunny' : 'mdi-weather-night'"
           variant="elevated"
           slim
@@ -25,13 +26,13 @@ function onClick() {
         </v-btn>
       </v-app-bar>
       <br />
-      <v-main>
+      <v-main class="app-container">
         <v-container>
           <slot name="content"></slot>
         </v-container>
       </v-main>
 
-      <v-footer class="d-flex flex-column" app>
+      <v-footer class="d-flex flex-column bg-opacity" app>
         <div
           class="px-4 py-2 text-center w-100"
           :color="theme === 'light' ? 'grey-lighten-3' : 'grey-darken-4'"
@@ -51,3 +52,16 @@ export default {
   })
 }
 </script>
+
+
+<style scoped>
+.app-container {
+  min-height: 100vh;
+  background-image: url('/images/bg-csu.jpg'); 
+  background-size: cover;
+}
+
+.bg-opacity {
+  background-color: rgba(255, 255, 255, 0.3); /* Light, semi-transparent white */
+}
+</style>

@@ -9,7 +9,7 @@ import LoginForm from '@/components/auth/LoginForm.vue';
             <v-row class="d-flex justify-center">
             <v-col cols="12" md="6">
               <v-card
-                class="mx-auto bg-surface-light"
+                class="mx-auto bg-opacity"
                 max-width="400"
                 elevation="24"
               >
@@ -38,3 +38,10 @@ import LoginForm from '@/components/auth/LoginForm.vue';
             </template>
     </AppLayout>
 </template> 
+
+
+<style scoped>
+.bg-opacity {
+  background-color: rgba(255, 255, 255, 0.5); /* Light, semi-transparent white */
+}
+</style>
