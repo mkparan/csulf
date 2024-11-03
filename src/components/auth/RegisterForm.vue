@@ -6,7 +6,8 @@ import {
   confirmedValidator
 } from '@/utils/validators'
 import { ref } from 'vue'
-import { supabase, formActionDefault } from '@utils/supabase.js'
+import AlertNotification from '../common/AlertNotification.vue'
+import { supabase, formActionDefault } from '../../utils/supabase.js'
 
 const visible = ref(false)
 const isVisible = ref(false)
@@ -33,8 +34,7 @@ const onSubmit = async () => {
   formAction.value = { ...formActionDefault } ///reset error message
   formAction.value.formProcess = true
 
-   const { data, error } = await supabase.auth.signUp(
-  {
+  const { data, error } = await supabase.auth.signUp({
     email: formData.value.email,
     password: formData.value.password,
     options: {
@@ -44,8 +44,7 @@ const onSubmit = async () => {
         facebookLink: formData.value.facebookLink
       }
     }
-  }
-  )
+  })
 
   if (error) {
     console.error(error)
@@ -54,9 +53,10 @@ const onSubmit = async () => {
   } else if (data) {
     console.log(data)
     formAction.value.formSuccessMessage = 'Successfully Registered'
-   }
+    refVForm.value?.reset() //clear the field if successfull login
+  }
 
-    formAction.value.formProcess = false
+  formAction.value.formProcess = false
 }
 
 const onFormSubmit = () => {
@@ -67,30 +67,10 @@ const onFormSubmit = () => {
 </script>
 
 <template>
-  
-    <v-alert
-     v-if="formAction.formSuccessMessage"
-     :text="formAction.formSuccessMessage"
-     title="Success!"
-      type="success"
-      variant="tonal"
-      density="compact"
-      border="start"
-      closable
-    > </v-alert>
-
-    <v-alert
-     v-if="formAction.formErrorMessage"
-     :text="formAction.formErrorMessage"
-     title="Oppss!"
-      type="error"
-      variant="tonal"
-      density="compact"
-      border="start"
-      closable
-    > </v-alert>
-
-
+  <AlertNotification
+    :form-success-message="formAction.formSuccessMessage"
+    :form-error-message="formAction.formErrorMessage"
+  ></AlertNotification>
 
   <v-form ref="refVForm" fast-fail @submit.prevent="onFormSubmit">
     <v-text-field
