@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+import { isAuthenticated } from '@/utils/supabase'
 
 const theme = ref(localStorage.getItem('theme') ?? 'light')
 
@@ -7,6 +8,30 @@ function onClick() {
   theme.value = theme.value === 'light' ? 'dark' : 'light'
   localStorage.setItem('theme', theme.value)
 }
+
+// //utilized predefined vue functions
+// const { xs, sm, mobile } = useDisplay()
+
+// // Load Variables
+// const isLoggedIn = ref(false)
+
+// //  Toggle Theme
+// const onToggleTheme = () => {
+//   theme.value = theme.value === 'light' ? 'dark' : 'light'
+//   localStorage.setItem('theme', theme.value)
+// }
+
+// Get Authentication status from supabase
+const getLoggedStatus = async () => {
+  isLoggedIn.value = await isAuthenticated()
+}
+
+//di makita login haysst
+// Load Functions during component rendering
+// onMounted(() => {
+//   getLoggedStatus()
+// })
+
 </script>
 
 <template>

@@ -8,10 +8,15 @@ import {
 import { ref } from 'vue'
 import AlertNotification from '../common/AlertNotification.vue'
 import { supabase, formActionDefault } from '../../utils/supabase.js'
+import { useRouter } from 'vue-router';
 
 const visible = ref(false)
 const isVisible = ref(false)
 const refVForm = ref()
+
+//predefined vue functions
+const router = useRouter()
+
 
 const FormDataDefault = {
   firstname: '',
@@ -53,9 +58,11 @@ const onSubmit = async () => {
   } else if (data) {
     console.log(data)
     formAction.value.formSuccessMessage = 'Successfully Registered'
-    refVForm.value?.reset() //clear the field if successfull login
-  }
 
+    router.replace('/dashboard')
+  }
+   //reset form
+  refVForm.value?.reset() //clear the field if successfull login
   formAction.value.formProcess = false
 }
 
