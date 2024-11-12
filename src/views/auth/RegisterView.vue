@@ -11,13 +11,29 @@ const theme = ref('light')
         <v-container class="fill-height" fluid>
           <v-row class="d-flex align-center justify-center">
             <v-col cols="12" md="6" lg="4" class="mx-auto">
-              <v-card class="mx-auto" prepend-icon="mdi-login" subtitle="Login">
+              <v-card
+                class="mx-auto"
+                prepend-icon="mdi-account-plus"
+                subtitle="Register"
+              >
                 <template v-slot:title>
                   <span class="font-weight-black">Welcome to Vuetify</span>
                 </template>
 
                 <v-card-text class="bg-surface-light pt-4">
                   <v-form fast-fail @submit.prevent>
+                    <v-text-field
+                      rounded
+                      label="Firstname"
+                      variant="solo-filled"
+                    ></v-text-field>
+
+                    <v-text-field
+                      rounded
+                      label="Lastname"
+                      variant="solo-filled"
+                    ></v-text-field>
+
                     <v-text-field
                       rounded
                       label="Email"
@@ -31,16 +47,25 @@ const theme = ref('light')
                       variant="solo-filled"
                     ></v-text-field>
 
-                    <v-btn rounded class="mt-2" type="submit" block>
-                      Submit
-                    </v-btn>
+                    <v-text-field
+                      rounded
+                      label="Confirm Password"
+                      type="password"
+                      variant="solo-filled"
+                    ></v-text-field>
+
+                    <v-btn rounded class="mt-2" type="submit" block
+                      >Submit</v-btn
+                    >
                   </v-form>
+
                   <v-divider class="my-5"></v-divider>
+
                   <h5 class="text-center">
-                    Don't have an account?
-                    <RouterLink class="text-primary" to="register">
-                      Register Here!
-                    </RouterLink>
+                    Already have an account?
+                    <RouterLink class="text-primary" to="/">
+                      Login here!</RouterLink
+                    >
                   </h5>
                 </v-card-text>
               </v-card>
@@ -75,9 +100,3 @@ const theme = ref('light')
     </v-app>
   </v-responsive>
 </template>
-
-<style scoped>
-.fill-height {
-  min-height: 100vh; /* Ensures the container takes full viewport height */
-}
-</style>
