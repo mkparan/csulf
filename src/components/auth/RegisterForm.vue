@@ -8,7 +8,7 @@ import {
 import { ref } from 'vue'
 import AlertNotification from '../common/AlertNotification.vue'
 import { supabase, formActionDefault } from '../../utils/supabase.js'
-import { useRouter } from 'vue-router';
+import { useRouter } from 'vue-router'
 
 const visible = ref(false)
 const isVisible = ref(false)
@@ -16,7 +16,6 @@ const refVForm = ref()
 
 //predefined vue functions
 const router = useRouter()
-
 
 const FormDataDefault = {
   firstname: '',
@@ -59,9 +58,9 @@ const onSubmit = async () => {
     console.log(data)
     formAction.value.formSuccessMessage = 'Successfully Registered'
 
-    router.replace('/dashboard')
+    router.replace('/system/dashboard')
   }
-   //reset form
+  //reset form
   refVForm.value?.reset() //clear the field if successfull login
   formAction.value.formProcess = false
 }
@@ -79,7 +78,7 @@ const onFormSubmit = () => {
     :form-error-message="formAction.formErrorMessage"
   ></AlertNotification>
 
-  <v-form ref="refVForm" fast-fail @submit.prevent="onFormSubmit">
+  <v-form class="mt-5" ref="refVForm" fast-fail @submit.prevent="onFormSubmit">
     <v-text-field
       rounded="xl"
       v-model="formData.firstname"

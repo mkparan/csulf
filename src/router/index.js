@@ -34,7 +34,7 @@ const router = createRouter({
       component: RegisterView
     },
     {
-      path: '/dashboard',
+      path: '/system/dashboard',
       name: 'dashboard',
       component: DashboardView
     }
