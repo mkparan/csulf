@@ -10,7 +10,6 @@ const { mobile } = useDisplay()
   <AppLayout>
     <template #content>
       <v-row class="d-flex align-center justify-center">
-        <v-col cols="12" lg="8" v-if="!mobile"></v-col>
         <v-col cols="12" lg="4" :class="mobile">
           <v-card class="blur-card mx-auto" elevation="16">
             <v-card-title class="text-center">
@@ -33,12 +32,15 @@ const { mobile } = useDisplay()
 
               <h5 class="text-center text-white">
                 Already have an account?
-                <RouterLink class="text-orange-lighten-3" to="/">
+                <RouterLink class="text-orange-lighten-3" to="/login">
                   Login here!
                 </RouterLink>
               </h5>
             </v-card-text>
           </v-card>
+        </v-col>
+        <v-col cols="12" lg="8" v-if="!mobile">
+          <v-img class="mx-auto" src="/images/register.svg" width="800"></v-img>
         </v-col>
       </v-row>
     </template>

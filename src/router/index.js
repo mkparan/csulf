@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import SplashScreen from '@/views/auth/SplashScreen.vue'
 import LoginView from '@/views/auth/LoginView.vue'
 import RegisterView from '@/views/auth/RegisterView.vue'
 
@@ -7,6 +8,15 @@ const router = createRouter({
   routes: [
     {
       path: '/',
+      redirect: '/splash', // Set the root to redirect to splash screen
+    },
+    {
+      path: '/splash',
+      name: 'splash',
+      component: SplashScreen,
+    },
+    {
+      path: '/login',
       name: 'login',
       component: LoginView,
     },

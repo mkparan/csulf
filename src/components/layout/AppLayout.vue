@@ -8,7 +8,7 @@ const theme = ref('light')
   <v-responsive class="border rounded">
     <v-app :theme="theme">
       <!-- Background image container -->
-      <div class="background-image">
+      <div class="background-image" transition="fade-transition">
         <v-main class="d-flex align-center justify-center fill-height">
           <v-container>
             <slot name="content"></slot>
