@@ -7,34 +7,23 @@ const theme = ref('light')
 <template>
   <v-responsive class="border rounded">
     <v-app :theme="theme">
-      <v-main class="d-flex align-center justify-center fill-height">
-        <v-container>
-          <slot name="content"></slot>
-        </v-container>
-      </v-main>
+      <!-- Background image container -->
+      <div class="background-image">
+        <v-main class="d-flex align-center justify-center fill-height">
+          <v-container>
+            <slot name="content"></slot>
+          </v-container>
+        </v-main>
+      </div>
+
       <v-footer
         border
         app
-        class="bg-light-green-darken-3 text-center d-flex flex-column"
+        class="footer-container text-center d-flex flex-column"
       >
-        <div>
-          <v-btn
-            v-for="icon in icons"
-            :key="icon"
-            :icon="icon"
-            class="mx-4"
-            variant="text"
-          ></v-btn>
-        </div>
-
-        <div class="pt-0">Caraga State University - Lost and Found</div>
-
+        <div>© Caraga State University - Lost and Found</div>
         <v-divider></v-divider>
-
-        <div>
-          {{ new Date().getFullYear() }} —
-          <strong>All Rights Reserved</strong>
-        </div>
+        <div>All Rights Reserved</div>
       </v-footer>
     </v-app>
   </v-responsive>
@@ -42,6 +31,24 @@ const theme = ref('light')
 
 <style scoped>
 .fill-height {
-  min-height: 100vh; /* Ensures container takes the full viewport height */
+  min-height: 100vh;
+}
+
+.background-image {
+  min-height: 100vh;
+  background-image: url('/images/background.svg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-container {
+  background-color: #e65100;
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  color: white;
 }
 </style>
