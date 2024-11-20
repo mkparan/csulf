@@ -11,6 +11,7 @@
             elevation="16"
             transition="fade-transition"
           />
+          <!-- splash loading -->
           <v-progress-circular
             :size="70"
             :width="7"
