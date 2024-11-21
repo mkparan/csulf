@@ -57,9 +57,14 @@ const onSubmit = async () => {
   } else if (data) {
     console.log(data)
     formAction.value.formSuccessMessage = 'Successfully Registered'
+    formAction.value.formSuccessMessage = 'Please Verify your Email to Login'
 
-    router.replace('/login')
+    // Add a 5-second delay before redirecting to the login page
+    setTimeout(() => {
+      router.replace('/login')
+    }, 5000) // 5000 milliseconds = 5 seconds
   }
+
   //reset form
   refVForm.value?.reset() //clear the field if successfull login
   formAction.value.formProcess = false
@@ -109,8 +114,8 @@ const onFormSubmit = () => {
       variant="solo-filled"
       :rules="[requiredValidator]"
     ></v-text-field>
-    <v-text-field 
-       color="green-darken-3"
+    <v-text-field
+      color="green-darken-3"
       bg-color="green-lighten-3"
       rounded
       v-model="formData.email"
@@ -120,7 +125,7 @@ const onFormSubmit = () => {
       variant="solo-filled"
     ></v-text-field>
     <v-text-field
-       color="green-darken-3"
+      color="green-darken-3"
       bg-color="green-lighten-3"
       rounded
       v-model="formData.password"
