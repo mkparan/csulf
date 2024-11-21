@@ -42,7 +42,9 @@ const onSubmit = async () => {
     console.log(data)
     formAction.value.formSuccessMessage = 'Successfully Logged Account'
 
-    router.replace('/system/dashboard')
+    setTimeout(() => {
+       router.replace('/system/dashboard')
+    }, 5000) // 5000 milliseconds = 5 seconds
   }
 
   //reset form

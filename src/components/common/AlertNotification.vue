@@ -12,6 +12,7 @@ const props = defineProps(['formSuccessMessage', 'formErrorMessage'])
     density="compact"
     border="start"
     closable
+    color="green-darken-4"
   >
   </v-alert>
 
@@ -24,6 +25,7 @@ const props = defineProps(['formSuccessMessage', 'formErrorMessage'])
     density="compact"
     border="start"
     closable
+    color="deep-orange-accent-4"
   >
   </v-alert>
 </template>
