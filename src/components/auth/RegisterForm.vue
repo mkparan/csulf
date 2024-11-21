@@ -76,7 +76,7 @@ const toggleVisibility = () => {
       type="submit"
       block
       color="orange-darken-3"
-      >Register</v-btn
+      >Sign up</v-btn
     >
 
     <v-divider class="my-5"><p class="text-white">or</p></v-divider>
@@ -87,9 +87,14 @@ const toggleVisibility = () => {
       size="x-large"
       block
       color="grey-lighten-4"
-      prepend-icon="mdi-google"
     >
-      Continue with Google
+      <img
+        src="/images/google.png"
+        alt="Google logo"
+        style="height: 24px; width: 24px"
+        class="me-2"
+      />
+      <p class="py-1 font-weight-medium">Continue with Google</p>
     </v-btn>
   </v-form>
 </template>

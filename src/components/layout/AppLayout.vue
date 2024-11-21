@@ -9,7 +9,10 @@ const theme = ref('light')
     <v-app :theme="theme">
       <!-- Background image container -->
       <div class="background-image" transition="fade-transition">
-        <v-main class="d-flex align-center justify-center fill-height">
+        <v-main
+          class="d-flex align-center justify-center fill-height"
+          transition="fade-transition"
+        >
           <v-container>
             <slot name="content"></slot>
           </v-container>
@@ -23,7 +26,7 @@ const theme = ref('light')
       >
         <div>© Caraga State University - Lost and Found</div>
         <v-divider></v-divider>
-        <div>All Rights Reserved</div>
+        <div><b>All Rights Reserved</b></div>
       </v-footer>
     </v-app>
   </v-responsive>
@@ -43,6 +46,7 @@ const theme = ref('light')
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: #144517;
 }
 
 .footer-container {
