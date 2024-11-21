@@ -1,9 +1,9 @@
 <script setup>
-import AppLayout from '@/components/layout/AppLayout.vue';
-import RegisterForm from '@/components/auth/RegisterForm.vue';
-  import { useDisplay } from 'vuetify'
+import AppLayout from '@/components/layout/AppLayout.vue'
+import RegisterForm from '@/components/auth/RegisterForm.vue'
+import { useDisplay } from 'vuetify'
 
- const { mobile } = useDisplay()
+const { mobile } = useDisplay()
 </script>
 
 <template>
@@ -13,12 +13,8 @@ import RegisterForm from '@/components/auth/RegisterForm.vue';
         <v-col cols="12" lg="4" :class="mobile">
           <v-card class="blur-card mx-auto" elevation="16">
             <v-card-title class="text-center">
-              <v-img
-                class="mx-auto"
-                src="/images/logo.png"
-                :width="mobile ? '60%' : '20%'"
-              ></v-img>
-              <h3 class="text-white font-weight-black">CREATE A NEW ACCOUNT</h3>
+              <v-img class="mx-auto" src="/images/logo.png" :width="mobile ? '60%' : '20%'"></v-img>
+              <h3 class="text-orange-lighten-5 font-weight-black">CREATE A NEW ACCOUNT</h3>
             </v-card-title>
 
             <v-card-text>
@@ -32,9 +28,7 @@ import RegisterForm from '@/components/auth/RegisterForm.vue';
 
               <h5 class="text-center text-white">
                 Already have an account?
-                <RouterLink class="text-orange-lighten-3" to="/login">
-                  Login here!
-                </RouterLink>
+                <RouterLink class="text-orange-lighten-3" to="/login"> Login here! </RouterLink>
               </h5>
             </v-card-text>
           </v-card>

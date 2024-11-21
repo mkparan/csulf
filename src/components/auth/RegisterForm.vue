@@ -163,7 +163,7 @@ const onFormSubmit = () => {
       prepend-icon="mdi-account-plus"
       :disabled="formAction.formProcess"
       :loading="formAction.formProcess"
-      >Register</v-btn
+      >Sign up</v-btn
     >
   </v-form>
 </template>
