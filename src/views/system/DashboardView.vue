@@ -1,13 +1,13 @@
-<<<<<<< HEAD
-<script setup>
-import SideNavigation from '@/components/layout/SideNavigation.vue'
-=======
 <script>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { supabase } from '../../utils/supabase.js'
+import SideNavigation from '@/components/layout/SideNavigation.vue'
 
 export default {
+  components: {
+    SideNavigation // Register the component here
+  },
   setup() {
     const router = useRouter()
     const formAction = ref({
@@ -32,8 +32,7 @@ export default {
       onLogout
     }
   }
-} 
->>>>>>> 880f1ad511250b0bdf3b301e4605e0da671819fc
+}
 </script>
 
 <template>
@@ -42,6 +41,7 @@ export default {
       <v-img class="pa-6" src="/images/logo.png"></v-img>
     </v-app-bar>
 
+    <!-- Use SideNavigation -->
     <SideNavigation></SideNavigation>
 
     <v-navigation-drawer location="right">
