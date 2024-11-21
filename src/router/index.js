@@ -49,4 +49,24 @@ const router = createRouter({
   ]
 })
 
+// router.beforeEach(async (to) => {
+//   // Check if the user is logged in
+//   const isLoggedIn = await authStore.isAuthenticated()
+
+//   // Redirect logged-in users away from login or register pages
+//   if (isLoggedIn && (to.name === 'login' || to.name === 'register')) {
+//     return { name: 'dashboard' } // Redirect to dashboard
+//   }
+
+//   // Prevent unauthenticated users from accessing system pages
+//   if (!isLoggedIn && to.path.startsWith('/system')) {
+//     return { name: 'login' } // Redirect to login
+//   }
+
+//   // Redirect unknown routes to the not-found page
+//   if (router.resolve(to).matched.length === 0) {
+//     return { name: 'not-found' }
+//   }
+// })
+
 export default router

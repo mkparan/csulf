@@ -12,10 +12,13 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.46.1",
-    "pinia": "^2.1.7",
+    "apexcharts": "^4.0.0",
+    "pinia": "^2.2.6",
+    "sass": "^1.81.0",
     "vue": "^3.4.29",
     "vue-router": "^4.3.3",
-    "vuetify": "^3.7.2"
+    "vue3-apexcharts": "^1.7.0",
+    "vuetify": "^3.7.4"
   },
   "devDependencies": {
     "@mdi/font": "^7.4.47",

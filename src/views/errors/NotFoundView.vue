@@ -1,7 +1,7 @@
 <script setup>
-import { useAuthUserStore } from '@/stores/authUser'
-import AppLayout from '@/components/layout/AppLayout.vue'
-import SideNavigation from '@/components/layout/navigation/SideNavigation.vue'
+// import { useAuthUserStore } from '@/stores/authUser'
+// import AppLayout from '@/components/layout/AppLayout.vue'
+// import SideNavigation from '@/components/layout/navigation/SideNavigation.vue'
 import { onMounted, ref } from 'vue'
 import { useDisplay } from 'vuetify'
 
