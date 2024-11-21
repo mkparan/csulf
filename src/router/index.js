@@ -17,12 +17,6 @@ const router = createRouter({
       component: SplashScreen
     },
     {
-      path: '/home',
-      name: 'home',
-      redirect: '/login' // Redirecting to login or another view
-    },
-
-    {
       path: '/login',
       name: 'login',
       component: LoginView
@@ -38,6 +32,20 @@ const router = createRouter({
       name: 'dashboard',
       component: DashboardView
     }
+
+    // // Errors Pages
+    // {
+    //   path: '/forbidden',
+    //   name: 'forbidden',
+    //   component: ForbiddenView
+    //   // meta: { isDefault: true }
+    // },
+    // {
+    //   path: '/not-found',
+    //   name: 'not-found',
+    //   component: NotFoundView
+    //   // meta: { isDefault: true }
+    // }
   ]
 })
 
