@@ -43,7 +43,7 @@ const onSubmit = async () => {
     formAction.value.formSuccessMessage = 'Successfully Logged Account'
 
     setTimeout(() => {
-       router.replace('/system/dashboard')
+      router.replace('/system/dashboard')
     }, 5000) // 5000 milliseconds = 5 seconds
   }
 
@@ -98,20 +98,26 @@ const onFormSubmit = () => {
       block
       color="orange-darken-3"
       prepend-icon="mdi-login"
-      >Login</v-btn
+      >Sign in</v-btn
     >
     <!-- <h4 class="text-center">OR</h4> -->
-   <v-divider class="my-5"><h4 class="text-white">or</h4></v-divider>
+    <v-divider class="my-5"><h4 class="text-white">or</h4></v-divider>
     <v-btn
       rounded
       class="mt-2 font-weight-medium text-capitalize google-btn"
       size="x-large"
       block
       color="grey-lighten-4"
-      prepend-icon="mdi mdi-google-plus"
-      >Continue with Google
-      </v-btn>
-      
+    >
+      <img
+        src="/images/google.png"
+        alt="Google logo"
+        style="height: 24px; width: 24px"
+        class="me-2"
+      />
+      <p class="py-1 font-weight-medium">Continue with Google</p>
+    </v-btn>
+
     <v-divider class="my-5"></v-divider>
   </v-form>
 </template>

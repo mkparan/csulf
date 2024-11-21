@@ -16,11 +16,7 @@ const theme = ref('light')
         </v-main>
       </div>
 
-      <v-footer
-        border
-        app
-        class="footer-container text-center d-flex flex-column"
-      >
+      <v-footer border app class="footer-container text-center d-flex flex-column">
         <div>© Caraga State University - Lost and Found</div>
         <v-divider></v-divider>
         <div>All Rights Reserved</div>
@@ -43,6 +39,7 @@ const theme = ref('light')
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: #144517;
 }
 
 .footer-container {

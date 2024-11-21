@@ -1,4 +1,3 @@
-
 <script setup>
 import AppLayout from '@/components/layout/AppLayout.vue'
 import LoginForm from '@/components/auth/LoginForm.vue'
@@ -18,12 +17,8 @@ const { mobile } = useDisplay()
         <v-col cols="12" lg="4" :class="mobile ? '' : 'pt-16'">
           <v-card class="blur-card mx-auto" elevation="16">
             <v-card-title class="text-center">
-              <v-img
-                class="mx-auto"
-                src="/images/logo.png"
-                :width="mobile ? '60%' : '30%'"
-              ></v-img>
-              <h3 class="text-white font-weight-black">WELCOME</h3>
+              <v-img class="mx-auto" src="/images/logo.png" :width="mobile ? '60%' : '30%'"></v-img>
+              <h3 class="text-orange-lighten-5 font-weight-black">WELCOME</h3>
             </v-card-title>
 
             <v-card-text>
@@ -54,4 +49,3 @@ const { mobile } = useDisplay()
   overflow: hidden;
 }
 </style>
-
