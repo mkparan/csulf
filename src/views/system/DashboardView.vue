@@ -28,7 +28,7 @@ export default {
       onLogout
     }
   }
-}
+} 
 </script>
 
 <template>
