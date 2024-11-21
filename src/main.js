@@ -17,10 +17,10 @@ const app = createApp(App)
 
 const vuetify = createVuetify({
   icons: {
-    defaultSet: 'mdi', // This is already the default value - only for display purposes
+    defaultSet: 'mdi' // This is already the default value - only for display purposes
   },
   components,
-  directives,
+  directives
 })
 
 app.use(createPinia())

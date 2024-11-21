@@ -1,74 +1,153 @@
 <script setup>
+import {
+  requiredValidator,
+  emailValidator,
+  passwordValidator,
+  confirmedValidator
+} from '@/utils/validators'
 import { ref } from 'vue'
+import AlertNotification from '../common/AlertNotification.vue'
+import { supabase, formActionDefault } from '../../utils/supabase.js'
+import { useRouter } from 'vue-router'
 
 const visible = ref(false)
-const passwordField = ref(null)
+const isVisible = ref(false)
+const refVForm = ref()
 
-const toggleVisibility = () => {
-  if (passwordField.value) {
-    const cursorPosition =
-      passwordField.value.$el.querySelector('input').selectionStart
-    visible.value = !visible.value
-    // Ensure cursor stays at the same position
-    setTimeout(() => {
-      passwordField.value.$el
-        .querySelector('input')
-        .setSelectionRange(cursorPosition, cursorPosition)
-    })
+//predefined vue functions
+const router = useRouter()
+
+const FormDataDefault = {
+  firstname: '',
+  lastname: '',
+  facebookLink: '',
+  email: '',
+  password: '',
+  passwordConfirmation: ''
+}
+
+const formData = ref({
+  ...FormDataDefault
+})
+
+const formAction = ref({
+  ...formActionDefault
+})
+
+const onSubmit = async () => {
+  formAction.value = { ...formActionDefault } ///reset error message
+  formAction.value.formProcess = true
+
+  const { data, error } = await supabase.auth.signUp({
+    email: formData.value.email,
+    password: formData.value.password,
+    options: {
+      data: {
+        firstname: formData.value.firstname,
+        lastname: formData.value.lastname,
+        facebookLink: formData.value.facebookLink
+      }
+    }
+  })
+
+  if (error) {
+    console.error(error)
+    formAction.value.formErrorMessage = error.message
+    formAction.value.formStatus = error.status
+  } else if (data) {
+    console.log(data)
+    formAction.value.formSuccessMessage = 'Successfully Registered'
+
+    router.replace('/login')
   }
+  //reset form
+  refVForm.value?.reset() //clear the field if successfull login
+  formAction.value.formProcess = false
+}
+
+const onFormSubmit = () => {
+  refVForm.value?.validate().then(({ valid }) => {
+    if (valid) onSubmit()
+  })
 }
 </script>
 
 <template>
-  <v-form fast-fail @submit.prevent>
+  <AlertNotification
+    :form-success-message="formAction.formSuccessMessage"
+    :form-error-message="formAction.formErrorMessage"
+  ></AlertNotification>
+
+  <v-form class="mt-5" ref="refVForm" fast-fail @submit.prevent="onFormSubmit">
     <v-text-field
+      color="green-darken-3"
+      bg-color="green-lighten-3"
       rounded
+      v-model="formData.firstname"
       label="Firstname"
+      prepend-inner-icon="mdi-account-outline"
       variant="solo-filled"
+      :rules="[requiredValidator]"
+    ></v-text-field>
+    <v-text-field
       color="green-darken-3"
       bg-color="green-lighten-3"
-    ></v-text-field>
-
-    <v-text-field
       rounded
+      v-model="formData.lastname"
       label="Lastname"
+      prepend-inner-icon="mdi-account-outline"
       variant="solo-filled"
+      :rules="[requiredValidator]"
+    ></v-text-field>
+    <v-text-field
       color="green-darken-3"
       bg-color="green-lighten-3"
-    ></v-text-field>
-
-    <v-text-field
       rounded
+      v-model="formData.facebookLink"
+      label="Facebook Link"
+      prepend-inner-icon="mdi-link-variant-plus"
+      variant="solo-filled"
+      :rules="[requiredValidator]"
+    ></v-text-field>
+    <v-text-field 
+       color="green-darken-3"
+      bg-color="green-lighten-3"
+      rounded
+      v-model="formData.email"
       label="Email"
+      prepend-inner-icon="mdi-email-outline"
+      :rules="[requiredValidator, emailValidator]"
       variant="solo-filled"
-      color="green-darken-3"
-      bg-color="green-lighten-3"
     ></v-text-field>
-
     <v-text-field
+       color="green-darken-3"
+      bg-color="green-lighten-3"
       rounded
+      v-model="formData.password"
+      :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
+      :type="visible ? 'text' : 'password'"
       label="Password"
-      :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
-      :type="visible ? 'text' : 'password'"
+      prepend-inner-icon="mdi-lock-outline"
       variant="solo-filled"
-      color="green-darken-3"
-      bg-color="green-lighten-3"
-      @click:append-inner="toggleVisibility"
-      ref="passwordField"
+      @click:append-inner="visible = !visible"
+      :rules="[requiredValidator, passwordValidator]"
     ></v-text-field>
-
     <v-text-field
-      rounded
-      label="Confirm Password"
-      :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
-      :type="visible ? 'text' : 'password'"
-      variant="solo-filled"
       color="green-darken-3"
       bg-color="green-lighten-3"
-      @click:append-inner="toggleVisibility"
-      ref="passwordField"
+      rounded
+      v-model="formData.passwordConfirmation"
+      :append-inner-icon="isVisible ? 'mdi-eye-off' : 'mdi-eye'"
+      :type="isVisible ? 'text' : 'password'"
+      label="Password Confirmation"
+      prepend-inner-icon="mdi-lock-outline"
+      variant="solo-filled"
+      @click:append-inner="isVisible = !isVisible"
+      :rules="[
+        requiredValidator,
+        confirmedValidator(formData.passwordConfirmation, formData.password)
+      ]"
     ></v-text-field>
-
     <v-btn
       rounded
       class="mt-2 font-weight-black"
@@ -76,25 +155,10 @@ const toggleVisibility = () => {
       type="submit"
       block
       color="orange-darken-3"
-      >Sign up</v-btn
+      prepend-icon="mdi-account-plus"
+      :disabled="formAction.formProcess"
+      :loading="formAction.formProcess"
+      >Register</v-btn
     >
-
-    <v-divider class="my-5"><p class="text-white">or</p></v-divider>
-
-    <v-btn
-      rounded
-      class="mt-2 font-weight-medium text-capitalize google-btn"
-      size="x-large"
-      block
-      color="grey-lighten-4"
-    >
-      <img
-        src="/images/google.png"
-        alt="Google logo"
-        style="height: 24px; width: 24px"
-        class="me-2"
-      />
-      <p class="py-1 font-weight-medium">Continue with Google</p>
-    </v-btn>
   </v-form>
 </template>

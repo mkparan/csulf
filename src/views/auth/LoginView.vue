@@ -1,3 +1,4 @@
+
 <script setup>
 import AppLayout from '@/components/layout/AppLayout.vue'
 import LoginForm from '@/components/auth/LoginForm.vue'
@@ -22,7 +23,7 @@ const { mobile } = useDisplay()
                 src="/images/logo.png"
                 :width="mobile ? '60%' : '30%'"
               ></v-img>
-              <h3 class="text-orange-lighten-5 font-weight-black">WELCOME</h3>
+              <h3 class="text-white font-weight-black">WELCOME</h3>
             </v-card-title>
 
             <v-card-text>
@@ -53,3 +54,4 @@ const { mobile } = useDisplay()
   overflow: hidden;
 }
 </style>
+

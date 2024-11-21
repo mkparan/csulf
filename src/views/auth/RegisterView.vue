@@ -1,9 +1,9 @@
 <script setup>
-import AppLayout from '@/components/layout/AppLayout.vue'
-import RegisterForm from '@/components/auth/RegisterForm.vue'
-import { useDisplay } from 'vuetify'
+import AppLayout from '@/components/layout/AppLayout.vue';
+import RegisterForm from '@/components/auth/RegisterForm.vue';
+  import { useDisplay } from 'vuetify'
 
-const { mobile } = useDisplay()
+ const { mobile } = useDisplay()
 </script>
 
 <template>
@@ -18,9 +18,7 @@ const { mobile } = useDisplay()
                 src="/images/logo.png"
                 :width="mobile ? '60%' : '20%'"
               ></v-img>
-              <h3 class="text-orange-lighten-5 font-weight-black">
-                CREATE A NEW ACCOUNT
-              </h3>
+              <h3 class="text-white font-weight-black">CREATE A NEW ACCOUNT</h3>
             </v-card-title>
 
             <v-card-text>
