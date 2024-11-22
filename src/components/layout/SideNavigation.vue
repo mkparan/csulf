@@ -1,31 +1,64 @@
 <script>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { supabase } from '../../utils/supabase.js'
+import { useAuthStore } from '@/stores/authUser'  // Import the auth store
 
 export default {
   setup() {
-    const router = useRouter()
-    const formAction = ref({
-      formProcess: false
-    })
+    const router = useRouter()  // Router for redirection
+    const formAction = ref({ formProcess: false })  // Handle form process (loading indicator)
 
-    const onLogout = async () => {
-      formAction.value = { formProcess: true }
+    // User details
+    const firstName = ref('')
+    const lastName = ref('')
 
-      const { error } = await supabase.auth.signOut()
+    // Fetch user details (e.g., first and last name)
+    const fetchUserDetails = async () => {
+      const { data: { user }, error } = await supabase.auth.getUser()
       if (error) {
-        console.error('Error during logout:', error)
+        console.error('Error fetching user details:', error)
         return
       }
 
+      // Set user details if available
+      firstName.value = user?.user_metadata?.firstname || 'Firstname'
+      lastName.value = user?.user_metadata?.lastname || 'Lastname'
+    }
+
+    // Handle logout process
+    const onLogout = async () => {
+      formAction.value = { formProcess: true }  // Show loading indicator
+
+      // Sign out from Supabase
+      const { error } = await supabase.auth.signOut()
+      if (error) {
+        console.error('Error during logout:', error)
+        formAction.value.formProcess = false
+        return
+      }
+
+      // Clear the authentication data from the store
+      const authStore = useAuthStore()  // Access the auth store
+      authStore.logout()  // Call the logout method to clear user and token
+
+      // Stop loading indicator
       formAction.value.formProcess = false
+
+      // Redirect to login page after logout
       router.replace('/login')
     }
 
+    // Fetch user details on component mount
+    onMounted(() => {
+      fetchUserDetails()
+    })
+
     return {
       formAction,
-      onLogout
+      firstName,
+      lastName,
+      onLogout  // Make onLogout available to the template
     }
   }
 }
@@ -37,7 +70,7 @@ export default {
       <v-list-item
         class="pa-4"
         prepend-avatar="https://randomuser.me/api/portraits/men/78.jpg"
-        title="John Leider"
+        :title="`${firstName} ${lastName}`"
       ></v-list-item>
 
       <v-divider class="my-5"></v-divider>
@@ -49,7 +82,7 @@ export default {
 
     <template v-slot:append>
       <div class="pa-2">
-        <v-btn block @click="onLogout"> Sign out </v-btn>
+        <v-btn block @click="onLogout"> Sign out </v-btn> <!-- Logout button -->
       </div>
     </template>
   </v-navigation-drawer>
