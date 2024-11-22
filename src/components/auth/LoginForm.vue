@@ -4,6 +4,8 @@ import { supabase, formActionDefault } from '../../utils/supabase.js'
 import { requiredValidator, emailValidator } from '@/utils/validators'
 import AlertNotification from '../common/AlertNotification.vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/authUser'; // Correct import
+
 
 const visible = ref(false)
 const refVForm = ref()
@@ -26,6 +28,7 @@ const formAction = ref({
 })
 
 const onSubmit = async () => {
+  const authStore = useAuthStore(); 
   formAction.value = { ...formActionDefault } ///reset error message
   formAction.value.formProcess = true
 
@@ -41,6 +44,9 @@ const onSubmit = async () => {
   } else if (data) {
     console.log(data)
     formAction.value.formSuccessMessage = 'Successfully Logged Account'
+
+      // Update the auth store
+    authStore.login(data.user, data.session.access_token);
 
     setTimeout(() => {
       router.replace('/system/dashboard')

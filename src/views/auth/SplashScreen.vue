@@ -33,8 +33,8 @@ export default {
     // Redirect to login after 5 seconds (adjust timing as needed)
     setTimeout(() => {
       this.$router.push({ name: 'login' })
-    }, 7000)
-  },
+    }, 5000)
+  }
 }
 </script>
 

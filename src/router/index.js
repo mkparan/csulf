@@ -3,6 +3,8 @@ import LoginView from '@/views/auth/LoginView.vue'
 import RegisterView from '@/views/auth/RegisterView.vue'
 import SplashScreen from '@/views/auth/SplashScreen.vue'
 import DashboardView from '@/views/system/DashboardView.vue'
+import NotFoundView from '@/views/errors/NotFoundView.vue'
+import { useAuthStore } from '@/stores/authUser' // Correct the import here
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -21,7 +23,6 @@ const router = createRouter({
       name: 'login',
       component: LoginView
     },
-
     {
       path: '/register',
       name: 'register',
@@ -31,42 +32,38 @@ const router = createRouter({
       path: '/system/dashboard',
       name: 'dashboard',
       component: DashboardView
+    },
+    // Errors Pages
+    {
+      path: '/not-found',
+      name: 'not-found',
+      component: NotFoundView
     }
-
-    // // Errors Pages
-    // {
-    //   path: '/forbidden',
-    //   name: 'forbidden',
-    //   component: ForbiddenView
-    //   // meta: { isDefault: true }
-    // },
-    // {
-    //   path: '/not-found',
-    //   name: 'not-found',
-    //   component: NotFoundView
-    //   // meta: { isDefault: true }
-    // }
   ]
 })
 
-// router.beforeEach(async (to) => {
-//   // Check if the user is logged in
-//   const isLoggedIn = await authStore.isAuthenticated()
+router.beforeEach(async (to, from, next) => {
+  const authStore = useAuthStore() // Correct store initialization
+  const isLoggedIn = await authStore.checkAuth() // Ensure you're using the store's method
 
-//   // Redirect logged-in users away from login or register pages
-//   if (isLoggedIn && (to.name === 'login' || to.name === 'register')) {
-//     return { name: 'dashboard' } // Redirect to dashboard
-//   }
+  console.log('Route Guard Debug:', { isLoggedIn, routeName: to.name })
 
-//   // Prevent unauthenticated users from accessing system pages
-//   if (!isLoggedIn && to.path.startsWith('/system')) {
-//     return { name: 'login' } // Redirect to login
-//   }
+  // If user is logged in, prevent accessing login or register pages
+  if (isLoggedIn && (to.name === 'login' || to.name === 'register')) {
+    return next({ name: 'dashboard' }) // Redirect logged-in users to dashboard
+  }
 
-//   // Redirect unknown routes to the not-found page
-//   if (router.resolve(to).matched.length === 0) {
-//     return { name: 'not-found' }
-//   }
-// })
+  // If the user is not logged in and tries to access a protected route (like dashboard)
+  if (!isLoggedIn && to.path.startsWith('/system')) {
+    return next({ name: 'login' }) // Redirect unauthenticated users to login
+  }
+
+  // Handle unknown routes
+  if (router.resolve(to).matched.length === 0) {
+    return next({ name: 'not-found' }) // Redirect unknown routes to not-found
+  }
+
+  next() // Allow the route to proceed
+})
 
 export default router
