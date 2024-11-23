@@ -1,4 +1,128 @@
+<script>
+import { ref } from 'vue'
+import { supabase } from '@/utils/supabase' // Correct import path for supabase.js in utils folder
+import AlertNotification from '../common/AlertNotification.vue'
+
+export default {
+  components: { AlertNotification },
+  setup() {
+    const showModal = ref(false) // Modal visibility
+    const item_name = ref('') // Name input
+    const image = ref(null) // Image input
+    const description = ref('') // Description input
+    const posts = ref([]) // Array to store posts
+
+    // Manage notifications
+    const formActionDefault = {
+      formSuccessMessage: '',
+      formErrorMessage: '',
+      formProcess: false,
+    }
+    const formAction = ref({ ...formActionDefault })
+
+    // Reset form fields
+    const resetForm = () => {
+      item_name.value = ''
+      image.value = null
+      description.value = ''
+    }
+
+    // Handle Post Submission
+    const handlePost = async () => {
+      formAction.value = { ...formActionDefault } // Reset notification messages
+      formAction.value.formProcess = true // Indicate process start
+
+      let imageUrl = ''
+      if (image.value) {
+        try {
+          const { data, error } = await supabase.storage
+            .from('items') // Get the image store in the bucket 
+            .upload(`public/${image.value.name}`, image.value)
+
+          if (error) {
+            console.error('Image upload error:', error)
+            formAction.value.formErrorMessage = 'Failed to upload the image.'
+            return
+          }
+          imageUrl = data?.path
+          console.log('Image uploaded successfully:', imageUrl) // Log image path
+        } catch (error) {
+          console.error('Error uploading image:', error)
+          formAction.value.formErrorMessage = 'Unexpected error during image upload.'
+          return
+        }
+      }
+
+      // Insert the post into the Supabase database
+      try {
+        const { error: insertError } = await supabase
+          .from('posts') // Your Supabase table
+          .insert([
+            {
+              item_name: item_name.value,
+              image: imageUrl, // If image is uploaded, store its path
+              description: description.value
+            }
+          ])
+
+        if (insertError) {
+          console.error('Insert error:', insertError)
+          formAction.value.formErrorMessage = 'Failed to create the post.'
+          return
+        }
+
+        formAction.value.formSuccessMessage = 'Post created successfully!' // Success message
+
+        // Fetch all posts to update the UI
+        const { data: postsData, error: fetchError } = await supabase.from('posts').select()
+
+        if (fetchError) {
+          console.error('Fetch error:', fetchError)
+          formAction.value.formErrorMessage = 'Failed to fetch updated posts.'
+          return
+        }
+
+        posts.value = postsData
+        console.log('Posts fetched:', posts.value) // Log the posts
+
+        // Reset the form and close the modal
+        resetForm()
+        showModal.value = false
+      } catch (error) {
+        console.error('Error inserting post:', error)
+        formAction.value.formErrorMessage = 'Unexpected error during post creation.'
+      } finally {
+        formAction.value.formProcess = false // Indicate process end
+      }
+    }
+
+    // Handle cancel (close modal without submitting)
+    const handleCancel = () => {
+      resetForm()
+      showModal.value = false
+    }
+
+    return {
+      showModal,
+      item_name,
+      image,
+      description,
+      posts,
+      formAction,
+      handlePost,
+      handleCancel,
+    }
+  }
+}
+</script>
+
 <template>
+  <!-- Alert Notification -->
+  <AlertNotification
+    :form-success-message="formAction.formSuccessMessage"
+    :form-error-message="formAction.formErrorMessage"
+  ></AlertNotification>
+
   <v-main>
     <!-- Post Icon Button -->
     <v-col cols="auto" class="pb-5 pl-3">
@@ -37,109 +161,12 @@
           <!-- Cancel Button -->
           <v-btn text color="red" @click="handleCancel">Cancel</v-btn>
           <!-- Post Button -->
-          <v-btn text color="green" @click="handlePost">Post</v-btn>
+          <v-btn :disabled="formAction.formProcess" text color="green" @click="handlePost">
+            Post
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
   </v-main>
 </template>
 
-<script>
-import { ref } from 'vue'
-import { supabase } from '@/utils/supabase' // Correct import path for supabase.js in utils folder
-
-export default {
-  setup() {
-    const showModal = ref(false) // Modal visibility
-    const item_name = ref('') // Name input
-    const image = ref(null) // Image input
-    const description = ref('') // Description input
-    const posts = ref([]) // Array to store posts
-
-    // Reset form fields
-    const resetForm = () => {
-      item_name.value = ''
-      image.value = null
-      description.value = ''
-    }
-
-    // Handle Post Submission
-    const handlePost = async () => {
-      let imageUrl = ''
-      if (image.value) {
-        try {
-          const { data, error } = await supabase.storage
-            .from('items') // Get the image store in the bucket 
-            .upload(`public/${image.value.name}`, image.value)
-
-          if (error) {
-            console.error('Image upload error:', error)
-            return
-          }
-          imageUrl = data?.path
-          console.log('Image uploaded successfully:', imageUrl) // Log image path
-        } catch (error) {
-          console.error('Error uploading image:', error)
-        }
-      }
-
-      // Insert the post into the Supabase database
-      try {
-        const { error: insertError } = await supabase
-          .from('posts') // Your Supabase table
-          .insert([
-            {
-              item_name: item_name.value,
-              image: imageUrl, // If image is uploaded, store its path
-              description: description.value
-            }
-          ])
-
-        if (insertError) {
-          console.error('Insert error:', insertError)
-          return
-        }
-
-        console.log('Post inserted successfully') // Log success
-
-        // Fetch all posts to update the UI
-        const { data: postsData, error: fetchError } = await supabase.from('posts').select()
-
-        if (fetchError) {
-          console.error('Fetch error:', fetchError)
-          return
-        }
-
-        posts.value = postsData
-        console.log('Posts fetched:', posts.value) // Log the posts
-
-        // Reset the form and close the modal
-        resetForm()
-        showModal.value = false
-      } catch (error) {
-        console.error('Error inserting post:', error)
-      }
-    }
-
-    // Handle cancel (close modal without submitting)
-    const handleCancel = () => {
-      resetForm()
-      showModal.value = false
-    }
-
-    return {
-      showModal,
-      item_name,
-      image,
-      description,
-      posts,
-      handlePost,
-      handleCancel
-    }
-  }
-}
-</script>
-
-<style scoped>
-/* You can add any custom styles you like here */
-</style>
