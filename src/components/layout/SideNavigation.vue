@@ -65,7 +65,7 @@ export default {
 </script>
 
 <template>
-  <v-navigation-drawer class="bg-white" theme="dark" :width="400" elevation="16">
+  <v-navigation-drawer class="bg-white" theme="dark" :width="300" elevation="16">
     <v-list color="transparent">
       <v-list-item
         class="pa-4"
