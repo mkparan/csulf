@@ -1,10 +1,10 @@
 <script>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { supabase } from '../../utils/supabase.js'
-import SideNavigation from '@/components/layout/SideNavigation.vue'
-import PostItemView from '@/components/layout/PostItemView.vue'
-import DisplayPostView from '@/components/layout/DisplayPostView.vue'
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { supabase } from '../../utils/supabase.js';
+import SideNavigation from '@/components/layout/SideNavigation.vue';
+import PostItemView from '@/components/layout/PostItemView.vue';
+import DisplayPostView from '@/components/layout/DisplayPostView.vue';
 
 export default {
   components: {
@@ -13,56 +13,65 @@ export default {
     DisplayPostView, //
   },
   setup() {
-    const router = useRouter()
+    const router = useRouter();
     const formAction = ref({
-      formProcess: false
-    })
+      formProcess: false,
+    });
 
     const onLogout = async () => {
-      formAction.value = { formProcess: true }
+      formAction.value = { formProcess: true };
 
-      const { error } = await supabase.auth.signOut()
+      const { error } = await supabase.auth.signOut();
       if (error) {
-        console.error('Error during logout:', error)
-        return
+        console.error('Error during logout:', error);
+        return;
       }
 
-      formAction.value.formProcess = false
-      router.replace('/login')
-    }
+      formAction.value.formProcess = false;
+      router.replace('/login');
+    };
 
     return {
       formAction,
-      onLogout
-    }
-  }
-}
+      onLogout,
+    };
+  },
+};
 </script>
 
 <template>
   <v-layout class="rounded rounded-md">
+    <!-- Top App Bar -->
     <v-app-bar color="green-darken-4 pa-1" class="text-center">
       <v-img class="pa-6" src="/images/logo.png"></v-img>
     </v-app-bar>
 
-    <!-- Use SideNavigation -->
-    <SideNavigation></SideNavigation>
+    <!-- Grid Container for 3 Columns -->
+    <v-container fluid>
+      <v-row>
+        <!-- First Column: SideNavigation -->
+        <v-col cols="12" md="3">
+          <SideNavigation></SideNavigation>
+        </v-col>
 
-    <v-navigation-drawer location="right">
-      <v-list>
-        <v-list-item title="Drawer right"></v-list-item>
-      </v-list>
-    </v-navigation-drawer>
+        <!-- Second Column: DisplayPostView -->
+        <v-col cols="12" md="6">
+                 <!--post item-->
+           <PostItemView></PostItemView>
+          <DisplayPostView></DisplayPostView>
+        </v-col>
 
-   <!--post item-->
-    <PostItemView></PostItemView>
+        <!-- Third Column: Navigation Drawer -->
+        <!-- <v-col cols="12" md="4">
+          <v-navigation-drawer permanent right>
+            <v-list>
+              <v-list-item title="Drawer right"></v-list-item>
+            </v-list>
+          </v-navigation-drawer>
+        </v-col> -->
+      </v-row>
+    </v-container>
   </v-layout>
-
-      <!--display post-->
-  <v-layout> 
-        <DisplayPostView></DisplayPostView>
-  </v-layout>
-
 </template>
 
 <style scoped>
@@ -70,4 +79,3 @@ h1 {
   margin-top: 20px;
 }
 </style>
-
