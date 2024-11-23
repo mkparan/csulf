@@ -3,10 +3,14 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { supabase } from '../../utils/supabase.js'
 import SideNavigation from '@/components/layout/SideNavigation.vue'
+import PostItemView from '@/components/layout/PostItemView.vue'
+import DisplayPostView from '@/components/layout/DisplayPostView.vue'
 
 export default {
   components: {
-    SideNavigation // Register the component here
+    SideNavigation, // Register the component here
+    PostItemView,
+    DisplayPostView, //
   },
   setup() {
     const router = useRouter()
@@ -50,10 +54,15 @@ export default {
       </v-list>
     </v-navigation-drawer>
 
-    <v-main class="d-flex align-center justify-center" style="min-height: 300px">
-      Main Content
-    </v-main>
+   <!--post item-->
+    <PostItemView></PostItemView>
   </v-layout>
+
+      <!--display post-->
+  <v-layout> 
+        <DisplayPostView></DisplayPostView>
+  </v-layout>
+
 </template>
 
 <style scoped>
