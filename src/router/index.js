@@ -55,7 +55,7 @@ router.beforeEach(async (to, from, next) => {
   console.log('Route Guard Debug:', { isLoggedIn, routeName: to.name })
 
   // If user is logged in, prevent accessing login or register pages
-  if (isLoggedIn && (to.name === 'login' || to.name === 'register')) {
+  if (isLoggedIn && (to.name === 'login' || to.name === 'register' || to.name === 'splash')) {
     return next({ name: 'dashboard' }) // Redirect logged-in users to dashboard
   }
 
