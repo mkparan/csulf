@@ -64,9 +64,9 @@ export default {
 
               <!-- Third Column: Navigation Drawer -->
               <!-- <v-col cols="12" md="4">
-                <v-navigation-drawer permanent right>
+                <v-navigation-drawer permanent left>
                   <v-list>
-                    <v-list-item title="Drawer right"></v-list-item>
+                    <v-list-item title="Drawer left"></v-list-item>
                   </v-list>
                 </v-navigation-drawer>
               </v-col> -->
