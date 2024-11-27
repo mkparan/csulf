@@ -1,22 +1,22 @@
 <script>
 import { ref } from 'vue'
-import { supabase } from '@/utils/supabase' // Correct import path for supabase.js in utils folder
+import { supabase } from '@/utils/supabase' // Ensure this points to your Supabase instance
 import AlertNotification from '../common/AlertNotification.vue'
 
 export default {
   components: { AlertNotification },
   setup() {
     const showModal = ref(false) // Modal visibility
-    const item_name = ref('') // Name input
-    const image = ref(null) // Image input
+    const item_name = ref('') // Item name input
+    const image = ref(null) // Image file input
     const description = ref('') // Description input
     const posts = ref([]) // Array to store posts
 
-    // Manage notifications
+    // Manage form action states
     const formActionDefault = {
       formSuccessMessage: '',
       formErrorMessage: '',
-      formProcess: false,
+      formProcess: false
     }
     const formAction = ref({ ...formActionDefault })
 
@@ -29,14 +29,14 @@ export default {
 
     // Handle Post Submission
     const handlePost = async () => {
-      formAction.value = { ...formActionDefault } // Reset notification messages
+      formAction.value = { ...formActionDefault }
       formAction.value.formProcess = true // Indicate process start
 
       let imageUrl = ''
       if (image.value) {
         try {
           const { data, error } = await supabase.storage
-            .from('items') // Get the image store in the bucket 
+            .from('items')
             .upload(`public/${image.value.name}`, image.value)
 
           if (error) {
@@ -45,7 +45,7 @@ export default {
             return
           }
           imageUrl = data?.path
-          console.log('Image uploaded successfully:', imageUrl) // Log image path
+          console.log('Image uploaded successfully:', imageUrl)
         } catch (error) {
           console.error('Error uploading image:', error)
           formAction.value.formErrorMessage = 'Unexpected error during image upload.'
@@ -53,17 +53,30 @@ export default {
         }
       }
 
-      // Insert the post into the Supabase database
       try {
-        const { error: insertError } = await supabase
-          .from('posts') // Your Supabase table
-          .insert([
-            {
-              item_name: item_name.value,
-              image: imageUrl, // If image is uploaded, store its path
-              description: description.value
-            }
-          ])
+        // Get the current user ID
+        const {
+          data: { user },
+          error: authError
+        } = await supabase.auth.getUser()
+
+        if (authError) {
+          console.error('Auth error:', authError)
+          formAction.value.formErrorMessage = 'Failed to retrieve user information.'
+          return
+        }
+
+        const userId = user?.id // User ID from the auth table
+
+        // Insert the post into the posts table
+        const { error: insertError } = await supabase.from('posts').insert([
+          {
+            item_name: item_name.value,
+            image: imageUrl,
+            description: description.value,
+            user_id: userId // Link the post to the authenticated user
+          }
+        ])
 
         if (insertError) {
           console.error('Insert error:', insertError)
@@ -71,9 +84,9 @@ export default {
           return
         }
 
-        formAction.value.formSuccessMessage = 'Post created successfully!' // Success message
+        formAction.value.formSuccessMessage = 'Post created successfully!'
 
-        // Fetch all posts to update the UI
+        // Fetch updated posts
         const { data: postsData, error: fetchError } = await supabase.from('posts').select()
 
         if (fetchError) {
@@ -83,20 +96,19 @@ export default {
         }
 
         posts.value = postsData
-        console.log('Posts fetched:', posts.value) // Log the posts
+        console.log('Posts fetched:', posts.value)
 
-        // Reset the form and close the modal
-        resetForm()
-        showModal.value = false
+        resetForm() // Clear the form fields
+        showModal.value = false // Close the modal
       } catch (error) {
-        console.error('Error inserting post:', error)
+        console.error('Error during post creation:', error)
         formAction.value.formErrorMessage = 'Unexpected error during post creation.'
       } finally {
         formAction.value.formProcess = false // Indicate process end
       }
     }
 
-    // Handle cancel (close modal without submitting)
+    // Cancel button logic
     const handleCancel = () => {
       resetForm()
       showModal.value = false
@@ -110,7 +122,7 @@ export default {
       posts,
       formAction,
       handlePost,
-      handleCancel,
+      handleCancel
     }
   }
 }
@@ -169,4 +181,3 @@ export default {
     </v-dialog>
   </v-main>
 </template>
-

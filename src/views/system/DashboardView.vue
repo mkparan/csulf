@@ -39,40 +39,47 @@ export default {
 };
 </script>
 
-<template>
-  <v-layout class="rounded rounded-md">
-    <!-- Top App Bar -->
-    <v-app-bar color="green-darken-4 pa-1" class="text-center">
-      <v-img class="pa-6" src="/images/logo.png"></v-img>
-    </v-app-bar>
 
-    <!-- Grid Container for 3 Columns -->
-    <v-container fluid>
-      <v-row>
-        <!-- First Column: SideNavigation -->
-        <v-col cols="12" md="3">
-          <SideNavigation></SideNavigation>
-        </v-col>
+      <template >
+        <v-layout class="rounded rounded-md">
+          <!-- Top App Bar -->
+          <v-app-bar color="green-darken-4 pa-1" class="text-center">
+            <v-img class="pa-6" src="/images/logo.png"></v-img>
+          </v-app-bar>
 
-        <!-- Second Column: DisplayPostView -->
-        <v-col cols="12" md="6">
-                 <!--post item-->
-           <PostItemView></PostItemView>
-          <DisplayPostView></DisplayPostView>
-        </v-col>
+          <!-- Grid Container for 3 Columns -->
+          <v-container fluid>
+            <v-row>
+              <!-- First Column: SideNavigation -->
+              <v-col cols="12" md="3">
+                <SideNavigation></SideNavigation>
+              </v-col>
 
-        <!-- Third Column: Navigation Drawer -->
-        <!-- <v-col cols="12" md="4">
-          <v-navigation-drawer permanent right>
-            <v-list>
-              <v-list-item title="Drawer right"></v-list-item>
-            </v-list>
-          </v-navigation-drawer>
-        </v-col> -->
-      </v-row>
-    </v-container>
-  </v-layout>
-</template>
+              <!-- Second Column: DisplayPostView -->
+              <v-col cols="12" md="6">
+                      <!--post item-->
+                <PostItemView></PostItemView>
+                <DisplayPostView></DisplayPostView>
+              </v-col>
+
+              <!-- Third Column: Navigation Drawer -->
+              <!-- <v-col cols="12" md="4">
+                <v-navigation-drawer permanent left>
+                  <v-list>
+                    <v-list-item title="Drawer left"></v-list-item>
+                  </v-list>
+                </v-navigation-drawer>
+              </v-col> -->
+            </v-row>
+          </v-container>
+
+        <v-footer border app class="footer-container text-center d-flex flex-column" color="deep-orange">
+        <div>© Caraga State University - Lost and Found</div>
+        <v-divider></v-divider>
+        <div>All Rights Reserved</div>
+      </v-footer>
+        </v-layout>
+      </template>
 
 <style scoped>
 h1 {
