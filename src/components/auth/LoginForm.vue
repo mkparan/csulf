@@ -4,8 +4,7 @@ import { supabase, formActionDefault } from '../../utils/supabase.js'
 import { requiredValidator, emailValidator } from '@/utils/validators'
 import AlertNotification from '../common/AlertNotification.vue'
 import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores/authUser'; // Correct import
-
+import { useAuthStore } from '@/stores/authUser' // Correct import
 
 const visible = ref(false)
 const refVForm = ref()
@@ -28,7 +27,7 @@ const formAction = ref({
 })
 
 const onSubmit = async () => {
-  const authStore = useAuthStore(); 
+  const authStore = useAuthStore()
   formAction.value = { ...formActionDefault } ///reset error message
   formAction.value.formProcess = true
 
@@ -45,8 +44,8 @@ const onSubmit = async () => {
     console.log(data)
     formAction.value.formSuccessMessage = 'Successfully Logged Account'
 
-      // Update the auth store
-    authStore.login(data.user, data.session.access_token);
+    // Update the auth store
+    authStore.login(data.user, data.session.access_token)
 
     setTimeout(() => {
       router.replace('/system/dashboard')
@@ -71,14 +70,13 @@ const onFormSubmit = () => {
     :form-error-message="formAction.formErrorMessage"
   ></AlertNotification>
 
-  <v-form class="mt-5" ref="refVForm" fast-fail @submit.prevent="onFormSubmit">
+  <v-form class="mt-5 ma-4" ref="refVForm" fast-fail @submit.prevent="onFormSubmit">
     <v-text-field
       color="green-darken-3"
       bg-color="green-lighten-3"
       rounded
       v-model="formData.email"
       label="Email"
-      prepend-inner-icon="mdi-email-outline"
       :rules="[requiredValidator, emailValidator]"
       variant="solo-filled"
     ></v-text-field>
@@ -91,7 +89,6 @@ const onFormSubmit = () => {
       :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
       :type="visible ? 'text' : 'password'"
       label="Password"
-      prepend-inner-icon="mdi-lock-outline"
       variant="solo-filled"
       @click:append-inner="visible = !visible"
       :rules="[requiredValidator]"
@@ -103,7 +100,6 @@ const onFormSubmit = () => {
       type="submit"
       block
       color="orange-darken-3"
-      prepend-icon="mdi-login"
       >Sign in</v-btn
     >
     <!-- <h4 class="text-center">OR</h4> -->

@@ -2,12 +2,12 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { supabase } from '../../utils/supabase.js'
-import { useAuthStore } from '@/stores/authUser'  // Import the auth store
+import { useAuthStore } from '@/stores/authUser' // Import the auth store
 
 export default {
   setup() {
-    const router = useRouter()  // Router for redirection
-    const formAction = ref({ formProcess: false })  // Handle form process (loading indicator)
+    const router = useRouter() // Router for redirection
+    const formAction = ref({ formProcess: false }) // Handle form process (loading indicator)
 
     // User details
     const firstName = ref('')
@@ -15,7 +15,10 @@ export default {
 
     // Fetch user details (e.g., first and last name)
     const fetchUserDetails = async () => {
-      const { data: { user }, error } = await supabase.auth.getUser()
+      const {
+        data: { user },
+        error
+      } = await supabase.auth.getUser()
       if (error) {
         console.error('Error fetching user details:', error)
         return
@@ -28,7 +31,7 @@ export default {
 
     // Handle logout process
     const onLogout = async () => {
-      formAction.value = { formProcess: true }  // Show loading indicator
+      formAction.value = { formProcess: true } // Show loading indicator
 
       // Sign out from Supabase
       const { error } = await supabase.auth.signOut()
@@ -39,8 +42,8 @@ export default {
       }
 
       // Clear the authentication data from the store
-      const authStore = useAuthStore()  // Access the auth store
-      authStore.logout()  // Call the logout method to clear user and token
+      const authStore = useAuthStore() // Access the auth store
+      authStore.logout() // Call the logout method to clear user and token
 
       // Stop loading indicator
       formAction.value.formProcess = false
@@ -58,7 +61,7 @@ export default {
       formAction,
       firstName,
       lastName,
-      onLogout  // Make onLogout available to the template
+      onLogout // Make onLogout available to the template
     }
   }
 }
@@ -67,11 +70,7 @@ export default {
 <template>
   <v-navigation-drawer class="bg-white" theme="dark" :width="300" elevation="16">
     <v-list color="transparent">
-      <v-list-item
-        class="pa-4"
-        prepend-avatar="https://randomuser.me/api/portraits/men/78.jpg"
-        :title="`${firstName} ${lastName}`"
-      ></v-list-item>
+      <v-list-item class="pa-4 text-center" :title="`${firstName} ${lastName}`"></v-list-item>
 
       <v-divider class="my-5"></v-divider>
 
@@ -82,7 +81,8 @@ export default {
 
     <template v-slot:append>
       <div class="pa-2">
-        <v-btn block @click="onLogout"> Sign out </v-btn> <!-- Logout button -->
+        <v-btn block @click="onLogout"> Sign out </v-btn>
+        <!-- Logout button -->
       </div>
     </template>
   </v-navigation-drawer>
