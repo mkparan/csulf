@@ -1,57 +1,43 @@
 <template>
   <v-app>
     <!-- Sidebar -->
-    <v-navigation-drawer app width="300" class="sidebar white-background pt-3">
+    <v-navigation-drawer app width="300" class="sidebar">
       <!-- Profile Section -->
       <div class="profile-section">
         <v-avatar size="100" class="mx-auto">
-          <v-img 
-            src="https://scontent.fcgy2-2.fna.fbcdn.net/v/t39.30808-6/415088245_3509080339421197_435914246344423626_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeGuQ97xLeyLu_79p1zb-ql4B9p_WwYYxz4H2n9bBhjHPke4Nh__sQE866JlPfR-JC5Ikj3-m8KTYKYV6H8WBTlQ&_nc_ohc=yltZepfm-7AQ7kNvgE0KMuQ&_nc_zt=23&_nc_ht=scontent.fcgy2-2.fna&_nc_gid=AIGdcIKsJAne8xj3i8gnE0P&oh=00_AYCtbyYQsDy8yuVb7af2bYbmfitwWRwGtSBlrznlw9ADwQ&oe=674E613E" 
-            alt="User Avatar" />
+          <v-img
+            src="https://scontent.fcgy2-2.fna.fbcdn.net/v/t39.30808-6/415088245_3509080339421197_435914246344423626_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeGuQ97xLeyLu_79p1zb-ql4B9p_WwYYxz4H2n9bBhjHPke4Nh__sQE866JlPfR-JC5Ikj3-m8KTYKYV6H8WBTlQ&_nc_ohc=yltZepfm-7AQ7kNvgE0KMuQ&_nc_zt=23&_nc_ht=scontent.fcgy2-2.fna&_nc_gid=AIGdcIKsJAne8xj3i8gnE0P&oh=00_AYCtbyYQsDy8yuVb7af2bYbmfitwWRwGtSBlrznlw9ADwQ&oe=674E613E"
+            alt="User Avatar"
+          />
         </v-avatar>
         <p class="text-center font-weight-bold mt-2">
           {{ firstName }} {{ lastName }}
         </p>
       </div>
 
-      
       <!-- Navigation Links -->
-    <v-list dense class="navigation-links">
-      <v-list-item @click="navigateTo('home')" class="menu-item">
-        <v-icon left>mdi-home</v-icon>
-        <v-list-item-title>Home</v-list-item-title>
-      </v-list-item>
+      <v-list dense>
+        <v-list-item
+          v-for="item in menuItems"
+          :key="item.title"
+          @click="navigateTo(item.route)"
+          class="menu-item"
+        >
+          <v-icon>{{ item.icon }}</v-icon>
+          <v-list-item-title>{{ item.title }}</v-list-item-title>
+        </v-list-item>
 
-      <v-list-item @click="navigateTo('saved')" class="menu-item">
-        <v-icon left>mdi-content-save</v-icon>
-        <v-list-item-title>Saved</v-list-item-title>
-      </v-list-item>
+        
+        <v-list-item @click="onLogout" class="logout-button">
+          <v-icon>mdi-logout</v-icon>
+          <v-list-item-title>SIGN OUT</v-list-item-title>
+        </v-list-item>
+     
+      </v-list>
 
-      <v-list-item @click="navigateTo('profile')" class="menu-item">
-        <v-icon left>mdi-account</v-icon>
-        <v-list-item-title>Profile</v-list-item-title>
-      </v-list-item>
-
-      <v-list-item @click="navigateTo('appearance')" class="menu-item">
-        <v-icon left>mdi-format-paint</v-icon>
-        <v-list-item-title>Appearance</v-list-item-title>
-      </v-list-item>
-
-      <v-list-item @click="navigateTo('about-us')" class="menu-item">
-        <v-icon left>mdi-information</v-icon>
-        <v-list-item-title>About Us</v-list-item-title>
-      </v-list-item>
-    </v-list>
-
-    <!-- Footer Section -->
-    <div class="footer-section">
-      <v-divider></v-divider>
-      <v-list-item @click="onLogout" class="logout-button">
-        <v-icon>mdi-logout</v-icon>
-        <v-list-item-title>SIGN OUT</v-list-item-title>
-      </v-list-item>
-    </div>
-  </v-navigation-drawer>
+      <!-- Footer Section -->
+     
+    </v-navigation-drawer>
 
     <!-- Main Content -->
     <v-main>
@@ -63,28 +49,25 @@
 <script>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { supabase } from "../../utils/supabase.js";
-import { useAuthStore } from "@/stores/authUser";
+import { supabase } from "@/utils/supabase"; // Ensure supabase.js is correctly configured
+import { useAuthStore } from "@/stores/authUser"; // Ensure Pinia store is configured
 
 export default {
   setup() {
     const router = useRouter();
-    const formAction = ref({ formProcess: false });
-    const firstName = ref("");
-    const lastName = ref("");
+    const firstName = ref("Firstname");
+    const lastName = ref("Lastname");
 
-
-
-    const navigateTo = (route) => {
-      console.log(`Navigating to ${route}`);
-      // Add your navigation logic here
-    };
+    const menuItems = [
+      { title: "Home", icon: "mdi-home", route: "home" },
+      { title: "Saved", icon: "mdi-content-save", route: "saved" },
+      { title: "Profile", icon: "mdi-account", route: "profile" },
+      { title: "Appearance", icon: "mdi-format-paint", route: "appearance" },
+      { title: "About Us", icon: "mdi-information", route: "about-us" },
+    ];
 
     const fetchUserDetails = async () => {
-      const {
-        data: { user },
-        error,
-      } = await supabase.auth.getUser();
+      const { data: { user }, error } = await supabase.auth.getUser();
       if (error) {
         console.error("Error fetching user details:", error);
         return;
@@ -93,17 +76,18 @@ export default {
       lastName.value = user?.user_metadata?.lastname || "Lastname";
     };
 
+    const navigateTo = (route) => {
+      router.push(`/${route}`);
+    };
+
     const onLogout = async () => {
-      formAction.value = { formProcess: true };
       const { error } = await supabase.auth.signOut();
       if (error) {
         console.error("Error during logout:", error);
-        formAction.value.formProcess = false;
         return;
       }
       const authStore = useAuthStore();
       authStore.logout();
-      formAction.value.formProcess = false;
       router.replace("/login");
     };
 
@@ -112,9 +96,10 @@ export default {
     });
 
     return {
-      formAction,
       firstName,
       lastName,
+      menuItems,
+      navigateTo,
       onLogout,
     };
   },
@@ -122,17 +107,13 @@ export default {
 </script>
 
 <style scoped>
-/* Sidebar styling */
 .sidebar {
   background: linear-gradient(
     to bottom,
-    #065e09, /* Dominant Green */
-    #508d0a, /* Light Green */
-    #ffc107, /* Yellow */
-    #a1887f, /* Brown */
-    #ffffff /* White */
+    #065e09,
+    #508d0a
   );
-  color: #ffffff; /* Text color for contrast with green */
+  color: #ffffff;
   height: 100%;
   padding-top: 10px;
   display: flex;
@@ -140,93 +121,42 @@ export default {
   justify-content: space-between;
 }
 
-/* Profile section */
+/* Profile Section */
 .profile-section {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 30px 10px;
+  padding: 90px 10px;
   border-bottom: 1px solid #e0e0e0;
-  margin-top: 30px; /* Adjust margin to space it from the top */
+  padding-bottom: 40px;
 }
 
-/* Profile image */
 .profile-section img {
-  width: 150px; /* Adjusted size */
-  height: 150px; /* Matching width and height */
-  object-fit: cover; /* Ensures the image is cropped evenly if aspect ratio differs */
-  border-radius: 50%; /* Makes the image circular */
-  display: block; /* Ensures no unexpected inline spacing around the image */
-  border: 2px solid #e0e0e0; /* Optional border for styling */
-  margin: auto; /* Center the image horizontally */
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 50%;
 }
 
-.profile-section p {
-  font-size: 1.1rem;
-  margin-top: 10px;
-}
-
-/* Navigation links */
-.navigation-links {
-  flex-grow: 1;
-  padding: 10px 0;
-}
-
-.v-list-item {
-  display: flex;
-  align-items: center;
-  padding-left: 15px;
-  color: #424242;
-}
-
-/* Logout button */
-.footer-section {
-  padding: 10px 15px;
-}
-
-.logout-button {
-  color: #ff5252;
-  font-weight: bold;
-}
-
-.v-list-item-title {
-  margin-left: 10px;
-  font-size: 1rem;
-}
-
-
-/* Navigation Section */
-
-/* Adjust navigation links */
-.navigation-links {
-  padding: 0; /* Remove extra padding */
-}
-
+/* Navigation Links */
 .menu-item {
   display: flex;
   align-items: center;
-  padding: 10px 20px;
+  padding: 19px 30px;
   color: #e4e6eb;
   cursor: pointer;
   transition: background-color 0.3s;
 }
 
 .menu-item:hover {
-  background-color: #3a3b3c; /* Hover effect */
+  background-color: #ff0000;
 }
 
 .menu-item .v-icon {
-  font-size: 1.4rem;
-  color: #e4e6eb; /* Icon color */
   margin-right: 10px;
+  font-size: 1.4rem;
 }
 
-.menu-item .v-list-item-title {
-  font-size: 1rem;
-  font-weight: 500;
-}
-
-/* Logout button */
 .footer-section {
   padding: 10px 20px;
 }
@@ -234,19 +164,22 @@ export default {
 .logout-button {
   display: flex;
   align-items: center;
-  color: #ff5252;
+  color: #ffffff;
   font-weight: bold;
   cursor: pointer;
+  padding: 10px 20px;
   transition: background-color 0.3s;
+  justify-content: flex-start;
+  width: 100%;
+  text-align: left;
 }
 
 .logout-button:hover {
-  background-color: #3a3b3c;
+  background-color: #ff0000;
 }
 
 .logout-button .v-icon {
   margin-right: 10px;
   font-size: 1.4rem;
 }
-
 </style>
