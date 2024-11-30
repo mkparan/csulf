@@ -27,16 +27,13 @@
           <v-list-item-title>{{ item.title }}</v-list-item-title>
         </v-list-item>
 
-        
         <v-list-item @click="onLogout" class="logout-button">
           <v-icon>mdi-logout</v-icon>
           <v-list-item-title>SIGN OUT</v-list-item-title>
         </v-list-item>
-     
       </v-list>
 
       <!-- Footer Section -->
-     
     </v-navigation-drawer>
 
     <!-- Main Content -->
@@ -47,7 +44,6 @@
 </template>
 
 <script>
-<<<<<<< HEAD
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { supabase } from "@/utils/supabase"; // Ensure supabase.js is correctly configured
@@ -58,17 +54,6 @@ export default {
     const router = useRouter();
     const firstName = ref("Firstname");
     const lastName = ref("Lastname");
-=======
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { supabase } from '../../utils/supabase.js'
-import { useAuthStore } from '@/stores/authUser' // Import the auth store
-
-export default {
-  setup() {
-    const router = useRouter() // Router for redirection
-    const formAction = ref({ formProcess: false }) // Handle form process (loading indicator)
->>>>>>> 88fb10a7aee1d6ce30018a0bfcf0a65a2b0284fe
 
     const menuItems = [
       { title: "Home", icon: "mdi-home", route: "home" },
@@ -79,14 +64,7 @@ export default {
     ];
 
     const fetchUserDetails = async () => {
-<<<<<<< HEAD
       const { data: { user }, error } = await supabase.auth.getUser();
-=======
-      const {
-        data: { user },
-        error
-      } = await supabase.auth.getUser()
->>>>>>> 88fb10a7aee1d6ce30018a0bfcf0a65a2b0284fe
       if (error) {
         console.error("Error fetching user details:", error);
         return;
@@ -100,14 +78,8 @@ export default {
     };
 
     const onLogout = async () => {
-<<<<<<< HEAD
+      // Show loading indicator
       const { error } = await supabase.auth.signOut();
-=======
-      formAction.value = { formProcess: true } // Show loading indicator
-
-      // Sign out from Supabase
-      const { error } = await supabase.auth.signOut()
->>>>>>> 88fb10a7aee1d6ce30018a0bfcf0a65a2b0284fe
       if (error) {
         console.error("Error during logout:", error);
         return;
@@ -117,21 +89,7 @@ export default {
       router.replace("/login");
     };
 
-<<<<<<< HEAD
-=======
-      // Clear the authentication data from the store
-      const authStore = useAuthStore() // Access the auth store
-      authStore.logout() // Call the logout method to clear user and token
-
-      // Stop loading indicator
-      formAction.value.formProcess = false
-
-      // Redirect to login page after logout
-      router.replace('/login')
-    }
-
     // Fetch user details on component mount
->>>>>>> 88fb10a7aee1d6ce30018a0bfcf0a65a2b0284fe
     onMounted(() => {
       fetchUserDetails();
     });
@@ -139,7 +97,6 @@ export default {
     return {
       firstName,
       lastName,
-<<<<<<< HEAD
       menuItems,
       navigateTo,
       onLogout,
@@ -149,12 +106,9 @@ export default {
 </script>
 
 <style scoped>
+/* Sidebar styles */
 .sidebar {
-  background: linear-gradient(
-    to bottom,
-    #065e09,
-    #508d0a
-  );
+  background: linear-gradient(to bottom, #065e09, #508d0a);
   color: #ffffff;
   height: 100%;
   padding-top: 10px;
@@ -162,18 +116,6 @@ export default {
   flex-direction: column;
   justify-content: space-between;
 }
-=======
-      onLogout // Make onLogout available to the template
-    }
-  }
-}
-</script>
-
-<template>
-  <v-navigation-drawer class="bg-white" theme="dark" :width="300" elevation="16">
-    <v-list color="transparent">
-      <v-list-item class="pa-4 text-center" :title="`${firstName} ${lastName}`"></v-list-item>
->>>>>>> 88fb10a7aee1d6ce30018a0bfcf0a65a2b0284fe
 
 /* Profile Section */
 .profile-section {
@@ -192,7 +134,6 @@ export default {
   border-radius: 50%;
 }
 
-<<<<<<< HEAD
 /* Navigation Links */
 .menu-item {
   display: flex;
@@ -212,10 +153,12 @@ export default {
   font-size: 1.4rem;
 }
 
+/* Footer Section */
 .footer-section {
   padding: 10px 20px;
 }
 
+/* Logout Button */
 .logout-button {
   display: flex;
   align-items: center;
@@ -238,13 +181,3 @@ export default {
   font-size: 1.4rem;
 }
 </style>
-=======
-    <template v-slot:append>
-      <div class="pa-2">
-        <v-btn block @click="onLogout"> Sign out </v-btn>
-        <!-- Logout button -->
-      </div>
-    </template>
-  </v-navigation-drawer>
-</template>
->>>>>>> 88fb10a7aee1d6ce30018a0bfcf0a65a2b0284fe
