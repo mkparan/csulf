@@ -1,42 +1,42 @@
 <script>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { supabase } from '../../utils/supabase.js';
-import SideNavigation from '@/components/layout/SideNavigation.vue';
-import PostItemView from '@/components/layout/PostItemView.vue';
-import DisplayPostView from '@/components/layout/DisplayPostView.vue';
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { supabase } from '../../utils/supabase.js'
+import SideNavigation from '@/components/layout/SideNavigation.vue'
+import PostItemView from '@/components/layout/PostItemView.vue'
+import DisplayPostView from '@/components/layout/DisplayPostView.vue'
 
 export default {
   components: {
     SideNavigation, // Register the component here
     PostItemView,
-    DisplayPostView, //
+    DisplayPostView //
   },
   setup() {
-    const router = useRouter();
+    const router = useRouter()
     const formAction = ref({
-      formProcess: false,
-    });
+      formProcess: false
+    })
 
     const onLogout = async () => {
-      formAction.value = { formProcess: true };
+      formAction.value = { formProcess: true }
 
-      const { error } = await supabase.auth.signOut();
+      const { error } = await supabase.auth.signOut()
       if (error) {
-        console.error('Error during logout:', error);
-        return;
+        console.error('Error during logout:', error)
+        return
       }
 
-      formAction.value.formProcess = false;
-      router.replace('/login');
-    };
+      formAction.value.formProcess = false
+      router.replace('/login')
+    }
 
     return {
       formAction,
-      onLogout,
-    };
-  },
-};
+      onLogout
+    }
+  }
+}
 </script>
 
 <template>
@@ -56,26 +56,20 @@ export default {
 
         <!-- Second Column: DisplayPostView -->
         <v-col cols="12" md="6">
-                 <!--post item-->
-           <PostItemView></PostItemView>
+          <!--post item-->
+          <PostItemView></PostItemView>
           <DisplayPostView></DisplayPostView>
         </v-col>
 
         <!-- Third Column: Navigation Drawer -->
         <!-- <v-col cols="12" md="4">
-          <v-navigation-drawer permanent right>
-            <v-list>
-              <v-list-item title="Drawer right"></v-list-item>
-            </v-list>
-          </v-navigation-drawer>
-        </v-col> -->
+                <v-navigation-drawer permanent left>
+                  <v-list>
+                    <v-list-item title="Drawer left"></v-list-item>
+                  </v-list>
+                </v-navigation-drawer>
+              </v-col> -->
       </v-row>
     </v-container>
   </v-layout>
 </template>
-
-<style scoped>
-h1 {
-  margin-top: 20px;
-}
-</style>
