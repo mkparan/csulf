@@ -40,36 +40,43 @@ export default {
 </script>
 
 <template>
-  <v-layout class="rounded rounded-md">
+  <v-layout>
     <!-- Top App Bar -->
-    <v-app-bar color="green-darken-4 pa-1" class="text-center">
-      <v-img class="pa-6" src="/images/logo.png"></v-img>
+    <v-app-bar app flat height="64" class="transparent-bar">
+      <v-img src="/images/logo.png" class="pa-6"></v-img>
     </v-app-bar>
 
-    <!-- Grid Container for 3 Columns -->
+    <!-- Separate Containers for Layout -->
     <v-container fluid>
       <v-row>
-        <!-- First Column: SideNavigation -->
-        <v-col cols="12" md="3">
-          <SideNavigation></SideNavigation>
-        </v-col>
+        <!-- Left Sidebar -->
+        <v-container>
+          <v-row>
+            <v-col cols="3" sm="3">
+              <SideNavigation />
+            </v-col>
+          </v-row>
+        </v-container>
 
-        <!-- Second Column: DisplayPostView -->
-        <v-col cols="12" md="6">
-          <!--post item-->
-          <PostItemView></PostItemView>
-          <DisplayPostView></DisplayPostView>
-        </v-col>
-
-        <!-- Third Column: Navigation Drawer -->
-        <!-- <v-col cols="12" md="4">
-                <v-navigation-drawer permanent left>
-                  <v-list>
-                    <v-list-item title="Drawer left"></v-list-item>
-                  </v-list>
-                </v-navigation-drawer>
-              </v-col> -->
+        <!-- Main Content (Posts) -->
+        <v-container>
+          <v-row>
+            <v-col cols="12">
+              <PostItemView />
+              <DisplayPostView />
+            </v-col>
+          </v-row>
+        </v-container>
       </v-row>
     </v-container>
   </v-layout>
 </template>
+
+<style>
+/* Transparent Top Bar */
+.transparent-bar {
+  background-color: transparent !important;
+  z-index: 10; /* Keeps it above other content */
+  box-shadow: none !important;
+}
+</style>
