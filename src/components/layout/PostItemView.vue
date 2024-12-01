@@ -129,18 +129,26 @@ export default {
 </script>
 
 <template>
-  <!-- Alert Notification -->
-  <AlertNotification
-    :form-success-message="formAction.formSuccessMessage"
-    :form-error-message="formAction.formErrorMessage"
-  ></AlertNotification>
-
   <v-main>
     <!-- Post Icon Button -->
-    <v-col cols="auto" class="pb-5 pl-3">
-      <v-btn color="primary" size="large" prepend-icon="mdi-post-outline" @click="showModal = true">
-        Post An Item
-      </v-btn>
+
+    <v-col cols="12" md="6">
+      <v-card
+        class="rounded-xl"
+        max-width="600"
+        subtitle="Found Something?"
+        title="Mark Kenth Paran"
+        elevation="16"
+      >
+        <template v-slot:actions>
+          <v-btn
+            class="rounded-pill bg-light-green-darken-3"
+            text="Post Now!"
+            block
+            @click="showModal = true"
+          ></v-btn>
+        </template>
+      </v-card>
     </v-col>
 
     <!-- Modal for Create Post -->
@@ -180,4 +188,10 @@ export default {
       </v-card>
     </v-dialog>
   </v-main>
+
+  <!-- Alert Notification -->
+  <AlertNotification
+    :form-success-message="formAction.formSuccessMessage"
+    :form-error-message="formAction.formErrorMessage"
+  ></AlertNotification>
 </template>

@@ -67,7 +67,7 @@ export default {
     <v-container>
       <v-row dense>
         <v-col cols="12" v-for="(post, index) in posts" :key="index">
-          <v-card class="mb-4" max-width="600px" outlined>
+          <v-card class="mb-4 rounded-xl" max-width="600px" outlined elevation="16">
             <!-- Poster Details -->
             <v-list-item>
               <v-avatar

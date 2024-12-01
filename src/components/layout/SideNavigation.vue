@@ -89,13 +89,15 @@ export default {
       <v-divider class="my-5"></v-divider>
 
       <v-list-item @click="navigateTo('home')" class="menu-item">
-        <v-list-item prepend-icon="mdi-home" title="Home"></v-list-item>
+        <v-btn class="rounded-pill text-light-green-darken-3" block
+          ><v-list-item title="Home"></v-list-item
+        ></v-btn>
       </v-list-item>
       <v-list-item @click="navigateTo('saved')" class="menu-item">
-        <v-list-item prepend-icon="mdi-content-save" title="Saved"></v-list-item>
+        <v-list-item title="Saved"></v-list-item>
       </v-list-item>
       <v-list-item @click="navigateTo('saved')" class="menu-item">
-        <v-list-item prepend-icon="mdi-account" title="Profile"></v-list-item>
+        <v-list-item title="Profile"></v-list-item>
       </v-list-item>
     </v-list>
 

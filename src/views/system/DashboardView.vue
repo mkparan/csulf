@@ -42,12 +42,16 @@ export default {
 <template>
   <v-layout>
     <!-- Top App Bar -->
-    <v-app-bar app flat height="64" class="transparent-bar">
+    <v-app-bar app flat height="64" class="transparent-bar text-center">
+      <v-app-bar-nav-icon
+        color="light-green-darken-3"
+        prepend-icon="mdi-view-headline"
+      ></v-app-bar-nav-icon>
       <v-img src="/images/logo.png" class="pa-6"></v-img>
     </v-app-bar>
 
     <!-- Separate Containers for Layout -->
-    <v-container fluid>
+    <v-container>
       <v-row>
         <!-- Left Sidebar -->
         <v-container>
