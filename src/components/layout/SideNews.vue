@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { supabase } from '../../utils/supabase.js'
-import { useAuthStore } from '@/stores/authUser' // Import the auth store
+import { useAuthStore } from '@/stores/authUser' // Kept intact as per your original code
 
 export default {
   setup() {
@@ -10,8 +10,8 @@ export default {
     const formAction = ref({ formProcess: false }) // Handle form process (loading indicator)
 
     // User details
-    const firstName = ref('')
-    const lastName = ref('')
+    const firstName = ref('Firstname')
+    const lastName = ref('Lastname')
 
     // Fetch user details (e.g., first and last name)
     const fetchUserDetails = async () => {
@@ -42,7 +42,7 @@ export default {
       }
 
       // Clear the authentication data from the store
-      const authStore = useAuthStore() // Access the auth store
+      const authStore = useAuthStore()
       authStore.logout() // Call the logout method to clear user and token
 
       // Stop loading indicator
@@ -69,7 +69,8 @@ export default {
 
 <template>
   <v-navigation-drawer
-    class="bg-light-green-darken-3 rounded-e-xl pa-6"
+    location="right"
+    class="bg-white rounded-s-xl pa-6"
     :width="350"
     elevation="16"
   >
@@ -87,31 +88,6 @@ export default {
       </v-list>
 
       <v-divider class="my-5"></v-divider>
-
-      <v-list-item @click="navigateTo('home')" class="menu-item">
-        <v-btn class="rounded-pill text-light-green-darken-3" block
-          ><v-list-item title="Home"></v-list-item
-        ></v-btn>
-      </v-list-item>
-      <v-list-item @click="navigateTo('saved')" class="menu-item">
-        <v-list-item title="Saved"></v-list-item>
-      </v-list-item>
-      <v-list-item @click="navigateTo('saved')" class="menu-item">
-        <v-list-item title="Profile"></v-list-item>
-      </v-list-item>
     </v-list>
-
-    <template v-slot:append>
-      <div class="pa-2">
-        <v-btn
-          class="rounded-pill text-light-green-darken-3 font-weight-black"
-          block
-          @click="onLogout"
-        >
-          Sign out
-        </v-btn>
-        <!-- Logout button -->
-      </div>
-    </template>
   </v-navigation-drawer>
 </template>

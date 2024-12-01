@@ -129,65 +129,68 @@ export default {
 </script>
 
 <template>
-  <v-main>
-    <!-- Post Icon Button -->
-
-    <v-col cols="12" md="6">
-      <v-card
-        class="rounded-xl"
-        max-width="600"
-        subtitle="Found Something?"
-        title="Mark Kenth Paran"
-        elevation="16"
-      >
-        <template v-slot:actions>
-          <v-btn
-            class="rounded-pill bg-light-green-darken-3"
-            text="Post Now!"
-            block
-            @click="showModal = true"
-          ></v-btn>
-        </template>
-      </v-card>
-    </v-col>
+  <v-container>
+    <v-row justify="center">
+      <v-col cols="12" sm="10" md="6">
+        <v-card
+          class="rounded-xl mb-4"
+          max-width="600"
+          elevation="4"
+          title="Mark Kenth Paran"
+          subtitle="Found Something?"
+        >
+          <v-card-actions>
+            <v-btn class="rounded-pill bg-light-green-darken-3" block @click="showModal = true">
+              Post Now!
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-col>
+    </v-row>
 
     <!-- Modal for Create Post -->
     <v-dialog v-model="showModal" max-width="500px">
-      <v-card>
-        <v-card-title>
+      <v-card class="rounded-xl">
+        <v-card-title class="text-center">
           <span class="text-h6">Create Post</span>
         </v-card-title>
-
         <v-card-text>
           <v-form>
-            <!-- Name Input -->
-            <v-text-field v-model="item_name" label="Item Name" outlined required></v-text-field>
-
-            <!-- File Input for Image -->
+            <v-text-field
+              v-model="item_name"
+              label="Item Name"
+              variant="solo"
+              rounded
+              outlined
+              required
+            />
             <v-file-input
               v-model="image"
               label="Upload Image"
               accept="image/*"
+              variant="solo"
+              rounded
               outlined
-            ></v-file-input>
-
-            <!-- Description Input -->
-            <v-textarea v-model="description" label="Description" outlined rows="3"></v-textarea>
+            />
+            <v-textarea
+              v-model="description"
+              label="Description"
+              variant="solo"
+              rounded
+              outlined
+              rows="3"
+            />
           </v-form>
         </v-card-text>
-
         <v-card-actions>
-          <v-spacer></v-spacer>
-          <!-- Cancel Button -->
           <v-btn text color="red" @click="handleCancel">Cancel</v-btn>
-          <!-- Post Button -->
           <v-btn :disabled="formAction.formProcess" text color="green" @click="handlePost">
             Post
           </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </v-main>
+  </v-container>
 
   <!-- Alert Notification -->
   <AlertNotification
