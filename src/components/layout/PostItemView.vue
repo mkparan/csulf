@@ -131,15 +131,15 @@ export default {
 <template>
   <v-container>
     <v-row justify="center">
-      <v-col cols="12" sm="10" md="6">
+      <v-col cols="12" sm="10" md="12">
         <v-card
           class="rounded-xl mb-4"
-          max-width="600"
+          max-width="1000"
           elevation="4"
           title="Mark Kenth Paran"
           subtitle="Found Something?"
         >
-          <v-card-actions>
+          <v-card-actions class="mx-auto">
             <v-btn class="rounded-pill bg-light-green-darken-3" block @click="showModal = true">
               Post Now!
             </v-btn>
