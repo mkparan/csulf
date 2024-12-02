@@ -43,7 +43,7 @@ const onSubmit = async () => {
     password: formData.value.password,
     options: {
       data: {
-        firstname: formData.value.firstname,
+        firstname: formData.value.firstname,     //customs object
         lastname: formData.value.lastname,
         facebookLink: formData.value.facebookLink
       }
