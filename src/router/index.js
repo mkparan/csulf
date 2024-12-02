@@ -5,6 +5,8 @@ import SplashScreen from '@/views/auth/SplashScreen.vue'
 import DashboardView from '@/views/system/DashboardView.vue'
 import NotFoundView from '@/views/errors/NotFoundView.vue'
 import { useAuthStore } from '@/stores/authUser' // Correct the import here
+import ProfileView from '@/views/system/profile/ProfileView.vue'
+import SaveView from '@/views/system/save/SaveView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -32,6 +34,16 @@ const router = createRouter({
       path: '/system/dashboard',
       name: 'dashboard',
       component: DashboardView
+    },
+    {
+      path: '/system/save',
+      name: 'save',
+      component: SaveView
+    },
+    {
+      path: '/system/profile',
+      name: 'profile',
+      component: ProfileView
     },
     // Errors Pages
     {

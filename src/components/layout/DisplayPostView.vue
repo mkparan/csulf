@@ -69,11 +69,11 @@ export default {
 <template>
   <v-container>
     <v-row dense>
-      <v-col cols="12" sm="6" md="4" v-for="post in posts" :key="post.id">
+      <v-col cols="12" sm="8" md="6" v-for="post in posts" :key="post.id">
         <!-- Post Card -->
         <v-card
           class="mb-4 rounded-xl"
-          max-width="400"
+          max-width="4000"
           outlined
           elevation="10"
           link

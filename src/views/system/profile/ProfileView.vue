@@ -3,14 +3,12 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { supabase } from '@/utils/supabase'
 import DashboardLayout from '@/components/layout/DashboardLayout.vue'
-import PostItemView from '@/components/layout/PostItemView.vue'
-import DisplayPostView from '@/components/layout/DisplayPostView.vue'
+import ProfileLayout from '@/components/layout/profile/ProfileLayout.vue'
 
 export default {
   components: {
     DashboardLayout,
-    PostItemView,
-    DisplayPostView
+    ProfileLayout
   },
   setup() {
     const formAction = ref({ formProcess: false })
@@ -38,19 +36,10 @@ export default {
 <template>
   <DashboardLayout>
     <template #content>
-      <v-layout>
-        <!-- Main Layout -->
-        <v-container fluid>
-          <v-row>
-            <!-- Main Content -->
-            <br />
-            <br />
-            <br />
-            <PostItemView />
-            <DisplayPostView />
-          </v-row>
-        </v-container>
-      </v-layout>
+      <v-container>
+        <!-- To display the components from Profile -->
+        <ProfileLayout></ProfileLayout>
+      </v-container>
     </template>
   </DashboardLayout>
 </template>

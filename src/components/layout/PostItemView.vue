@@ -130,8 +130,9 @@ export default {
 
 <template>
   <v-container>
+    <br />
     <v-row justify="center">
-      <v-col cols="12" sm="10" md="12">
+      <v-col cols="12" sm="8" md="8">
         <v-card
           class="rounded-xl mb-4"
           max-width="1000"
