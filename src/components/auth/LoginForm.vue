@@ -70,14 +70,13 @@ const onFormSubmit = () => {
     :form-error-message="formAction.formErrorMessage"
   ></AlertNotification>
 
-  <v-form class="mt-5" ref="refVForm" fast-fail @submit.prevent="onFormSubmit">
+  <v-form class="mt-5 ma-4" ref="refVForm" fast-fail @submit.prevent="onFormSubmit">
     <v-text-field
       color="green-darken-3"
       bg-color="green-lighten-3"
       rounded
       v-model="formData.email"
       label="Email"
-      prepend-inner-icon="mdi-email-outline"
       :rules="[requiredValidator, emailValidator]"
       variant="solo-filled"
     ></v-text-field>
@@ -90,7 +89,6 @@ const onFormSubmit = () => {
       :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
       :type="visible ? 'text' : 'password'"
       label="Password"
-      prepend-inner-icon="mdi-lock-outline"
       variant="solo-filled"
       @click:append-inner="visible = !visible"
       :rules="[requiredValidator]"
@@ -102,7 +100,6 @@ const onFormSubmit = () => {
       type="submit"
       block
       color="orange-darken-3"
-      prepend-icon="mdi-login"
       >Sign in</v-btn
     >
     <!-- <h4 class="text-center">OR</h4> -->

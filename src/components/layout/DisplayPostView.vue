@@ -1,84 +1,106 @@
-<script setup>
+<script>
 import { ref, onMounted } from 'vue'
-import { supabase } from '../../utils/supabase.js'
+import { supabase } from '@/utils/supabase.js'
 import ShowItemDetails from './ShowItemDetails.vue'
 
-const posts = ref([]) // Array to store posts
-const selectedPost = ref(null) // Selected post for details
+export default {
+  components: {
+    ShowItemDetails
+  },
+  setup() {
+    const postsWithUsers = ref([]) // Store combined data of posts and user info
+    const selectedPost = ref(null) // Selected post for details
 
-// Fetch posts with user details
-    const fetchPostsWithUserDetails = async () => {
+    // Fetch posts with user info using RPC
+    const fetchPostsWithUsers = async () => {
   try {
-    // Fetch all posts and join with user data from auth.users
-    const { data: postsData, error: postsError } = await supabase
-      .from('posts')
-      .select(`
-        id,
-        item_name,
-        description,
-        image,
-        user_id,
-        user:auth.users (
-          raw_user_meta_data->>firstname as firstname,
-          raw_user_meta_data->>lastname as lastname
-        )
-      `); // Access firstname and lastname from raw_user_meta_data
+    // Call the RPC function to get posts with user info
+    const { data, error } = await supabase.rpc('get_posts_with_user_info');
 
-    if (postsError) {
-      console.error('Error fetching posts:', postsError.message);
+    if (error) {
+      console.error('Error fetching posts with user info:', error.message);
       return;
     }
 
-    // Update the posts data with user details directly
-    posts.value = postsData.map((post) => ({
-      ...post,
-      firstname: post.user?.firstname || 'Unknown',
-      lastname: post.user?.lastname || 'User',
+    // Ensure the structure of the data matches what the frontend expects
+    postsWithUsers.value = data.map(post => ({
+      post_id: post.post_id,
+      item_name: post.item_name,
+      description: post.description,
+      image: post.image,
+      firstname: post.firstname,
+      lastname: post.lastname,
     }));
   } catch (err) {
-    console.error('Unexpected error:', err.message);
+    console.error('Unexpected error fetching posts with user info:', err.message);
   }
 };
 
+    // Handle displaying post details
+    const showDetails = (post) => {
+      selectedPost.value = post // Set the selected post for details view
+    }
 
-// Fetch posts when the component is mounted
-onMounted(fetchPostsWithUserDetails)
+    onMounted(fetchPostsWithUsers) // Fetch data on component mount
+
+    return {
+      postsWithUsers,
+      selectedPost,
+      showDetails
+    }
+  }
+}
 </script>
 
 <template>
-  <v-main>
-    <v-row>
-      <v-col v-for="(post, index) in posts" :key="index" cols="12" sm="6" md="4">
-        <v-card class="mb-4">
-          <v-list-item>
-            <template v-slot:prepend>
-              <v-avatar size="40" :image="post.posted_by_image || 'default-avatar-url'"></v-avatar>
-            </template>
-            <v-list-item-content>
-              <v-list-item-title>{{ post.firstname }} {{ post.lastname }}</v-list-item-title>
-              <v-list-item-subtitle>{{ post.role || 'User' }}</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
+  <v-container>
+    <v-row dense>
+      <v-col cols="12" sm="8" md="6" v-for="post in postsWithUsers" :key="post.post_id">
+  <!-- Post Card -->
+  <v-card
+    class="mb-4 rounded-xl"
+    max-width="4000"
+    outlined
+    elevation="10"
+    link
+    @click="showDetails(post)"
+  >
+    <!-- Poster Details -->
+    <v-list-item>
+      <v-avatar
+        size="40"
+        :color="post.image ? '' : 'grey-darken-3'"
+        :image="post.image || 'https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light'"
+      />
+      <v-list-item-content>
+        <v-list-item-title>{{ post.firstname }} {{ post.lastname }}</v-list-item-title>
+        <v-list-item-subtitle>User</v-list-item-subtitle>
+      </v-list-item-content>
+    </v-list-item>
 
-          <v-card-title>{{ post.item_name }}</v-card-title>
-          <v-card-subtitle>{{ post.description }}</v-card-subtitle>
-          <v-img
-            :src="`https://bvflfwricxabodytryee.supabase.co/storage/v1/object/public/items/${post.image}`"
-            height="300px"
-            cover
-          ></v-img>
-          <v-card-actions>
-            <v-btn @click="showDetails(post)">Show Details</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-col>
+    <!-- Post Image -->
+    <v-img
+      v-if="post.image"
+      height="200"
+      :src="`https://bvflfwricxabodytryee.supabase.co/storage/v1/object/public/items/${post.image}`"
+      cover
+      :alt="post.item_name || 'Post Image'"
+    />
+    <v-card-title>{{ post.item_name }}</v-card-title>
+    <v-card-subtitle>{{ post.description }}</v-card-subtitle>
+    <v-card-actions>
+      <v-btn color="blue" prepend-icon="mdi-bookmark-outline">Save</v-btn>
+    </v-card-actions>
+  </v-card>
+</v-col>
+
     </v-row>
 
-    <!-- Post Details Dialog -->
+    <!-- Details Dialog -->
     <v-dialog v-model="selectedPost" max-width="600">
       <template v-slot:default>
         <ShowItemDetails :post="selectedPost" />
       </template>
     </v-dialog>
-  </v-main>
+  </v-container>
 </template>
