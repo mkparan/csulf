@@ -1,48 +1,27 @@
-<script>
-import { computed } from 'vue'
-import { useDisplay } from 'vuetify' // Vuetify's display composable
+<script setup>
+import { useDisplay } from 'vuetify'
 
-export default {
-  setup() {
-    const display = useDisplay()
-
-    // Compute drawer width based on screen size
-    const drawerWidth = computed(() => (display.smAndDown ? 350 : 500))
-
-    // Compute iframe width based on drawer width
-    const iframeWidth = computed(() => drawerWidth.value)
-
-    return {
-      drawerWidth,
-      iframeWidth
-    }
-  }
-}
+// Get mobile status from Vuetify's useDisplay
+const { mobile } = useDisplay()
 </script>
 
 <template>
   <v-navigation-drawer
     location="right"
     class="bg-white rounded-s-xl pa-6"
-    :width="drawerWidth"
+    :width="350"
     elevation="16"
   >
-    <v-list color="transparent">
-      <v-list class="text-center">
-        <p class="text-center font-weight-bold mt-2 text-light-green-darken-3">
-          Follow CCIS page on Facebook!
-        </p>
-      </v-list>
+    <v-container>
+      <v-row>
+        <v-col cols="12" class="text-center">
+          <p class="font-weight-bold text-light-green-darken-3">Follow CCIS Page on Facebook!</p>
 
-      <!-- <v-divider class="my-5"></v-divider> -->
-
-      <v-col cols="12" sm="3" md="12" class="pa-2">
-        <v-list>
-          <!-- Facebook Embed -->
-          <div>
+          <!-- Show Facebook Embed iframe if not on mobile -->
+          <div v-if="!mobile">
             <iframe
-              src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fcciscarsu&tabs=timeline&width=300&height=689&small_header=true&adapt_container_width=true&hide_cover=true&show_facepile=true&appId"
-              width="300"
+              src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fcciscarsu&tabs=timeline&width=300&height=689&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true&appId"
+              width="320"
               height="689"
               style="border: none; overflow: hidden"
               scrolling="no"
@@ -51,8 +30,24 @@ export default {
               allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
             ></iframe>
           </div>
-        </v-list>
-      </v-col>
-    </v-list>
+
+          <!-- Fallback message when on mobile -->
+          <div v-else>
+            <img src="/images/ccis.png" alt="" width="280" height="300" />
+            <p class="text-center">
+              Embedding is not supported on mobile devices. <br />
+              Click below to visit the page directly:
+            </p>
+            <a
+              href="https://www.facebook.com/cciscarsu"
+              target="_blank"
+              class="text-decoration-none text-blue font-weight-bold"
+            >
+              Go to CCIS Page
+            </a>
+          </div>
+        </v-col>
+      </v-row>
+    </v-container>
   </v-navigation-drawer>
 </template>
