@@ -1,89 +1,105 @@
-<script>
+<script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { supabase } from '../../utils/supabase.js'
-import { useAuthStore } from '@/stores/authUser'  // Import the auth store
+import { supabase } from '@/utils/supabase'
+import { useAuthStore } from '@/stores/authUser'
 
-export default {
-  setup() {
-    const router = useRouter()  // Router for redirection
-    const formAction = ref({ formProcess: false })  // Handle form process (loading indicator)
+const router = useRouter()
 
-    // User details
-    const firstName = ref('')
-    const lastName = ref('')
+// Track current route for active class
+const currentRoute = ref(router.currentRoute.value.name)
 
-    // Fetch user details (e.g., first and last name)
-    const fetchUserDetails = async () => {
-      const { data: { user }, error } = await supabase.auth.getUser()
-      if (error) {
-        console.error('Error fetching user details:', error)
-        return
-      }
+const navigateTo = (routeName) => {
+  router.push({ name: routeName })
+  currentRoute.value = routeName
+}
 
-      // Set user details if available
-      firstName.value = user?.user_metadata?.firstname || 'Firstname'
-      lastName.value = user?.user_metadata?.lastname || 'Lastname'
-    }
+const onLogout = async () => {
+  await supabase.auth.signOut()
+  const authStore = useAuthStore()
+  authStore.logout()
+  router.replace('/login')
+}
 
-    // Handle logout process
-    const onLogout = async () => {
-      formAction.value = { formProcess: true }  // Show loading indicator
+const firstName = ref('')
+const lastName = ref('')
 
-      // Sign out from Supabase
-      const { error } = await supabase.auth.signOut()
-      if (error) {
-        console.error('Error during logout:', error)
-        formAction.value.formProcess = false
-        return
-      }
-
-      // Clear the authentication data from the store
-      const authStore = useAuthStore()  // Access the auth store
-      authStore.logout()  // Call the logout method to clear user and token
-
-      // Stop loading indicator
-      formAction.value.formProcess = false
-
-      // Redirect to login page after logout
-      router.replace('/login')
-    }
-
-    // Fetch user details on component mount
-    onMounted(() => {
-      fetchUserDetails()
-    })
-
-    return {
-      formAction,
-      firstName,
-      lastName,
-      onLogout  // Make onLogout available to the template
-    }
+const fetchUserDetails = async () => {
+  const {
+    data: { user },
+    error
+  } = await supabase.auth.getUser()
+  if (error) {
+    console.error(error)
+  } else {
+    firstName.value = user?.user_metadata?.firstname || 'Firstname'
+    lastName.value = user?.user_metadata?.lastname || 'Lastname'
   }
 }
+
+onMounted(() => {
+  fetchUserDetails()
+})
 </script>
 
 <template>
-  <v-navigation-drawer class="bg-white" theme="dark" :width="300" elevation="16">
+  <v-navigation-drawer
+    class="bg-light-green-darken-3 rounded-e-xl pa-6"
+    :width="350"
+    elevation="16"
+  >
     <v-list color="transparent">
+      <v-list class="text-center">
+        <div class="profile-section">
+          <v-avatar size="150" class="mx-auto">
+            <v-img
+              src="/images/profile-default.png"
+              alt="User Avatar"
+            />
+          </v-avatar>
+          <p class="text-center font-weight-bold mt-2">{{ firstName }} {{ lastName }}</p>
+        </div>
+      </v-list>
+
       <v-list-item
-        class="pa-4"
-        prepend-avatar="https://randomuser.me/api/portraits/men/78.jpg"
-        :title="`${firstName} ${lastName}`"
-      ></v-list-item>
-
-      <v-divider class="my-5"></v-divider>
-
-      <v-list-item prepend-icon="mdi-view-dashboard" title="Dashboard"></v-list-item>
-      <v-list-item prepend-icon="mdi-account-box" title="Account"></v-list-item>
-      <v-list-item prepend-icon="mdi-gavel" title="Admin"></v-list-item>
+        @click="navigateTo('dashboard')"
+        :class="{ 'active-item': currentRoute === 'dashboard' }"
+      >
+        <v-list-item-title>Home</v-list-item-title>
+      </v-list-item>
+      <v-list-item @click="navigateTo('save')" :class="{ 'active-item': currentRoute === 'save' }">
+        <v-list-item-title>Saved</v-list-item-title>
+      </v-list-item>
+      <v-list-item
+        @click="navigateTo('profile')"
+        :class="{ 'active-item': currentRoute === 'profile' }"
+      >
+        <v-list-item-title>Profile</v-list-item-title>
+      </v-list-item>
+      <v-list-item
+        @click="navigateTo('about')"
+        :class="{ 'active-item': currentRoute === 'about' }"
+      >
+        <v-list-item-title>About CSULF</v-list-item-title>
+      </v-list-item>
     </v-list>
 
     <template v-slot:append>
       <div class="pa-2">
-        <v-btn block @click="onLogout"> Sign out </v-btn> <!-- Logout button -->
+        <v-btn
+          class="rounded-pill text-light-green-darken-3 font-weight-black"
+          block
+          @click="onLogout"
+        >
+          Sign out
+        </v-btn>
       </div>
     </template>
   </v-navigation-drawer>
 </template>
+
+<style scoped>
+.active-item {
+  background-color: rgba(255, 255, 255, 0.196);
+}
+</style>
