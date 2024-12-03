@@ -1,23 +1,26 @@
-<script>
-export default {
-  props: {
-    post: {
-      type: Object,
-      required: true
-    }
-  },
-  data() {
-    return {
-      visible: true // Controls the visibility of the card
-    }
-  },
-  methods: {
-    closeCard() {
-      this.visible = false // Hides the card immediately without any effect
-    }
+<script setup>
+import { ref } from 'vue'
+
+//url of the image
+const profileUrl = 'https://bvflfwricxabodytryee.supabase.co/storage/v1/object/public/images/';
+
+// Props
+defineProps({
+  post: {
+    type: Object,
+    required: true
   }
+})
+
+// Reactive state
+const visible = ref(true)
+
+// Methods
+const closeCard = () => {
+  visible.value = false // Hides the card immediately without any effect
 }
 </script>
+
 
 <template>
   <v-card v-show="visible" class="mx-auto text-white" color="#26c6da" width="700px" height="700px">
@@ -34,24 +37,22 @@ export default {
     <!-- Card Actions -->
     <v-card-actions>
       <v-list-item class="w-100">
-        <!-- Poster Avatar -->
-        <template v-slot:prepend>
-          <v-avatar
-            size="40"
-            color="grey-darken-3"
-            :image="
-              post.posted_by_image ||
-              'https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light'
-            "
-          ></v-avatar>
-        </template>
+        <!-- Poster Image-->
+          <v-img
+            :src="`${profileUrl}${post.profile_pic}`"
+            alt="Profile Picture"
+            max-height="40"
+            max-width="40"
+          ></v-img>
+
+
+
 
         <!-- Poster Name and Role -->
         <v-list-item-content>
           <v-list-item-title class="font-weight-bold">
-            {{ post.firstname || 'bulldog' }}
+            {{ post.firstname }} {{ post.lastname }}
           </v-list-item-title>
-          <v-list-item-subtitle>{{ post.role || 'User' }}</v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
     </v-card-actions>

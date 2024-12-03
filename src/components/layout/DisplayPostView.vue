@@ -3,13 +3,14 @@ import { ref, onMounted } from 'vue'
 import { supabase } from '@/utils/supabase.js'
 import ShowItemDetails from './ShowItemDetails.vue'
 
-
-const postsWithUsers = ref([]) 
+const postsWithUsers = ref([])
 const selectedPost = ref(null)
 const userId = ref(null) // Current user's ID
 const showSuccessModal = ref(false) // Controls success modal
 
-
+//url of the image
+const profileUrl = 'https://bvflfwricxabodytryee.supabase.co/storage/v1/object/public/images/';
+ 
 // Fetch current user ID
 const fetchUserId = async () => {
   const { data, error } = await supabase.auth.getUser()
@@ -20,30 +21,30 @@ const fetchUserId = async () => {
   }
 }
 
-// Fetch posts with user info
-const fetchPostsWithUsers = async () => {
-  try {
-    const { data, error } = await supabase.rpc('get_posts_with_user_info')
-    if (error) {
-      console.error('Error fetching posts with user info:', error.message)
-      return
-    }
+              // Fetch posts with user info
+                const fetchPostsWithUsers = async () => {
+                  try {
+                    const { data, error } = await supabase.rpc('get_posts_with_user_info')
+                    if (error) {
+                      console.error('Error fetching posts with user info:', error.message)
+                      return
+                    }
 
-
-    // Ensure the structure of the data matches what the frontend expects
-    postsWithUsers.value = data.map((post) => ({
-      post_id: post.post_id,
-      item_name: post.item_name,
-      description: post.description,
-      image: post.image,
-      firstname: post.firstname,
-      lastname: post.lastname,
-      profile_pic: post.profile_pic // Assuming profile_pic is a valid URL
-    }))
-  } catch (err) {
-    console.error('Unexpected error fetching posts with user info:', err.message)
-  }
-}
+                    // Ensure the structure of the data matches what the frontend expects
+                    postsWithUsers.value = data.map((post) => ({
+                      post_id: post.post_id,
+                      item_name: post.item_name,
+                      description: post.description,
+                      image: post.image,
+                      firstname: post.firstname,
+                      lastname: post.lastname,
+                      facebookLink: post.facebookLink,
+                      profile_pic: post.profile_pic
+                    }))
+                  } catch (err) {
+                    console.error('Unexpected error fetching posts with user info:', err.message)
+                  }
+                }
 
 // Handle saving a post
 const savePost = async (postId) => {
@@ -82,26 +83,21 @@ onMounted(async () => {
     <!-- Post List -->
     <v-row dense>
       <v-col cols="12" sm="8" md="6" v-for="post in postsWithUsers" :key="post.post_id">
-        <v-card
-          class="mb-4 rounded-xl"
-          max-width="4000"
-          outlined
-          elevation="10"
-        >
-          <!-- User Avatar and Name -->
+        <v-card class="mb-4 rounded-xl" max-width="4000" outlined elevation="10">
           <v-list-item>
-            <v-avatar
-              size="40"
+                     <!-- Poster Image-->
+            <v-img
+            :src="`${profileUrl}${post.profile_pic}`"
+            alt="Profile Picture"
+            max-height="40"
+            max-width="40"
+          ></v-img>
 
-              color="grey-darken-3"
-              :image="
-                post.profile_pic ||
-                'https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light'
-              "
-            ></v-avatar>
 
             <v-list-item-content>
-              <v-list-item-title>{{ post.firstname }} {{ post.lastname }}</v-list-item-title>
+              <v-list-item-title
+                >{{ post.firstname }} {{ post.lastname }}</v-list-item-title
+              >
             </v-list-item-content>
           </v-list-item>
 
@@ -109,7 +105,7 @@ onMounted(async () => {
           <v-img
             v-if="post.image"
             height="200"
-            :src="`https://your-supabase-storage-url/${post.image}`"
+            :src="`https://bvflfwricxabodytryee.supabase.co/storage/v1/object/public/items/${post.image}`"
             cover
             :alt="post.item_name || 'Post Image'"
           />
@@ -120,6 +116,14 @@ onMounted(async () => {
               Save
             </v-btn>
             <v-btn color="primary" @click="showDetails(post)">Details</v-btn>
+            <v-btn
+              color="primary"
+              :href="post.facebookLink"
+              target="_blank"
+              rel="noopener"
+              @click="console.log(post.facebookLink)"
+              >Send Message</v-btn
+            >
           </v-card-actions>
         </v-card>
       </v-col>
