@@ -4,7 +4,7 @@ import { supabase } from '@/utils/supabase.js'
 import ShowItemDetails from './ShowItemDetails.vue'
 
 // Store combined data of posts and user info
-const postsWithUsers = ref([]) 
+const postsWithUsers = ref([])
 const selectedPost = ref(null) // Selected post for details
 
 // Fetch posts with user info using RPC
@@ -19,13 +19,14 @@ const fetchPostsWithUsers = async () => {
     }
 
     // Ensure the structure of the data matches what the frontend expects
-    postsWithUsers.value = data.map(post => ({
+    postsWithUsers.value = data.map((post) => ({
       post_id: post.post_id,
       item_name: post.item_name,
       description: post.description,
       image: post.image,
       firstname: post.firstname,
       lastname: post.lastname,
+      profile_pic: post.profile_pic // Assuming profile_pic is a valid URL
     }))
   } catch (err) {
     console.error('Unexpected error fetching posts with user info:', err.message)
@@ -58,9 +59,13 @@ onMounted(fetchPostsWithUsers)
           <v-list-item>
             <v-avatar
               size="40"
-              :color="post.image ? '' : 'grey-darken-3'"
-              :image="post.image || 'https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light'"
-            />
+              color="grey-darken-3"
+              :image="
+                post.profile_pic ||
+                'https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light'
+              "
+            ></v-avatar>
+
             <v-list-item-content>
               <v-list-item-title>{{ post.firstname }} {{ post.lastname }}</v-list-item-title>
               <v-list-item-subtitle></v-list-item-subtitle>

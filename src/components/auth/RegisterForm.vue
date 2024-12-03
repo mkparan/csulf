@@ -23,7 +23,8 @@ const FormDataDefault = {
   facebookLink: '',
   email: '',
   password: '',
-  passwordConfirmation: ''
+  passwordConfirmation: '',
+  profile_pic: 'https://drive.google.com/file/d/1gqnbKp7xU0rS3DSWLOZwB9an8VQwtPFk/view?usp=sharing' // Default profile picture
 }
 
 const formData = ref({

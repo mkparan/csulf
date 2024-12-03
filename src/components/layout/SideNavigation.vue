@@ -5,6 +5,7 @@ import { supabase } from '@/utils/supabase'
 import { useAuthStore } from '@/stores/authUser'
 
 const router = useRouter()
+const profileUrl = 'https://bvflfwricxabodytryee.supabase.co/storage/v1/object/public/images/';
 
 // Track current route for active class
 const currentRoute = ref(router.currentRoute.value.name)
@@ -23,6 +24,7 @@ const onLogout = async () => {
 
 const firstName = ref('')
 const lastName = ref('')
+const profile_pic = ref('')
 
 const fetchUserDetails = async () => {
   const {
@@ -34,6 +36,7 @@ const fetchUserDetails = async () => {
   } else {
     firstName.value = user?.user_metadata?.firstname || 'Firstname'
     lastName.value = user?.user_metadata?.lastname || 'Lastname'
+    profile_pic.value = user?.user_metadata?.profile_pic || '/images/profile-default.png' // Just the file name
   }
 }
 
@@ -53,8 +56,7 @@ onMounted(() => {
         <div class="profile-section">
           <v-avatar size="150" class="mx-auto">
             <v-img
-              src="/images/profile-default.png"
-              alt="User Avatar"
+              :src="profileUrl + profile_pic" alt="User Avatar" class="mx-auto" height="200" width="200"
             />
           </v-avatar>
           <p class="text-center font-weight-bold mt-2">{{ firstName }} {{ lastName }}</p>

@@ -4,9 +4,12 @@ import { supabase } from '@/utils/supabase'
 
 const firstName = ref('')
 const lastName = ref('')
-const profileImage = ref('/images/profile-default.png') // Default profile image
+const profile_pic = ref('') // File name of the profile image
 const facebookLink = ref('') // Reactive reference for Facebook link
 const showEditModal = ref(false) // Control modal visibility
+
+
+const profileUrl = 'https://bvflfwricxabodytryee.supabase.co/storage/v1/object/public/images/';
 
 // Fetch user details from Supabase
 const fetchUserDetails = async () => {
@@ -19,34 +22,116 @@ const fetchUserDetails = async () => {
   } else {
     firstName.value = user?.user_metadata?.firstname || 'Firstname'
     lastName.value = user?.user_metadata?.lastname || 'Lastname'
-    profileImage.value = user?.user_metadata?.profile_image || '/images/profile-default.png'
+    profile_pic.value = user?.user_metadata?.profile_pic || '/images/profile-default.png' // Just the file name
     facebookLink.value = user?.user_metadata?.facebook || ''
   }
 }
 
-// Update profile information
 const updateProfile = async () => {
-  const { error } = await supabase.auth.updateUser({
-    data: {
-      firstname: firstName.value,
-      lastname: lastName.value,
-      profile_image: profileImage.value,
-      facebook: facebookLink.value
-    }
-  })
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
 
-  if (error) {
-    console.error('Error updating profile:', error)
-  } else {
-    showEditModal.value = false // Close modal on success
-    fetchUserDetails() // Fetch updated user details
+  if (userError || !user) {
+    console.error('User is not authenticated or error fetching user:', userError);
+    return;
   }
-}
+
+  console.log('Updating profile...');
+
+  let uploadedFileName = profile_pic.value;
+
+  // Handle image upload if the profile_pic is a file
+  if (profile_pic.value instanceof File) {
+    // Use the file name as the file name in storage
+    uploadedFileName = `public/${profile_pic.value.name}`;
+
+    // Upload the image to Supabase storage
+    const { data, error: uploadError } = await supabase.storage
+      .from('images')
+      .upload(uploadedFileName, profile_pic.value);
+
+    if (uploadError) {
+      console.error('Error uploading image:', uploadError.message || uploadError);
+      return;
+    }
+
+    // After uploading, you can get the public URL (if needed for display purposes)
+    console.log("Uploaded File Name:", uploadedFileName);
+  }
+
+  // Construct new user metadata with the uploaded image file name
+  const updatedMetadata = {
+    firstname: firstName.value,
+    lastname: lastName.value,
+    profile_pic: uploadedFileName, // Store just the file name here
+    facebook: facebookLink.value
+  };
+
+  // Update user_metadata in auth.users
+  const { error: updateUserError } = await supabase.auth.updateUser({
+    data: updatedMetadata
+  });
+
+  if (updateUserError) {
+    console.error('Error updating user metadata in auth.users:', updateUserError.message);
+    return;
+  }
+
+  console.log('Profile updated successfully in auth.users');
+
+  // Update the 'raw_user_meta_data' column in auth.users directly
+  const { error: updateRawMetadataError } = await supabase
+    .from('auth.users')
+    .update({
+      raw_user_meta_data: {
+        firstname: firstName.value,
+        lastname: lastName.value,
+        profile_pic: uploadedFileName, // Use the file name here
+        facebook: facebookLink.value
+      }
+    })
+    .eq('id', user.id);
+
+  if (updateRawMetadataError) {
+    console.error('Error updating raw_user_meta_data in auth.users:', updateRawMetadataError.message || updateRawMetadataError);
+    return;
+  }
+
+  console.log('raw_user_meta_data column updated successfully');
+
+  // Optionally update the posts table or other tables
+  const { error: updatePostsError } = await supabase
+    .from('posts')
+    .update({
+      profile_pic: uploadedFileName, // Use the file name here
+      firstname: firstName.value,
+      lastname: lastName.value
+    })
+    .eq('user_id', user.id);
+
+  if (updatePostsError) {
+    console.error('Error updating posts table:', updatePostsError.message || updatePostsError);
+  } else {
+    console.log('Posts table updated successfully');
+  }
+
+  // Re-fetch user details to update UI
+  fetchUserDetails();
+  showEditModal.value = false;
+};
+
+// Generate the full URL for the profile picture (if needed for display purposes)
+const getProfilePicUrl = () => {
+  if (profile_pic.value && !profile_pic.value.startsWith('http')) {
+    return supabase.storage.from('images').getPublicUrl(profile_pic.value).publicURL;
+  }
+  return profile_pic.value;
+};
 
 onMounted(() => {
   fetchUserDetails()
 })
 </script>
+
 
 <template>
   <v-app>
@@ -57,22 +142,21 @@ onMounted(() => {
           <v-list class="text-center pt-5">
             <div class="profile-section">
               <v-avatar size="150" class="mx-auto">
-                <v-img :src="profileImage" alt="User Avatar" />
+                 <v-img :src="profileUrl + profile_pic" alt="User Avatar" class="mx-auto" height="200" width="200" />
               </v-avatar>
               <p class="text-center font-weight-bold mt-2">{{ firstName }} {{ lastName }}</p>
             </div>
           </v-list>
 
           <!-- Center the Facebook button -->
-       <v-card-actions class="text-center justify-center">
+          <v-card-actions class="text-center justify-center">
             <v-btn
               class="rounded-pill bg-light-green-darken-3"
               icon="mdi-facebook"
               :href="facebookLink"
             >
             </v-btn>
-        </v-card-actions>
-
+          </v-card-actions>
 
           <!-- Other buttons, already centered -->
           <v-card-actions class="mx-auto">
@@ -98,7 +182,7 @@ onMounted(() => {
             <v-text-field v-model="firstName" label="First Name" variant="solo" rounded outlined />
             <v-text-field v-model="lastName" label="Last Name" variant="solo" rounded outlined />
             <v-file-input
-              v-model="profileImage"
+              v-model="profile_pic"
               label="Upload Profile Image"
               accept="image/*"
               variant="solo"
