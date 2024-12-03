@@ -45,7 +45,8 @@ const onSubmit = async () => {
       data: {
         firstname: formData.value.firstname,     //customs object
         lastname: formData.value.lastname,
-        facebookLink: formData.value.facebookLink
+        facebookLink: formData.value.facebookLink,
+        profile_pic: formData.value.profile_pic
       }
     }
   })
