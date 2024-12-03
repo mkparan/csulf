@@ -86,7 +86,6 @@ onMounted(async () => {
       <v-col cols="12" sm="8" md="6" v-for="post in postsWithUsers" :key="post.post_id">
         <v-card class="mb-4 rounded-xl" max-width="4000" outlined elevation="10">
           <v-list-item>
-             <v-card-title>{{ post.facebook_link }}</v-card-title>
              <!-- Poster Image-->
             <v-avatar size="50" class="mx-auto" color="black">
               <v-img
@@ -121,7 +120,6 @@ onMounted(async () => {
               :href="post.facebook_link"
               target="_blank"
               rel="noopener"
-              @click="console.log(post.facebook_link)"
               >Send Message</v-btn
             >
           </v-card-actions>
