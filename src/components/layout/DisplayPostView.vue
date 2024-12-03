@@ -3,9 +3,6 @@ import { ref, onMounted } from 'vue'
 import { supabase } from '@/utils/supabase.js'
 import ShowItemDetails from './ShowItemDetails.vue'
 
-//toastification
-import { useToast } from 'vue-toastification'
-const toast = useToast()
 
 const postsWithUsers = ref([]) 
 const selectedPost = ref(null)
