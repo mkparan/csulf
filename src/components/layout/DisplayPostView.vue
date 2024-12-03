@@ -85,14 +85,12 @@ onMounted(async () => {
       <v-col cols="12" sm="8" md="6" v-for="post in postsWithUsers" :key="post.post_id">
         <v-card class="mb-4 rounded-xl" max-width="4000" outlined elevation="10">
           <v-list-item>
-                     <!-- Poster Image-->
-            <v-img
-            :src="`${profileUrl}${post.profile_pic}`"
-            alt="Profile Picture"
-            max-height="40"
-            max-width="40"
-          ></v-img>
-
+             <!-- Poster Image-->
+            <v-avatar size="50" class="mx-auto" color="black">
+              <v-img
+                :src="`${profileUrl}${post.profile_pic}`" alt="User Picture" class="mx-auto" height="200" width="200"
+              />
+            </v-avatar>   
 
             <v-list-item-content>
               <v-list-item-title

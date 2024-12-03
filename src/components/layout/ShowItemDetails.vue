@@ -38,15 +38,11 @@ const closeCard = () => {
     <v-card-actions>
       <v-list-item class="w-100">
         <!-- Poster Image-->
-          <v-img
-            :src="`${profileUrl}${post.profile_pic}`"
-            alt="Profile Picture"
-            max-height="40"
-            max-width="40"
-          ></v-img>
-
-
-
+           <v-avatar size="50" class="mx-auto" color="black">
+              <v-img
+                :src="`${profileUrl}${post.profile_pic}`" alt="User Picture" class="mx-auto" height="200" width="200"
+              />
+            </v-avatar>  
 
         <!-- Poster Name and Role -->
         <v-list-item-content>
