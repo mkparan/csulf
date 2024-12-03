@@ -155,6 +155,8 @@ onMounted(() => {
               class="rounded-pill bg-light-green-darken-3"
               icon="mdi-facebook"
               :href="facebook_link"
+              target="_blank"
+              rel="noopener"
             >
             </v-btn>
           </v-card-actions>
