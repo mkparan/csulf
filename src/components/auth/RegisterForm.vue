@@ -20,7 +20,7 @@ const router = useRouter()
 const FormDataDefault = {
   firstname: '',
   lastname: '',
-  facebookLink: '',
+  facebook_link: '',
   email: '',
   password: '',
   passwordConfirmation: '',
@@ -46,7 +46,7 @@ const onSubmit = async () => {
       data: {
         firstname: formData.value.firstname,     //customs object
         lastname: formData.value.lastname,
-        facebookLink: formData.value.facebookLink,
+        facebook_link: formData.value.facebook_link,
         profile_pic: formData.value.profile_pic
       }
     }
@@ -108,7 +108,7 @@ const onFormSubmit = () => {
       color="green-darken-3"
       bg-color="green-lighten-3"
       rounded
-      v-model="formData.facebookLink"
+      v-model="formData.facebook_link"
       label="Facebook Link"
       variant="solo-filled"
       :rules="[requiredValidator]"

@@ -5,7 +5,7 @@ import { supabase } from '@/utils/supabase'
 const firstName = ref('')
 const lastName = ref('')
 const profile_pic = ref('') // File name of the profile image
-const facebookLink = ref('') // Reactive reference for Facebook link
+const facebook_link = ref('') // Reactive reference for Facebook link
 const showEditModal = ref(false) // Control modal visibility
 
 
@@ -23,7 +23,7 @@ const fetchUserDetails = async () => {
     firstName.value = user?.user_metadata?.firstname || 'Firstname'
     lastName.value = user?.user_metadata?.lastname || 'Lastname'
     profile_pic.value = user?.user_metadata?.profile_pic || '/images/profile-default.png' // Just the file name
-    facebookLink.value = user?.user_metadata?.facebook || ''
+    facebook_link.value = user?.user_metadata?.facebook_link || ''
   }
 }
 
@@ -63,7 +63,7 @@ const updateProfile = async () => {
     firstname: firstName.value,
     lastname: lastName.value,
     profile_pic: uploadedFileName, // Store just the file name here
-    facebook: facebookLink.value
+    facebook_link: facebook_link.value
   };
 
   // Update user_metadata in auth.users
@@ -86,7 +86,7 @@ const updateProfile = async () => {
         firstname: firstName.value,
         lastname: lastName.value,
         profile_pic: uploadedFileName, // Use the file name here
-        facebook: facebookLink.value
+        facebook_link: facebook_link.value
       }
     })
     .eq('id', user.id);
@@ -104,7 +104,8 @@ const updateProfile = async () => {
     .update({
       profile_pic: uploadedFileName, // Use the file name here
       firstname: firstName.value,
-      lastname: lastName.value
+      lastname: lastName.value,
+      facebook_link: facebook_link.value
     })
     .eq('user_id', user.id);
 
@@ -153,7 +154,7 @@ onMounted(() => {
             <v-btn
               class="rounded-pill bg-light-green-darken-3"
               icon="mdi-facebook"
-              :href="facebookLink"
+              :href="facebook_link"
             >
             </v-btn>
           </v-card-actions>
@@ -190,7 +191,7 @@ onMounted(() => {
               outlined
             />
             <v-text-field
-              v-model="facebookLink"
+              v-model="facebook_link"
               label="Facebook Profile Link"
               variant="solo"
               rounded

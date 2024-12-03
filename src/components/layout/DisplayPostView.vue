@@ -38,9 +38,10 @@ const fetchUserId = async () => {
                       image: post.image,
                       firstname: post.firstname,
                       lastname: post.lastname,
-                      facebookLink: post.facebookLink,
+                      facebook_link: post.facebook_link,
                       profile_pic: post.profile_pic
-                    }))
+                    }));
+                     console.log(postsWithUsers.value);
                   } catch (err) {
                     console.error('Unexpected error fetching posts with user info:', err.message)
                   }
@@ -85,6 +86,7 @@ onMounted(async () => {
       <v-col cols="12" sm="8" md="6" v-for="post in postsWithUsers" :key="post.post_id">
         <v-card class="mb-4 rounded-xl" max-width="4000" outlined elevation="10">
           <v-list-item>
+             <v-card-title>{{ post.facebook_link }}</v-card-title>
              <!-- Poster Image-->
             <v-avatar size="50" class="mx-auto" color="black">
               <v-img
@@ -116,10 +118,10 @@ onMounted(async () => {
             <v-btn color="primary" @click="showDetails(post)">Details</v-btn>
             <v-btn
               color="primary"
-              :href="post.facebookLink"
+              :href="post.facebook_link"
               target="_blank"
               rel="noopener"
-              @click="console.log(post.facebookLink)"
+              @click="console.log(post.facebook_link)"
               >Send Message</v-btn
             >
           </v-card-actions>
