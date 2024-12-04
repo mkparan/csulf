@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue';
 import { supabase } from '@/utils/supabase.js';
 import ShowItemDetails from './ShowItemDetails.vue'
+import AlertNotification from '../common/AlertNotification.vue';
 
 const posts = ref([]); // Array to store posts
 const firstName = ref(''); // First name of the user
@@ -17,6 +18,15 @@ const profileUrl = 'https://bvflfwricxabodytryee.supabase.co/storage/v1/object/p
 const showDetails = (post) => {
   selectedPost.value = post
 }
+
+// Manage form action states
+const formActionDefault = {
+  formSuccessMessage: '',
+  formErrorMessage: '',
+  formProcess: false,
+};
+
+const formAction = ref({ ...formActionDefault });
 
 // Fetch user's details and posts only on component mount
 const fetchUserData = async () => {
@@ -46,10 +56,38 @@ const fetchUserData = async () => {
   }
 };
 
+   const deletePost = async (post) => {
+  // Confirm deletion
+  const confirmed = confirm('Are you sure you want to delete this post?');
+  if (!confirmed) return;
+
+  // Attempt to delete the post from the database
+  const { error } = await supabase
+    .from('posts')
+    .delete()
+    .eq('id', post.id);
+
+  if (error) {
+    console.error('Error deleting post:', error);
+    formAction.formErrorMessage = 'Post not deleted'
+  } else {
+    // Remove the post from the `posts` array to update the UI
+    posts.value = posts.value.filter((p) => p.id !== post.id);
+    console.log('Post deleted successfully');
+    formAction.value.formSuccessMessage = 'Successfully Deleted'
+  }
+};
+
+
 onMounted(fetchUserData); // Fetch user data and posts when the component is mounted
 </script>
 
 <template>
+        <!-- Alert Notification -->
+  <AlertNotification
+    :form-success-message="formAction.formSuccessMessage"
+    :form-error-message="formAction.formErrorMessage"
+  ></AlertNotification>
   <v-container>
     <v-row dense>
       <v-col cols="12" sm="8" md="6" v-for="post in posts" :key="post.id">
