@@ -1,5 +1,3 @@
-userspost
-
 <script setup>
 import { ref, onMounted } from 'vue'
 import { supabase } from '@/utils/supabase.js'
@@ -80,6 +78,78 @@ const deletePost = async (post) => {
 }
 
 onMounted(fetchUserData) // Fetch user data and posts when the component is mounted
+
+///edit the post
+const editPostData = ref(null) // Holds the post data to edit
+const isEditModalVisible = ref(false) // Controls the visibility of the edit modal
+
+const editPost = (post) => {
+  editPostData.value = { ...post } // Load the post data into the form
+  isEditModalVisible.value = true // Show the modal
+}
+
+const uploadImage = async (file) => {
+  try {
+    const { data, error } = await supabase.storage
+      .from('items') // Your Supabase storage bucket
+      .upload(`public/${file.name}`, file, {
+        cacheControl: '3600',
+        upsert: true, // Prevent overwriting existing files
+      });
+
+    if (error) {
+      throw error;
+    }
+
+    // Return the file path on successful upload
+    return data.path;
+  } catch (error) {
+    console.error('Error uploading image:', error);
+    return null;
+  }
+};
+
+
+const updatePost = async () => {
+  formAction.value = { ...formActionDefault, formProcess: true };
+
+  // Check if a new image is selected
+  if (editPostData.value.imageFile) {
+    const uploadedImagePath = await uploadImage(editPostData.value.imageFile);
+
+    if (!uploadedImagePath) {
+      formAction.value.formErrorMessage = 'Image upload failed';
+      formAction.value.formProcess = false;
+      return;
+    }
+
+    editPostData.value.image = uploadedImagePath; // Use uploaded image path
+  }
+
+  const { id, image, item_name, description } = editPostData.value;
+
+  const { error } = await supabase
+    .from('posts')
+    .update({ image, item_name, description })
+    .eq('id', id);
+
+  if (error) {
+    console.error('Error updating post:', error);
+    formAction.value.formErrorMessage = 'Post update failed';
+  } else {
+    // Update the local data
+    const index = posts.value.findIndex((p) => p.id === id);
+    if (index !== -1) {
+      posts.value[index] = { ...editPostData.value };
+    }
+    console.log('Post updated successfully');
+    formAction.value.formSuccessMessage = 'Post updated successfully';
+    isEditModalVisible.value = false; // Close the modal
+  }
+
+  formAction.value.formProcess = false;
+};
+
 </script>
 
 <template>
@@ -149,5 +219,40 @@ onMounted(fetchUserData) // Fetch user data and posts when the component is moun
         <ShowItemDetails :post="selectedPost" />
       </template>
     </v-dialog>
+
+    <!-- Edit Post Modal -->
+  <v-dialog v-model="isEditModalVisible" max-width="600">
+    <template v-slot:default>
+      <v-card>
+        <v-card-title>Edit Post</v-card-title>
+        <v-card-text>
+          <v-form>
+            <v-text-field
+              v-model="editPostData.item_name"
+              label="Item Name"
+              outlined
+              dense
+            ></v-text-field>
+            <v-textarea
+              v-model="editPostData.description"
+              label="Description"
+              outlined
+              dense
+            ></v-textarea>
+            <v-file-input
+                label="Upload Image"
+                v-model="editPostData.imageFile"
+                accept="image/*"
+                show-size
+            ></v-file-input>
+          </v-form>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn color="primary" @click="updatePost">Save</v-btn>
+          <v-btn color="secondary" @click="isEditModalVisible = false">Cancel</v-btn>
+        </v-card-actions>
+      </v-card>
+    </template>
+  </v-dialog>
   </v-container>
 </template>
