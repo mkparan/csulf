@@ -1,15 +1,16 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { supabase } from '@/utils/supabase'
+import UsersPost from '@/components/layout/UsersPost.vue' // Adjust the path as necessary
 
+// Define component properties here
 const firstName = ref('')
 const lastName = ref('')
 const profile_pic = ref('') // File name of the profile image
 const facebook_link = ref('') // Reactive reference for Facebook link
 const showEditModal = ref(false) // Control modal visibility
 
-
-const profileUrl = 'https://bvflfwricxabodytryee.supabase.co/storage/v1/object/public/images/';
+const profileUrl = 'https://bvflfwricxabodytryee.supabase.co/storage/v1/object/public/images/'
 
 // Fetch user details from Supabase
 const fetchUserDetails = async () => {
@@ -28,34 +29,34 @@ const fetchUserDetails = async () => {
 }
 
 const updateProfile = async () => {
-  const { data: { user }, error: userError } = await supabase.auth.getUser();
+  const { data: { user }, error: userError } = await supabase.auth.getUser()
 
   if (userError || !user) {
-    console.error('User is not authenticated or error fetching user:', userError);
-    return;
+    console.error('User is not authenticated or error fetching user:', userError)
+    return
   }
 
-  console.log('Updating profile...');
+  console.log('Updating profile...')
 
-  let uploadedFileName = profile_pic.value;
+  let uploadedFileName = profile_pic.value
 
   // Handle image upload if the profile_pic is a file
   if (profile_pic.value instanceof File) {
     // Use the file name as the file name in storage
-    uploadedFileName = `public/${profile_pic.value.name}`;
+    uploadedFileName = `public/${profile_pic.value.name}`
 
     // Upload the image to Supabase storage
     const { data, error: uploadError } = await supabase.storage
       .from('images')
-      .upload(uploadedFileName, profile_pic.value);
+      .upload(uploadedFileName, profile_pic.value)
 
     if (uploadError) {
-      console.error('Error uploading image:', uploadError.message || uploadError);
-      return;
+      console.error('Error uploading image:', uploadError.message || uploadError)
+      return
     }
 
     // After uploading, you can get the public URL (if needed for display purposes)
-    console.log("Uploaded File Name:", uploadedFileName);
+    console.log('Uploaded File Name:', uploadedFileName)
   }
 
   // Construct new user metadata with the uploaded image file name
@@ -64,19 +65,19 @@ const updateProfile = async () => {
     lastname: lastName.value,
     profile_pic: uploadedFileName, // Store just the file name here
     facebook_link: facebook_link.value
-  };
+  }
 
   // Update user_metadata in auth.users
   const { error: updateUserError } = await supabase.auth.updateUser({
     data: updatedMetadata
-  });
+  })
 
   if (updateUserError) {
-    console.error('Error updating user metadata in auth.users:', updateUserError.message);
-    return;
+    console.error('Error updating user metadata in auth.users:', updateUserError.message)
+    return
   }
 
-  console.log('Profile updated successfully in auth.users');
+  console.log('Profile updated successfully in auth.users')
 
   // Update the 'raw_user_meta_data' column in auth.users directly
   const { error: updateRawMetadataError } = await supabase
@@ -89,14 +90,14 @@ const updateProfile = async () => {
         facebook_link: facebook_link.value
       }
     })
-    .eq('id', user.id);
+    .eq('id', user.id)
 
   if (updateRawMetadataError) {
-    console.error('Error updating raw_user_meta_data in auth.users:', updateRawMetadataError.message || updateRawMetadataError);
-    return;
+    console.error('Error updating raw_user_meta_data in auth.users:', updateRawMetadataError.message || updateRawMetadataError)
+    return
   }
 
-  console.log('raw_user_meta_data column updated successfully');
+  console.log('raw_user_meta_data column updated successfully')
 
   // Optionally update the posts table or other tables
   const { error: updatePostsError } = await supabase
@@ -107,32 +108,31 @@ const updateProfile = async () => {
       lastname: lastName.value,
       facebook_link: facebook_link.value
     })
-    .eq('user_id', user.id);
+    .eq('user_id', user.id)
 
   if (updatePostsError) {
-    console.error('Error updating posts table:', updatePostsError.message || updatePostsError);
+    console.error('Error updating posts table:', updatePostsError.message || updatePostsError)
   } else {
-    console.log('Posts table updated successfully');
+    console.log('Posts table updated successfully')
   }
 
   // Re-fetch user details to update UI
-  fetchUserDetails();
-  showEditModal.value = false;
-};
+  fetchUserDetails()
+  showEditModal.value = false
+}
 
 // Generate the full URL for the profile picture (if needed for display purposes)
 const getProfilePicUrl = () => {
   if (profile_pic.value && !profile_pic.value.startsWith('http')) {
-    return supabase.storage.from('images').getPublicUrl(profile_pic.value).publicURL;
+    return supabase.storage.from('images').getPublicUrl(profile_pic.value).publicURL
   }
-  return profile_pic.value;
-};
+  return profile_pic.value
+}
 
 onMounted(() => {
   fetchUserDetails()
 })
 </script>
-
 
 <template>
   <v-app>
@@ -207,5 +207,8 @@ onMounted(() => {
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- Posts section -->
+    <UsersPost />
   </v-app>
 </template>

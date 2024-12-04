@@ -77,14 +77,12 @@ const handlePost = async () => {
 
     const userId = user?.id;
 
-    const { error: insertError } = await supabase.from('posts').insert([
-      {
-        item_name: item_name.value,
-        image: imageUrl,
-        description: description.value,
-        user_id: userId,
-      },
-    ]);
+    const { error: insertError } = await supabase.from('posts').insert([{
+      item_name: item_name.value,
+      image: imageUrl,
+      description: description.value,
+      user_id: userId,
+    }]);
 
     if (insertError) {
       console.error('Insert error:', insertError);
@@ -94,7 +92,11 @@ const handlePost = async () => {
 
     formAction.value.formSuccessMessage = 'Post created successfully!';
 
-    const { data: postsData, error: fetchError } = await supabase.from('posts').select();
+    // Fetch the new list of posts, filtering by userId for UsersPost.vue
+    const { data: postsData, error: fetchError } = await supabase
+      .from('posts')
+      .select()
+      .eq('user_id', userId); // Fetch only the logged-in user's posts
 
     if (fetchError) {
       console.error('Fetch error:', fetchError);
@@ -102,7 +104,7 @@ const handlePost = async () => {
       return;
     }
 
-    posts.value = postsData;
+    posts.value = postsData; // Update posts with user's posts
     console.log('Posts fetched:', posts.value);
 
     resetForm(); // Clear the form fields
