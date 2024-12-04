@@ -68,8 +68,24 @@ onMounted(fetchUserData); // Fetch user data and posts when the component is mou
                             />
                           </v-avatar>
 
-                          <!-- Icon -->
-                          <v-icon icon="mdi-format-list-bulleted" class="ml-auto"></v-icon>
+                             <!-- Options Icon with Menu -->
+                            <v-menu offset-y>
+                              <template v-slot:activator="{ props }">
+                                <v-icon
+                                  icon="mdi-format-list-bulleted"
+                                  class="ml-auto"
+                                  v-bind="props"
+                                ></v-icon>
+                              </template>
+                              <v-list>
+                                <v-list-item @click="editPost(post)">
+                                  <v-list-item-title>Edit Post</v-list-item-title>
+                                </v-list-item>
+                                <v-list-item @click="deletePost(post)">
+                                  <v-list-item-title>Delete Post</v-list-item-title>
+                                </v-list-item>
+                              </v-list>
+                            </v-menu>
               </v-row>
             <v-list-item-content>
               <v-list-item-title
