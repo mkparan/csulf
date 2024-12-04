@@ -55,8 +55,8 @@
             <v-row justify="center" class="mt-4 pa-3">
               <!-- Developer 1 -->
               <v-col cols="12" sm="4" md="4" lg="3" class="text-center">
-                <v-avatar size="100" class="mx-auto">
-                  <v-img src="/images/mkdp.jpg" alt="Mark Kenth Paran" />
+                <v-avatar size="100" class="mx-auto" color="black">
+                  <v-img src="/images/mkdp.jpg" alt="Mark Kenth Paran" class="rounded" />
                 </v-avatar>
                 <p class="text-light-green-darken-3 font-weight-bold mt-2">Mark Kenth Paran</p>
                 <p class="text-light-green-darken-3 text-caption">
@@ -66,8 +66,8 @@
 
               <!-- Developer 2 -->
               <v-col cols="12" sm="4" md="4" lg="3" class="text-center">
-                <v-avatar size="100" class="mx-auto">
-                  <v-img src="/path/to/andrie_photo.png" alt="Andrie Ignacio" />
+                <v-avatar size="100" class="mx-auto" color="black">
+                  <v-img src="/path/to/andrie_photo.png" alt="Andrie Ignacio" class="rounded" />
                 </v-avatar>
                 <p class="text-light-green-darken-3 font-weight-bold mt-2">Andrie Ignacio</p>
                 <p class="text-light-green-darken-3 text-caption">Frontend Developer</p>
@@ -75,8 +75,8 @@
 
               <!-- Developer 3 -->
               <v-col cols="12" sm="4" md="4" lg="3" class="text-center">
-                <v-avatar size="100" class="mx-auto">
-                  <v-img src="/images/emman.jpg" alt="Emmanuel Ampatin" />
+                <v-avatar size="100" class="mx-auto" color="black">
+                  <v-img src="/images/emman.jpg" alt="Emmanuel Ampatin" class="rounded" />
                 </v-avatar>
                 <p class="text-light-green-darken-3 font-weight-bold mt-2">Emmanuel Ampatin</p>
                 <p class="text-light-green-darken-3 text-caption">Backend Developer</p>
