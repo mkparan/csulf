@@ -127,10 +127,8 @@ onMounted(async () => {
             <v-btn color="blue" prepend-icon="mdi-bookmark-outline" @click="savePost(post.post_id)">
               Save
             </v-btn>
-            <!-- <v-btn color="primary" @click="showDetails(post)">Details</v-btn> -->
-            <v-btn color="primary" :href="post.facebook_link" target="_blank" rel="noopener"
-              >Send Message</v-btn
-            >
+            <v-btn color="primary" class="text-center" :href="post.facebook_link" target="_blank" rel="noopener"
+              >Send Message</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
