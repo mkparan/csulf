@@ -1,137 +1,146 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import { supabase } from '@/utils/supabase' // Ensure this points to your Supabase instance
-import AlertNotification from '../common/AlertNotification.vue'
+import { ref, onMounted } from 'vue';
+import { supabase } from '@/utils/supabase'; // Ensure this points to your Supabase instance
+import AlertNotification from '../common/AlertNotification.vue';
+import { requiredValidator } from '../../utils/validators'; // Assuming this is defined correctly
 
 // Reactive references for form and modal
-const showModal = ref(false) // Modal visibility
-const item_name = ref('') // Item name input
-const image = ref(null) // Image file input
-const description = ref('') // Description input
-const posts = ref([]) // Array to store posts
-const firstName = ref('') // User's first name
-const lastName = ref('') // User's last name
+const showModal = ref(false); // Modal visibility
+const item_name = ref(''); // Item name input
+const image = ref(null); // Image file input
+const description = ref(''); // Description input
+const posts = ref([]); // Array to store posts
+const firstName = ref(''); // User's first name
+const lastName = ref(''); // User's last name
 
 // Manage form action states
 const formActionDefault = {
   formSuccessMessage: '',
   formErrorMessage: '',
-  formProcess: false
-}
-const formAction = ref({ ...formActionDefault })
+  formProcess: false,
+};
+const formAction = ref({ ...formActionDefault });
 
 // Reset form fields
 const resetForm = () => {
-  item_name.value = ''
-  image.value = null
-  description.value = ''
-}
+  item_name.value = '';
+  image.value = null;
+  description.value = '';
+};
 
 // Handle Post Submission
 const handlePost = async () => {
-  formAction.value = { ...formActionDefault }
-  formAction.value.formProcess = true // Indicate process start
+  // Reset messages
+  formAction.value = { ...formActionDefault };
 
-  let imageUrl = ''
+  // Validate required fields
+  if (!item_name.value || !image.value || !description.value) {
+    formAction.value.formErrorMessage = 'All fields are required.';
+    console.error('Validation error: Some fields are empty.');
+    return;
+  }
+
+  formAction.value.formProcess = true; // Indicate process start
+
+  let imageUrl = '';
   if (image.value) {
     try {
       const { data, error } = await supabase.storage
         .from('items')
-        .upload(`public/${image.value.name}`, image.value)
+        .upload(`public/${image.value.name}`, image.value);
 
       if (error) {
-        console.error('Image upload error:', error)
-        formAction.value.formErrorMessage = 'Failed to upload the image.'
-        return
+        console.error('Image upload error:', error);
+        formAction.value.formErrorMessage = 'Failed to upload the image.';
+        return;
       }
-      imageUrl = data?.path
-      console.log('Image uploaded successfully:', imageUrl)
+      imageUrl = data?.path;
+      console.log('Image uploaded successfully:', imageUrl);
     } catch (error) {
-      console.error('Error uploading image:', error)
-      formAction.value.formErrorMessage = 'Unexpected error during image upload.'
-      return
+      console.error('Error uploading image:', error);
+      formAction.value.formErrorMessage = 'Unexpected error during image upload.';
+      return;
     }
   }
 
   try {
-    // Get the current user ID
     const {
       data: { user },
-      error: authError
-    } = await supabase.auth.getUser()
+      error: authError,
+    } = await supabase.auth.getUser();
 
     if (authError) {
-      console.error('Auth error:', authError)
-      formAction.value.formErrorMessage = 'Failed to retrieve user information.'
-      return
+      console.error('Auth error:', authError);
+      formAction.value.formErrorMessage = 'Failed to retrieve user information.';
+      return;
     }
 
-    const userId = user?.id // User ID from the auth table
+    const userId = user?.id;
 
-    // Insert the post into the posts table
     const { error: insertError } = await supabase.from('posts').insert([
       {
         item_name: item_name.value,
         image: imageUrl,
         description: description.value,
-        user_id: userId // Link the post to the authenticated user
-      }
-    ])
+        user_id: userId,
+      },
+    ]);
 
     if (insertError) {
-      console.error('Insert error:', insertError)
-      formAction.value.formErrorMessage = 'Failed to create the post.'
-      return
+      console.error('Insert error:', insertError);
+      formAction.value.formErrorMessage = 'Failed to create the post.';
+      return;
     }
 
-    formAction.value.formSuccessMessage = 'Post created successfully!'
+    formAction.value.formSuccessMessage = 'Post created successfully!';
 
-    // Fetch updated posts
-    const { data: postsData, error: fetchError } = await supabase.from('posts').select()
+    const { data: postsData, error: fetchError } = await supabase.from('posts').select();
 
     if (fetchError) {
-      console.error('Fetch error:', fetchError)
-      formAction.value.formErrorMessage = 'Failed to fetch updated posts.'
-      return
+      console.error('Fetch error:', fetchError);
+      formAction.value.formErrorMessage = 'Failed to fetch updated posts.';
+      return;
     }
 
-    posts.value = postsData
-    console.log('Posts fetched:', posts.value)
+    posts.value = postsData;
+    console.log('Posts fetched:', posts.value);
 
-    resetForm() // Clear the form fields
-    showModal.value = false // Close the modal
+    resetForm(); // Clear the form fields
+    showModal.value = false; // Close the modal
   } catch (error) {
-    console.error('Error during post creation:', error)
-    formAction.value.formErrorMessage = 'Unexpected error during post creation.'
+    console.error('Error during post creation:', error);
+    formAction.value.formErrorMessage = 'Unexpected error during post creation.';
   } finally {
-    formAction.value.formProcess = false // Indicate process end
+    formAction.value.formProcess = false; // Indicate process end
   }
-}
+};
 
-// Cancel button logic
 const handleCancel = () => {
-  resetForm()
-  showModal.value = false
-}
+  resetForm();
+  formAction.value = { ...formActionDefault }; // Reset form action state
+  showModal.value = false; // Close the modal
+};
+
 
 // Fetch user details on component mount
 const fetchUserDetails = async () => {
   const {
     data: { user },
-    error
-  } = await supabase.auth.getUser()
+    error,
+  } = await supabase.auth.getUser();
   if (error) {
-    console.error(error)
+    console.error(error);
   } else {
-    firstName.value = user?.user_metadata?.firstname || 'Firstname'
-    lastName.value = user?.user_metadata?.lastname || 'Lastname'
+    firstName.value = user?.user_metadata?.firstname || 'Firstname';
+    lastName.value = user?.user_metadata?.lastname || 'Lastname';
   }
-}
+};
 
 onMounted(() => {
-  fetchUserDetails()
-})
+  fetchUserDetails();
+});
 </script>
+
 
 <template>
   <v-container>
@@ -168,7 +177,7 @@ onMounted(() => {
               variant="solo"
               rounded
               outlined
-              required
+              :rules="[requiredValidator]"
             />
             <v-file-input
               v-model="image"
@@ -177,6 +186,7 @@ onMounted(() => {
               variant="solo"
               rounded
               outlined
+              :rules="[requiredValidator]"
             />
             <v-textarea
               v-model="description"
@@ -185,6 +195,7 @@ onMounted(() => {
               rounded
               outlined
               rows="3"
+              :rules="[requiredValidator]"
             />
           </v-form>
         </v-card-text>
