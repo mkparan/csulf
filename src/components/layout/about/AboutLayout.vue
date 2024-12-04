@@ -76,7 +76,7 @@
               <!-- Developer 3 -->
               <v-col cols="12" sm="4" md="4" lg="3" class="text-center">
                 <v-avatar size="100" class="mx-auto">
-                  <v-img src="/path/to/emmanuel_photo.png" alt="Emmanuel Ampatin" />
+                  <v-img src="/images/emman.jpg" alt="Emmanuel Ampatin" />
                 </v-avatar>
                 <p class="text-light-green-darken-3 font-weight-bold mt-2">Emmanuel Ampatin</p>
                 <p class="text-light-green-darken-3 text-caption">Backend Developer</p>
