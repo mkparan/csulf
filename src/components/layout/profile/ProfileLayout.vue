@@ -29,7 +29,10 @@ const fetchUserDetails = async () => {
 }
 
 const updateProfile = async () => {
-  const { data: { user }, error: userError } = await supabase.auth.getUser()
+  const {
+    data: { user },
+    error: userError
+  } = await supabase.auth.getUser()
 
   if (userError || !user) {
     console.error('User is not authenticated or error fetching user:', userError)
@@ -93,7 +96,10 @@ const updateProfile = async () => {
     .eq('id', user.id)
 
   if (updateRawMetadataError) {
-    console.error('Error updating raw_user_meta_data in auth.users:', updateRawMetadataError.message || updateRawMetadataError)
+    console.error(
+      'Error updating raw_user_meta_data in auth.users:',
+      updateRawMetadataError.message || updateRawMetadataError
+    )
     return
   }
 
@@ -143,7 +149,13 @@ onMounted(() => {
           <v-list class="text-center pt-5">
             <div class="profile-section">
               <v-avatar size="150" class="mx-auto">
-                 <v-img :src="profileUrl + profile_pic" alt="User Avatar" class="mx-auto" height="200" width="200" />
+                <v-img
+                  :src="profileUrl + profile_pic"
+                  alt="User Avatar"
+                  class="mx-auto"
+                  height="200"
+                  width="200"
+                />
               </v-avatar>
               <p class="text-center font-weight-bold mt-2">{{ firstName }} {{ lastName }}</p>
             </div>

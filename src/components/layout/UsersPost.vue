@@ -1,14 +1,22 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { supabase } from '@/utils/supabase.js';
+import ShowItemDetails from './ShowItemDetails.vue'
 
 const posts = ref([]); // Array to store posts
 const firstName = ref(''); // First name of the user
 const lastName = ref(''); // Last name of the user
 const profilePic = ref(''); // Profile picture of the user
+const selectedPost = ref(null);
+
 
 // URL for fetching the image
 const profileUrl = 'https://bvflfwricxabodytryee.supabase.co/storage/v1/object/public/images/';
+
+// Show item details in a modal
+const showDetails = (post) => {
+  selectedPost.value = post
+}
 
 // Fetch user's details and posts only on component mount
 const fetchUserData = async () => {
@@ -48,16 +56,29 @@ onMounted(fetchUserData); // Fetch user data and posts when the component is mou
         <v-card class="mb-4 rounded-xl" max-width="4000" outlined elevation="10">
           <v-list-item>
              <!-- Poster Image-->
-            <v-avatar size="50" class="mx-auto" color="black">
-               <v-img :src="profileUrl + profilePic" alt="User Avatar" class="mx-auto" height="200" width="200" />
-            </v-avatar>   
+              <v-row align="center" justify="space-between" class="mx-1 my-2">
+                          <!-- Avatar -->
+                          <v-avatar size="50" color="black">
+                            <v-img
+                              :src="profileUrl + profilePic"
+                              alt="User Avatar"
+                              class="mx-auto"
+                              height="200"
+                              width="200"
+                            />
+                          </v-avatar>
 
+                          <!-- Icon -->
+                          <v-icon icon="mdi-format-list-bulleted" class="ml-auto"></v-icon>
+              </v-row>
             <v-list-item-content>
               <v-list-item-title
                 >{{ firstName }} {{ lastName }}</v-list-item-title
               >
             </v-list-item-content>
           </v-list-item>
+          
+
 
           <!-- Post Image -->
           <v-img
@@ -75,5 +96,12 @@ onMounted(fetchUserData); // Fetch user data and posts when the component is mou
         </v-card>
       </v-col>
     </v-row>
+
+       <!-- Details Modal -->
+    <v-dialog v-model="selectedPost" max-width="600">
+      <template v-slot:default>
+        <ShowItemDetails :post="selectedPost" />
+      </template>
+    </v-dialog>
   </v-container>
 </template>
