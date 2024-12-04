@@ -34,14 +34,14 @@ const { mobile } = useDisplay()
           <!-- Fallback message when on mobile -->
           <div v-else>
             <img src="/images/ccis.png" alt="" width="280" height="300" />
-            <p class="text-center">
+            <p class="text-center text-light-green-darken-3">
               Embedding is not supported on mobile devices. <br />
               Click below to visit the page directly:
             </p>
             <a
               href="https://www.facebook.com/cciscarsu"
               target="_blank"
-              class="text-decoration-none text-blue font-weight-bold"
+              class="text-decoration-none text-light-green-darken-4 font-weight-bold"
             >
               Go to CCIS Page
             </a>

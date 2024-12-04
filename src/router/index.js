@@ -7,6 +7,8 @@ import NotFoundView from '@/views/errors/NotFoundView.vue'
 import { useAuthStore } from '@/stores/authUser' // Correct the import here
 import ProfileView from '@/views/system/profile/ProfileView.vue'
 import SaveView from '@/views/system/save/SaveView.vue'
+import AboutView from '@/views/system/about/AboutView.vue'
+import SearchView from '@/views/system/search/SearchView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -44,6 +46,16 @@ const router = createRouter({
       path: '/system/profile',
       name: 'profile',
       component: ProfileView
+    },
+    {
+      path: '/system/about',
+      name: 'about',
+      component: AboutView
+    },
+    {
+      path: '/system/search',
+      name: 'search',
+      component: SearchView
     },
     // Errors Pages
     {
