@@ -50,6 +50,27 @@ const fetchSavedPosts = async () => {
   }
 }
 
+  // Method to remove a post from saved
+const removeFromSaved = async (postId) => {
+  try {
+    // Delete the post from saved_posts table
+    const { error } = await supabase
+      .from('saved_posts')
+      .delete()
+      .eq('post_id', postId)
+
+    if (error) {
+      console.error('Error removing post from saved:', error.message)
+    } else {
+      // Update the local list of saved posts to reflect the removal
+      savedPosts.value = savedPosts.value.filter(post => post.post_id !== postId)
+      console.log(`Post with ID ${postId} removed from saved posts.`)
+    }
+  } catch (err) {
+    console.error('Unexpected error while removing post from saved:', err.message)
+  }
+}
+
 // Fetch data on component mount
 onMounted(fetchSavedPosts)
 </script>
@@ -89,7 +110,7 @@ onMounted(fetchSavedPosts)
               />
               <v-card-subtitle>{{ post.description }}</v-card-subtitle>
               <v-card-actions>
-                <v-btn color="primary" class="text-center">Remove from Saved</v-btn>
+                <v-btn color="primary" @click="removeFromSaved(post.post_id)" class="text-center">Remove from Saved</v-btn>
               </v-card-actions>
             </v-card>
           </v-col>
