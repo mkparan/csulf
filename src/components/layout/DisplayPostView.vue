@@ -119,24 +119,31 @@ onMounted(async () => {
           link
           @click="showDetails(post)"
         >
-          <v-list-item>
-            <!-- Poster Image-->
-            <v-avatar size="50" class="mx-auto" color="black">
-              <v-img
-                :src="`${profileUrl}${post.profile_pic}`"
-                alt="User Picture"
-                class="mx-auto"
-                height="200"
-                width="200"
-              />
-            </v-avatar>
+              <v-list-item class="pb-3">
+                      <v-row class="w-100" align="center" no-gutters>
+                        <!-- Post Owner Image -->
+                        <v-col cols="auto">
+                          <v-avatar size="50" class="mx-2" color="black">
+                            <v-img
+                                    :src="`${profileUrl}${post.profile_pic}`"
+                                    alt="User Picture"
+                                    class="mx-auto"
+                                    height="200"
+                                    width="200"
+                            />
+                          </v-avatar>
+                        </v-col>
 
-            <v-list-item-content>
-              <v-list-item-title class="text-light-green-darken-3 font-weight-bold pa-1"
-                >{{ post.firstname }} {{ post.lastname }}</v-list-item-title
-              >
-            </v-list-item-content>
-          </v-list-item>
+                        <!-- Post Owner Name -->
+                        <v-col class="d-flex align-center">
+                          <v-list-item-content>
+                            <v-list-item-title class="text-light-green-darken-3 font-weight-bold pa-1">
+                                {{ post.firstname }} {{ post.lastname }}
+                            </v-list-item-title>
+                          </v-list-item-content>
+                        </v-col>
+                      </v-row>
+                </v-list-item>
 
           <!-- Post Image -->
           <v-img
