@@ -36,25 +36,31 @@ const closeCard = () => {
 
       <!-- Card Actions -->
       <v-card-actions>
-        <v-list-item class="w-100">
-          <!-- Poster Image-->
-          <v-avatar size="50" class="mx-auto" color="black">
-            <v-img
-              :src="`${profileUrl}${post.profile_pic}`"
-              alt="User Picture"
-              class="mx-auto"
-              height="200"
-              width="200"
-            />
-          </v-avatar>
+             <v-list-item class="pb-3 w-100">
+                      <v-row class="w-100" align="center" no-gutters>
+                        <!-- Post Owner Image -->
+                        <v-col cols="auto">
+                          <v-avatar size="50" class="mx-2" color="black">
+                            <v-img
+                                    :src="`${profileUrl}${post.profile_pic}`"
+                                    alt="User Picture"
+                                    class="mx-auto"
+                                    height="200"
+                                    width="200"
+                            />
+                          </v-avatar>
+                        </v-col>
 
-          <!-- Poster Name and Role -->
-          <v-list-item-content>
-            <v-list-item-title class="font-weight-bold text-light-green-darken-3">
-              {{ post.firstname }} {{ post.lastname }}
-            </v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
+                        <!-- Post Owner Name -->
+                        <v-col class="d-flex align-center">
+                          <v-list-item-content>
+                            <h2 class="text-light-green-darken-3 font-weight-bold pa-1">
+                                {{ post.firstname }} {{ post.lastname }}
+                            </h2>
+                          </v-list-item-content>
+                        </v-col>
+                      </v-row>
+             </v-list-item>
       </v-card-actions>
 
       <!-- Card Title -->
