@@ -4,11 +4,12 @@ import { supabase } from '@/utils/supabase.js'
 import ShowItemDetails from './ShowItemDetails.vue'
 
 const postsWithUsers = ref([])
+const savedPosts = ref([]) // Track saved posts
 const selectedPost = ref(null)
 const userId = ref(null) // Current user's ID
 const showSuccessModal = ref(false) // Controls success modal
 
-//url of the image
+// URL of the image
 const profileUrl = 'https://bvflfwricxabodytryee.supabase.co/storage/v1/object/public/images/'
 
 // Fetch current user ID
@@ -30,7 +31,6 @@ const fetchPostsWithUsers = async () => {
       return
     }
 
-    // Ensure the structure of the data matches what the frontend expects
     postsWithUsers.value = data.map((post) => ({
       post_id: post.post_id,
       item_name: post.item_name,
@@ -41,16 +41,41 @@ const fetchPostsWithUsers = async () => {
       facebook_link: post.facebook_link,
       profile_pic: post.profile_pic
     }))
-    console.log(postsWithUsers.value)
   } catch (err) {
     console.error('Unexpected error fetching posts with user info:', err.message)
   }
+}
+
+// Fetch saved posts
+const fetchSavedPosts = async () => {
+  if (!userId.value) return
+
+  const { data, error } = await supabase
+    .from('saved_posts')
+    .select('post_id')
+    .eq('user_id', userId.value)
+
+  if (error) {
+    console.error('Error fetching saved posts:', error.message)
+  } else {
+    savedPosts.value = data.map((saved) => saved.post_id)
+  }
+}
+
+// Check if a post is already saved
+const isSaved = (postId) => {
+  return savedPosts.value.includes(postId)
 }
 
 // Handle saving a post
 const savePost = async (postId) => {
   if (!userId.value) {
     toast.error('You must be logged in to save a post.')
+    return
+  }
+
+  if (isSaved(postId)) {
+    toast.info('This post is already saved.')
     return
   }
 
@@ -62,6 +87,7 @@ const savePost = async (postId) => {
     toast.error('Error saving post. Please try again.')
     console.error('Error saving post:', error.message)
   } else {
+    savedPosts.value.push(postId) // Update saved posts
     showSuccessModal.value = true // Show the success modal
     toast.success('Post saved successfully!')
   }
@@ -76,6 +102,7 @@ const showDetails = (post) => {
 onMounted(async () => {
   await fetchUserId()
   await fetchPostsWithUsers()
+  await fetchSavedPosts()
 })
 </script>
 
@@ -124,8 +151,13 @@ onMounted(async () => {
             post.description
           }}</v-card-subtitle>
           <v-card-actions>
-            <v-btn color="blue" prepend-icon="mdi-bookmark-outline" @click="savePost(post.post_id)">
-              Save
+            <v-btn
+              :color="isSaved(post.post_id) ? 'grey' : 'blue'"
+              :disabled="isSaved(post.post_id)"
+              prepend-icon="mdi-bookmark-outline"
+              @click.stop="savePost(post.post_id)"
+            >
+              {{ isSaved(post.post_id) ? 'Saved' : 'Save' }}
             </v-btn>
             <v-btn color="primary" class="text-center" :href="post.facebook_link" target="_blank" rel="noopener"
               >Send Message</v-btn>
