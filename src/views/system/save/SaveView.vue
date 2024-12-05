@@ -83,23 +83,30 @@ onMounted(fetchSavedPosts)
         <v-row dense>
           <v-col cols="12" sm="8" md="6" v-for="post in savedPosts" :key="post.post_id">
             <v-card class="mb-0 rounded-xl" max-width="4000" outlined elevation="10">
-              <v-list-item>
-                <!-- Post Owner Image -->
-                <v-avatar size="50" class="mx-auto" color="black">
-                  <v-img
-                    :src="`${profileUrl}${post.post_owner.profile_pic}`"
-                    alt="Post Owner Picture"
-                    class="mx-auto"
-                    height="200"
-                    width="200"
-                  />
-                </v-avatar>
-                <v-list-item-content>
-                  <v-list-item-title class="text-light-green-darken-3 font-weight-bold pa-1">
-                    Posted by: {{ post.post_owner.first_name }} {{ post.post_owner.last_name }}
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
+                <v-list-item>
+                      <v-row class="w-100" align="center" no-gutters>
+                        <!-- Post Owner Image -->
+                        <v-col cols="auto">
+                          <v-avatar size="50" class="mx-2" color="black">
+                            <v-img
+                              :src="`${profileUrl}${post.post_owner.profile_pic}`"
+                              alt="Post Owner Picture"
+                              height="50"
+                              width="50"
+                            />
+                          </v-avatar>
+                        </v-col>
+
+                        <!-- Post Owner Name -->
+                        <v-col class="d-flex align-center">
+                          <v-list-item-content>
+                            <v-list-item-title class="text-light-green-darken-3 font-weight-bold">
+                                {{ post.post_owner.first_name }} {{ post.post_owner.last_name }}
+                            </v-list-item-title>
+                          </v-list-item-content>
+                        </v-col>
+                      </v-row>
+                </v-list-item>
               <v-card-title class="text-center">{{ post.item_name }}</v-card-title>
               <v-img
                 v-if="post.image"
