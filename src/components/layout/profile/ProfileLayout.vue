@@ -149,7 +149,7 @@ onMounted(() => {
         <v-card class="rounded-xl mb-4" max-width="1000" elevation="4">
           <v-list class="text-center pt-5">
             <div class="profile-section">
-              <v-avatar size="150" class="mx-auto">
+              <v-avatar size="150" class="mx-auto" color="black">
                 <v-img
                   :src="profileUrl + profile_pic"
                   alt="User Avatar"

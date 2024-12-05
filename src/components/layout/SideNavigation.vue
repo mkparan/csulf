@@ -54,7 +54,28 @@ onMounted(() => {
     <v-list color="transparent">
       <v-list class="text-center">
         <div class="profile-section">
-          <v-avatar size="150" class="mx-auto">
+            <v-avatar size="150" class="mx-auto" color="white">
+                 <!-- Show profile image only if profile_pic is available -->
+                    <v-img
+                      v-if="profile_pic"
+                      :src="profileUrl + profile_pic"
+                      alt="User Avatar"
+                      class="mx-auto"
+                      height="200"
+                      width="200"
+                    />
+                    <!-- Default image when profile_pic is not available -->
+                    <v-img
+                      v-else
+                      src="/images/profile-default.png"
+                      alt="Default Avatar"
+                      class="mx-auto"
+                      height="200"
+                      width="200"
+                    />
+            </v-avatar>
+
+          <!-- <v-avatar size="150" class="mx-auto" color="white">
             <v-img
               :src="profileUrl + profile_pic"
               alt="User Avatar"
@@ -62,7 +83,7 @@ onMounted(() => {
               height="200"
               width="200"
             />
-          </v-avatar>
+          </v-avatar> -->
           <p class="text-center font-weight-bold mt-2">{{ firstName }} {{ lastName }}</p>
         </div>
       </v-list>
