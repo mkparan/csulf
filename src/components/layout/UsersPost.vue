@@ -192,7 +192,7 @@ const updatePost = async () => {
               </v-menu>
             </v-row>
             <v-list-item-content>
-              <v-list-item-title>{{ firstName }} {{ lastName }}</v-list-item-title>
+              <h3>{{ firstName }} {{ lastName }}</h3>
             </v-list-item-content>
           </v-list-item>
 

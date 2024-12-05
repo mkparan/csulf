@@ -100,9 +100,9 @@ onMounted(fetchSavedPosts)
                         <!-- Post Owner Name -->
                         <v-col class="d-flex align-center">
                           <v-list-item-content>
-                            <v-list-item-title class="text-light-green-darken-3 font-weight-bold">
+                            <h3 class="text-light-green-darken-3 font-weight-bold">
                                 {{ post.post_owner.first_name }} {{ post.post_owner.last_name }}
-                            </v-list-item-title>
+                            </h3>
                           </v-list-item-content>
                         </v-col>
                       </v-row>
