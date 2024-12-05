@@ -109,8 +109,23 @@ onMounted(fetchSavedPosts)
                 :alt="post.item_name || 'Post Image'"
               />
               <v-card-subtitle>{{ post.description }}</v-card-subtitle>
+
               <v-card-actions>
-                <v-btn color="primary" @click="removeFromSaved(post.post_id)" class="text-center">Remove from Saved</v-btn>
+                      <v-row class="w-100" justify="space-between">
+                        <!-- "Remove" button positioned on the left -->
+                        <v-col cols="auto">
+                          <v-btn color="primary" @click="removeFromSaved(post.post_id)" class="text-center">
+                            Remove
+                          </v-btn>
+                        </v-col>
+
+                        <!-- "Message" button positioned on the right -->
+                        <v-col cols="auto">
+                          <v-btn color="primary" :href="post.post_owner.facebook_link" target="_blank" rel="noopener" class="text-center">
+                            Message
+                          </v-btn>
+                        </v-col>
+                      </v-row>
               </v-card-actions>
             </v-card>
           </v-col>
