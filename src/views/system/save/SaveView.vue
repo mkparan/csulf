@@ -83,7 +83,7 @@ onMounted(fetchSavedPosts)
         <v-row dense>
           <v-col cols="12" sm="8" md="6" v-for="post in savedPosts" :key="post.post_id">
             <v-card class="mb-0 rounded-xl" max-width="4000" outlined elevation="10">
-                <v-list-item>
+                <v-list-item class="pb-2">
                       <v-row class="w-100" align="center" no-gutters>
                         <!-- Post Owner Image -->
                         <v-col cols="auto">
@@ -107,7 +107,6 @@ onMounted(fetchSavedPosts)
                         </v-col>
                       </v-row>
                 </v-list-item>
-              <v-card-title class="text-center">{{ post.item_name }}</v-card-title>
               <v-img
                 v-if="post.image"
                 height="200"
@@ -115,6 +114,7 @@ onMounted(fetchSavedPosts)
                 cover
                 :alt="post.item_name || 'Post Image'"
               />
+              <v-card-title class="">{{ post.item_name }}</v-card-title>
               <v-card-subtitle>{{ post.description }}</v-card-subtitle>
 
               <v-card-actions>
