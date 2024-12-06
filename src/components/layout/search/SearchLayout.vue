@@ -72,25 +72,31 @@ onMounted(() => {
         md="6"
       >
         <v-card class="rounded-xl mb-4" elevation="4">
-          <v-list-item>
-            <!-- Poster Image-->
-            <v-avatar size="50" class="mx-auto" color="black">
-              <v-img
-                :src="`${profileUrl}${post.profile_pic || 'default-profile-pic.jpg'}`"
-                alt="User Picture"
-                class="mx-auto"
-                height="200"
-                width="200"
-              />
-            </v-avatar>
+            <v-list-item class="pb-3">
+                      <v-row class="w-100" align="center" no-gutters>
+                        <!-- Post Owner Image -->
+                        <v-col cols="auto">
+                          <v-avatar size="50" class="mx-2" color="black">
+                            <v-img
+                                    :src="`${profileUrl}${post.profile_pic}`"
+                                    alt="User Picture"
+                                    class="mx-auto"
+                                    height="200"
+                                    width="200"
+                            />
+                          </v-avatar>
+                        </v-col>
 
-            <v-list-item-content>
-              <v-list-item-title class="text-light-green-darken-3 font-weight-bold pa-1">
-                {{ post.firstname }} {{ post.lastname }}
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-card-title class="text-center">{{ post.item_name }}</v-card-title>
+                        <!-- Post Owner Name -->
+                        <v-col class="d-flex align-center">
+                          <v-list-item-content>
+                            <h3 class="text-light-green-darken-3 font-weight-bold pa-1">
+                                {{ post.firstname }} {{ post.lastname }}
+                            </h3>
+                          </v-list-item-content>
+                        </v-col>
+                      </v-row>
+                </v-list-item>
           <v-img
             v-if="post.image"
             height="200"
@@ -98,7 +104,8 @@ onMounted(() => {
             cover
             :alt="post.item_name || 'Post Image'"
           />
-          <v-card-text>{{ post.description }}</v-card-text>
+          <v-card-title class="text-light-green-darken-3">{{ post.item_name }}</v-card-title>
+          <v-card-text class="text-light-green-darken-3">{{ post.description }}</v-card-text>
             <v-card-actions>
             <v-btn color="primary" class="text-center" :href="post.facebook_link" target="_blank" rel="noopener"
               >Send Message</v-btn>
