@@ -21,17 +21,20 @@ const savePost = async () => {
   const { imageFile, item_name, description, id } = post.value;
 
   // Upload the image if a new one is selected
-  let imageUrl = post.value.image;
   if (imageFile) {
-    const { data, error } = await supabase
-      .storage
-      .from('items')
-      .upload(`posts/${Date.now()}-${imageFile.name}`, imageFile);
+  const { data, error } = await supabase
+    .storage
+    .from('items')
+    .upload(
+      `posts/${Date.now()}-${imageFile.name}`, // File path
+      imageFile, // File to upload
+      { upsert: true } // Correctly include the upsert option here
+    );
 
-    if (error) {
-      console.error('Error uploading image:', error);
-      return;
-    }
+  if (error) {
+    console.error('Error uploading image:', error);
+    return;
+  }
     imageUrl = data.Key;
   }
 
