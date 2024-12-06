@@ -2,6 +2,14 @@
 import { ref, onMounted } from 'vue'
 import { supabase } from '@/utils/supabase'
 import UsersPost from '@/components/layout/UsersPost.vue' // Adjust the path as necessary
+import AlertNotification from '../../common/AlertNotification.vue'
+
+// Define state for success and error messages
+const formAction = ref({
+  formSuccessMessage: '',
+  formErrorMessage: '',
+  formProcess: false
+})
 
 // Define component properties here
 const firstName = ref('')
@@ -87,17 +95,9 @@ const fetchUserDetails = async () => {
     console.error('Error updating posts table:', updatePostsError)
   }
 
-  fetchUserDetails()
+     fetchUserDetails()
+  formAction.value.formSuccessMessage = 'Post successfully updated'
   showEditModal.value = false
-}
-
-
-// Generate the full URL for the profile picture (if needed for display purposes)
-const getProfilePicUrl = () => {
-  if (profile_pic.value && !profile_pic.value.startsWith('http')) {
-    return supabase.storage.from('images').getPublicUrl(profile_pic.value).publicURL
-  }
-  return profile_pic.value
 }
 
 onMounted(() => {
@@ -106,8 +106,10 @@ onMounted(() => {
 </script>
 
 <template>
-    <br />
-    <br />
+    <AlertNotification
+    :form-success-message="formAction.formSuccessMessage"
+    :form-error-message="formAction.formErrorMessage"
+  ></AlertNotification>
     <v-row justify="center">
       <v-col cols="12" sm="12" md="8">
         <v-card class="rounded-xl mb-4" max-width="1000" elevation="4">
