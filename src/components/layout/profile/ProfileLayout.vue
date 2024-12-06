@@ -28,104 +28,69 @@ const fetchUserDetails = async () => {
   }
 }
 
-const updateProfile = async () => {
-  const {
-    data: { user },
-    error: userError
-  } = await supabase.auth.getUser()
+   const updateProfile = async () => {
+  const { data: { user }, error: userError } = await supabase.auth.getUser()
 
   if (userError || !user) {
     console.error('User is not authenticated or error fetching user:', userError)
     return
   }
 
-  console.log('Updating profile...')
-
   let uploadedFileName = profile_pic.value
 
-  // Handle image upload if the profile_pic is a file
   if (profile_pic.value instanceof File) {
-    // Use the file name as the file name in storage
     uploadedFileName = `public/${profile_pic.value.name}`
 
-    // Upload the image to Supabase storage
-    const { data, error: uploadError } = await supabase.storage
+    const { error: uploadError } = await supabase.storage
       .from('images')
       .upload(uploadedFileName, profile_pic.value)
 
     if (uploadError) {
-      console.error('Error uploading image:', uploadError.message || uploadError)
+      console.error('Error uploading image:', uploadError)
       return
     }
-
-    // After uploading, you can get the public URL (if needed for display purposes)
-    console.log('Uploaded File Name:', uploadedFileName)
   }
 
-  // Construct new user metadata with the uploaded image file name
   const updatedMetadata = {
     firstname: firstName.value,
     lastname: lastName.value,
-    profile_pic: uploadedFileName, // Store just the file name here
+    profile_pic: uploadedFileName,
     facebook_link: facebook_link.value
   }
 
-  // Update user_metadata in auth.users
-  const { error: updateUserError } = await supabase.auth.updateUser({
-    data: updatedMetadata
-  })
-
+  const { error: updateUserError } = await supabase.auth.updateUser({ data: updatedMetadata })
   if (updateUserError) {
-    console.error('Error updating user metadata in auth.users:', updateUserError.message)
+    console.error('Error updating user metadata in auth.users:', updateUserError)
     return
   }
 
-  console.log('Profile updated successfully in auth.users')
-
-  // Update the 'raw_user_meta_data' column in auth.users directly
   const { error: updateRawMetadataError } = await supabase
     .from('auth.users')
     .update({
-      raw_user_meta_data: {
-        firstname: firstName.value,
-        lastname: lastName.value,
-        profile_pic: uploadedFileName, // Use the file name here
-        facebook_link: facebook_link.value
-      }
+      raw_user_meta_data: updatedMetadata
     })
     .eq('id', user.id)
 
-  if (updateRawMetadataError) {
+  if (updateRawMetadataError && Object.keys(updateRawMetadataError).length > 0) {
     console.error(
       'Error updating raw_user_meta_data in auth.users:',
-      updateRawMetadataError.message || updateRawMetadataError
+      updateRawMetadataError
     )
-    return
   }
 
-  console.log('raw_user_meta_data column updated successfully')
-
-  // Optionally update the posts table or other tables
   const { error: updatePostsError } = await supabase
     .from('posts')
-    .update({
-      profile_pic: uploadedFileName, // Use the file name here
-      firstname: firstName.value,
-      lastname: lastName.value,
-      facebook_link: facebook_link.value
-    })
+    .update(updatedMetadata)
     .eq('user_id', user.id)
 
   if (updatePostsError) {
-    console.error('Error updating posts table:', updatePostsError.message || updatePostsError)
-  } else {
-    console.log('Posts table updated successfully')
+    console.error('Error updating posts table:', updatePostsError)
   }
 
-  // Re-fetch user details to update UI
   fetchUserDetails()
   showEditModal.value = false
 }
+
 
 // Generate the full URL for the profile picture (if needed for display purposes)
 const getProfilePicUrl = () => {

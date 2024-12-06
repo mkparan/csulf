@@ -1,37 +1,4 @@
 
-<template>
-  <v-dialog v-model="isModalOpen" max-width="600">
-    <template v-slot:default>
-      <v-card>
-        <v-card-title>Edit Post</v-card-title>
-        <v-card-text>
-          <v-form>
-            <v-text-field
-              v-model="post.item_name"
-              label="Item Name"
-              required
-            ></v-text-field>
-            <v-textarea
-              v-model="post.description"
-              label="Description"
-              required
-            ></v-textarea>
-            <v-file-input
-              v-model="post.imageFile"
-              label="Image"
-              accept="image/*"
-            ></v-file-input>
-          </v-form>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn @click="savePost" color="primary">Save</v-btn>
-          <v-btn @click="cancelEdit" color="secondary">Cancel</v-btn>
-        </v-card-actions>
-      </v-card>
-    </template>
-  </v-dialog>
-</template>
-
 <script setup>
 import { ref } from 'vue';
 import { supabase } from '@/utils/supabase.js';
@@ -88,3 +55,37 @@ const cancelEdit = () => {
 
 defineProps(['post', 'openEditModal']);
 </script>
+
+
+<template>
+  <v-dialog v-model="isModalOpen" max-width="600">
+    <template v-slot:default>
+      <v-card>
+        <v-card-title>Edit Post</v-card-title>
+        <v-card-text>
+          <v-form>
+            <v-text-field
+              v-model="post.item_name"
+              label="Item Name"
+              required
+            ></v-text-field>
+            <v-textarea
+              v-model="post.description"
+              label="Description"
+              required
+            ></v-textarea>
+            <v-file-input
+              v-model="post.imageFile"
+              label="Image"
+              accept="image/*"
+            ></v-file-input>
+          </v-form>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn @click="savePost" color="primary">Save</v-btn>
+          <v-btn @click="cancelEdit" color="secondary">Cancel</v-btn>
+        </v-card-actions>
+      </v-card>
+    </template>
+  </v-dialog>
+</template>
