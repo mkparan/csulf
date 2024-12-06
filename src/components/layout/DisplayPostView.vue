@@ -3,49 +3,114 @@ import { ref, onMounted } from 'vue'
 import { supabase } from '@/utils/supabase.js'
 import ShowItemDetails from './ShowItemDetails.vue'
 
-// Store combined data of posts and user info
-const postsWithUsers = ref([]) 
-const selectedPost = ref(null) // Selected post for details
+const postsWithUsers = ref([])
+const savedPosts = ref([]) // Track saved posts
+const selectedPost = ref(null)
+const userId = ref(null) // Current user's ID
+const showSuccessModal = ref(false) // Controls success modal
 
-// Fetch posts with user info using RPC
+// URL of the image
+const profileUrl = 'https://bvflfwricxabodytryee.supabase.co/storage/v1/object/public/images/'
+
+// Fetch current user ID
+const fetchUserId = async () => {
+  const { data, error } = await supabase.auth.getUser()
+  if (error) {
+    console.error('Error fetching user ID:', error.message)
+  } else {
+    userId.value = data.user?.id
+  }
+}
+
+// Fetch posts with user info
 const fetchPostsWithUsers = async () => {
   try {
-    // Call the RPC function to get posts with user info
     const { data, error } = await supabase.rpc('get_posts_with_user_info')
-
     if (error) {
       console.error('Error fetching posts with user info:', error.message)
       return
     }
 
-    // Ensure the structure of the data matches what the frontend expects
-    postsWithUsers.value = data.map(post => ({
+    postsWithUsers.value = data.map((post) => ({
       post_id: post.post_id,
       item_name: post.item_name,
       description: post.description,
       image: post.image,
       firstname: post.firstname,
       lastname: post.lastname,
+      facebook_link: post.facebook_link,
+      profile_pic: post.profile_pic
     }))
   } catch (err) {
     console.error('Unexpected error fetching posts with user info:', err.message)
   }
 }
 
-// Handle displaying post details
-const showDetails = (post) => {
-  selectedPost.value = post // Set the selected post for details view
+// Fetch saved posts
+const fetchSavedPosts = async () => {
+  if (!userId.value) return
+
+  const { data, error } = await supabase
+    .from('saved_posts')
+    .select('post_id')
+    .eq('user_id', userId.value)
+
+  if (error) {
+    console.error('Error fetching saved posts:', error.message)
+  } else {
+    savedPosts.value = data.map((saved) => saved.post_id)
+  }
 }
 
-// Fetch posts on component mount
-onMounted(fetchPostsWithUsers)
+// Check if a post is already saved
+const isSaved = (postId) => {
+  return savedPosts.value.includes(postId)
+}
+
+// Handle saving a post
+const savePost = async (postId) => {
+  if (!userId.value) {
+    toast.error('You must be logged in to save a post.')
+    return
+  }
+
+  if (isSaved(postId)) {
+    toast.info('This post is already saved.')
+    return
+  }
+
+  const { error } = await supabase
+    .from('saved_posts')
+    .insert([{ post_id: postId, user_id: userId.value }])
+
+  if (error) {
+    toast.error('Error saving post. Please try again.')
+    console.error('Error saving post:', error.message)
+  } else {
+    savedPosts.value.push(postId) // Update saved posts
+    showSuccessModal.value = true // Show the success modal
+    toast.success('Post saved successfully!')
+  }
+}
+
+// Show item details in a modal
+const showDetails = (post) => {
+  selectedPost.value = post
+}
+
+// Fetch data on component mount
+onMounted(async () => {
+  await fetchUserId()
+  await fetchPostsWithUsers()
+  await fetchSavedPosts()
+})
 </script>
 
 <template>
   <v-container>
+    <!-- Post List -->
     <v-row dense>
       <v-col cols="12" sm="8" md="6" v-for="post in postsWithUsers" :key="post.post_id">
-        <!-- Post Card -->
         <v-card
           class="mb-4 rounded-xl"
           max-width="4000"
@@ -54,18 +119,31 @@ onMounted(fetchPostsWithUsers)
           link
           @click="showDetails(post)"
         >
-          <!-- Poster Details -->
-          <v-list-item>
-            <v-avatar
-              size="40"
-              :color="post.image ? '' : 'grey-darken-3'"
-              :image="post.image || 'https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light'"
-            />
-            <v-list-item-content>
-              <v-list-item-title>{{ post.firstname }} {{ post.lastname }}</v-list-item-title>
-              <v-list-item-subtitle></v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
+              <v-list-item class="pb-3">
+                      <v-row class="w-100" align="center" no-gutters>
+                        <!-- Post Owner Image -->
+                        <v-col cols="auto">
+                          <v-avatar size="50" class="mx-2" color="black">
+                            <v-img
+                                    :src="`${profileUrl}${post.profile_pic}`"
+                                    alt="User Picture"
+                                    class="mx-auto"
+                                    height="200"
+                                    width="200"
+                            />
+                          </v-avatar>
+                        </v-col>
+
+                        <!-- Post Owner Name -->
+                        <v-col class="d-flex align-center">
+                          <v-list-item-content>
+                            <h3 class="text-light-green-darken-3 font-weight-bold pa-1">
+                                {{ post.firstname }} {{ post.lastname }}
+                            </h3>
+                          </v-list-item-content>
+                        </v-col>
+                      </v-row>
+                </v-list-item>
 
           <!-- Post Image -->
           <v-img
@@ -75,16 +153,41 @@ onMounted(fetchPostsWithUsers)
             cover
             :alt="post.item_name || 'Post Image'"
           />
-          <v-card-title>{{ post.item_name }}</v-card-title>
-          <v-card-subtitle>{{ post.description }}</v-card-subtitle>
+          <v-card-title class="text-light-green-darken-3">{{ post.item_name }}</v-card-title>
+          <v-card-subtitle class="text-light-green-darken-3">{{
+            post.description
+          }}</v-card-subtitle>
           <v-card-actions>
-            <v-btn color="blue" prepend-icon="mdi-bookmark-outline">Save</v-btn>
+            <v-btn
+              :color="isSaved(post.post_id) ? 'grey' : 'blue'"
+              :disabled="isSaved(post.post_id)"
+              prepend-icon="mdi-bookmark-outline"
+              @click.stop="savePost(post.post_id)"
+            >
+              {{ isSaved(post.post_id) ? 'Saved' : 'Save' }}
+            </v-btn>
+            <v-btn color="primary" class="text-center" :href="post.facebook_link" target="_blank" rel="noopener"
+              >Send Message</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
 
-    <!-- Details Dialog -->
+    <!-- Success Modal -->
+    <v-dialog v-model="showSuccessModal" persistent max-width="400">
+      <v-card>
+        <v-card-title class="headline text-light-green-darken-3">Success</v-card-title>
+        <v-card-text class="text-light-green-darken-3"
+          >Your post has been saved successfully!</v-card-text
+        >
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="showSuccessModal = false">Close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Details Modal -->
     <v-dialog v-model="selectedPost" max-width="600">
       <template v-slot:default>
         <ShowItemDetails :post="selectedPost" />
@@ -92,3 +195,7 @@ onMounted(fetchPostsWithUsers)
     </v-dialog>
   </v-container>
 </template>
+
+<style scoped>
+/* Add any custom styles here */
+</style>

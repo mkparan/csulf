@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { supabase } from '@/utils/supabase' // Ensure this points to your Supabase instance
 import AlertNotification from '../common/AlertNotification.vue'
+import { requiredValidator } from '../../utils/validators' // Assuming this is defined correctly
 
 // Reactive references for form and modal
 const showModal = ref(false) // Modal visibility
@@ -29,7 +30,16 @@ const resetForm = () => {
 
 // Handle Post Submission
 const handlePost = async () => {
+  // Reset messages
   formAction.value = { ...formActionDefault }
+
+  // Validate required fields
+  if (!item_name.value || !image.value || !description.value) {
+    formAction.value.formErrorMessage = 'All fields are required.'
+    console.error('Validation error: Some fields are empty.')
+    return
+  }
+
   formAction.value.formProcess = true // Indicate process start
 
   let imageUrl = ''
@@ -54,7 +64,6 @@ const handlePost = async () => {
   }
 
   try {
-    // Get the current user ID
     const {
       data: { user },
       error: authError
@@ -66,15 +75,14 @@ const handlePost = async () => {
       return
     }
 
-    const userId = user?.id // User ID from the auth table
+    const userId = user?.id
 
-    // Insert the post into the posts table
     const { error: insertError } = await supabase.from('posts').insert([
       {
         item_name: item_name.value,
         image: imageUrl,
         description: description.value,
-        user_id: userId // Link the post to the authenticated user
+        user_id: userId
       }
     ])
 
@@ -86,8 +94,11 @@ const handlePost = async () => {
 
     formAction.value.formSuccessMessage = 'Post created successfully!'
 
-    // Fetch updated posts
-    const { data: postsData, error: fetchError } = await supabase.from('posts').select()
+    // Fetch the new list of posts, filtering by userId for UsersPost.vue
+    const { data: postsData, error: fetchError } = await supabase
+      .from('posts')
+      .select()
+      .eq('user_id', userId) // Fetch only the logged-in user's posts
 
     if (fetchError) {
       console.error('Fetch error:', fetchError)
@@ -95,7 +106,7 @@ const handlePost = async () => {
       return
     }
 
-    posts.value = postsData
+    posts.value = postsData // Update posts with user's posts
     console.log('Posts fetched:', posts.value)
 
     resetForm() // Clear the form fields
@@ -108,10 +119,10 @@ const handlePost = async () => {
   }
 }
 
-// Cancel button logic
 const handleCancel = () => {
   resetForm()
-  showModal.value = false
+  formAction.value = { ...formActionDefault } // Reset form action state
+  showModal.value = false // Close the modal
 }
 
 // Fetch user details on component mount
@@ -135,6 +146,7 @@ onMounted(() => {
 
 <template>
   <v-container>
+    <br />
     <br />
     <v-row justify="center">
       <v-col cols="12" sm="8" md="8">
@@ -168,7 +180,7 @@ onMounted(() => {
               variant="solo"
               rounded
               outlined
-              required
+              :rules="[requiredValidator]"
             />
             <v-file-input
               v-model="image"
@@ -177,6 +189,7 @@ onMounted(() => {
               variant="solo"
               rounded
               outlined
+              :rules="[requiredValidator]"
             />
             <v-textarea
               v-model="description"
@@ -185,6 +198,7 @@ onMounted(() => {
               rounded
               outlined
               rows="3"
+              :rules="[requiredValidator]"
             />
           </v-form>
         </v-card-text>
