@@ -170,7 +170,7 @@ const updatePost = async () => {
         </v-row>
     <v-row dense>
       <v-col cols="12" sm="8" md="6" v-for="post in posts" :key="post.id">
-        <v-card class="mb-4 rounded-xl" max-width="4000" outlined elevation="10">
+        <v-card class="mb-4 rounded-xl" max-width="4000" outlined elevation="10" link @click="showDetails(post)">
               <v-list-item>
                         <!-- Poster Image -->
                         <v-row align="center" class="mx-1 my-2">
@@ -222,9 +222,6 @@ const updatePost = async () => {
           />
           <v-card-title class="text-light-green-darken-3">{{ post.item_name }}</v-card-title>
           <v-card-subtitle class="text-light-green-darken-3">{{ post.description }}</v-card-subtitle>
-          <v-card-actions>
-            <v-btn color="primary" @click="showDetails(post)"> View Details</v-btn>
-          </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
