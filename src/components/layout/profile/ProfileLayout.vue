@@ -36,8 +36,11 @@ const fetchUserDetails = async () => {
   }
 }
 
-   const updateProfile = async () => {
-  const { data: { user }, error: userError } = await supabase.auth.getUser()
+const updateProfile = async () => {
+  const {
+    data: { user },
+    error: userError
+  } = await supabase.auth.getUser()
 
   if (userError || !user) {
     console.error('User is not authenticated or error fetching user:', userError)
@@ -49,14 +52,19 @@ const fetchUserDetails = async () => {
   if (profile_pic.value instanceof File) {
     uploadedFileName = `public/${profile_pic.value.name}`
 
+    // Attempt to upload or overwrite the file if it already exists
     const { error: uploadError } = await supabase.storage
       .from('images')
-      .upload(uploadedFileName, profile_pic.value)
+      .upload(uploadedFileName, profile_pic.value, {
+        upsert: true // Correctly include the upsert option here
+      })
 
     if (uploadError) {
       console.error('Error uploading image:', uploadError)
       return
     }
+
+    console.log('Image uploaded successfully!')
   }
 
   const updatedMetadata = {
@@ -80,10 +88,7 @@ const fetchUserDetails = async () => {
     .eq('id', user.id)
 
   if (updateRawMetadataError && Object.keys(updateRawMetadataError).length > 0) {
-    console.error(
-      'Error updating raw_user_meta_data in auth.users:',
-      updateRawMetadataError
-    )
+    console.error('Error updating raw_user_meta_data in auth.users:', updateRawMetadataError)
   }
 
   const { error: updatePostsError } = await supabase
@@ -95,7 +100,7 @@ const fetchUserDetails = async () => {
     console.error('Error updating posts table:', updatePostsError)
   }
 
-     fetchUserDetails()
+  fetchUserDetails()
   formAction.value.formSuccessMessage = 'Post successfully updated'
   showEditModal.value = false
 }
@@ -106,85 +111,85 @@ onMounted(() => {
 </script>
 
 <template>
-    <AlertNotification
+  <AlertNotification
     :form-success-message="formAction.formSuccessMessage"
     :form-error-message="formAction.formErrorMessage"
   ></AlertNotification>
-    <v-row justify="center">
-      <v-col cols="12" sm="12" md="8">
-        <v-card class="rounded-xl mb-4" max-width="1000" elevation="4">
-          <v-list class="text-center pt-5">
-            <div class="profile-section">
-              <v-avatar size="150" class="mx-auto" color="black">
-                <v-img
-                  :src="profileUrl + profile_pic"
-                  alt="User Avatar"
-                  class="mx-auto"
-                  height="200"
-                  width="200"
-                />
-              </v-avatar>
-              <p class="text-center font-weight-bold mt-2">{{ firstName }} {{ lastName }}</p>
-            </div>
-          </v-list>
+  <v-row justify="center">
+    <v-col cols="12" sm="12" md="8">
+      <v-card class="rounded-xl mb-4" max-width="1000" elevation="4">
+        <v-list class="text-center pt-5">
+          <div class="profile-section">
+            <v-avatar size="150" class="mx-auto" color="black">
+              <v-img
+                :src="profileUrl + profile_pic"
+                alt="User Avatar"
+                class="mx-auto"
+                height="200"
+                width="200"
+              />
+            </v-avatar>
+            <p class="text-center font-weight-bold mt-2">{{ firstName }} {{ lastName }}</p>
+          </div>
+        </v-list>
 
-          <!-- Center the Facebook button -->
-          <v-card-actions class="text-center justify-center">
-            <v-btn
-              class="rounded-pill bg-light-green-darken-3"
-              icon="mdi-facebook"
-              :href="facebook_link"
-              target="_blank"
-              rel="noopener"
-            >
-            </v-btn>
-          </v-card-actions>
+        <!-- Center the Facebook button -->
+        <v-card-actions class="text-center justify-center">
+          <v-btn
+            class="rounded-pill bg-light-green-darken-3"
+            icon="mdi-facebook"
+            :href="facebook_link"
+            target="_blank"
+            rel="noopener"
+          >
+          </v-btn>
+        </v-card-actions>
 
-          <!-- Other buttons, already centered -->
-          <v-card-actions class="mx-auto">
-            <v-btn class="rounded-pill bg-light-green-darken-3" block @click="showEditModal = true">
-              Edit Profile
-            </v-btn>
-          </v-card-actions>
-          <v-card-actions class="mx-auto">
-            <v-btn class="rounded-pill bg-light-green-darken-3" block> Post Now! </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-col>
-    </v-row>
-
-    <!-- Modal for editing profile -->
-    <v-dialog v-model="showEditModal" max-width="500px">
-      <v-card class="rounded-xl">
-        <v-card-title class="text-center">Edit Profile</v-card-title>
-        <v-card-text>
-          <v-form>
-            <v-text-field v-model="firstName" label="First Name" variant="solo" rounded outlined />
-            <v-text-field v-model="lastName" label="Last Name" variant="solo" rounded outlined />
-            <v-file-input
-              v-model="profile_pic"
-              label="Upload Profile Image"
-              accept="image/*"
-              variant="solo"
-              rounded
-              outlined
-            />
-            <v-text-field
-              v-model="facebook_link"
-              label="Facebook Profile Link"
-              variant="solo"
-              rounded
-              outlined
-            />
-          </v-form>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn text color="red" @click="showEditModal = false">Cancel</v-btn>
-          <v-btn text color="green" @click="updateProfile">Save Changes</v-btn>
+        <!-- Other buttons, already centered -->
+        <v-card-actions class="mx-auto">
+          <v-btn class="rounded-pill bg-light-green-darken-3" block @click="showEditModal = true">
+            Edit Profile
+          </v-btn>
+        </v-card-actions>
+        <v-card-actions class="mx-auto">
+          <v-btn class="rounded-pill bg-light-green-darken-3" block> Post Now! </v-btn>
         </v-card-actions>
       </v-card>
-    </v-dialog>
+    </v-col>
+  </v-row>
 
-    <!-- Posts section -->
-    <UsersPost />
+  <!-- Modal for editing profile -->
+  <v-dialog v-model="showEditModal" max-width="500px">
+    <v-card class="rounded-xl">
+      <v-card-title class="text-center">Edit Profile</v-card-title>
+      <v-card-text>
+        <v-form>
+          <v-text-field v-model="firstName" label="First Name" variant="solo" rounded outlined />
+          <v-text-field v-model="lastName" label="Last Name" variant="solo" rounded outlined />
+          <v-file-input
+            v-model="profile_pic"
+            label="Upload Profile Image"
+            accept="image/*"
+            variant="solo"
+            rounded
+            outlined
+          />
+          <v-text-field
+            v-model="facebook_link"
+            label="Facebook Profile Link"
+            variant="solo"
+            rounded
+            outlined
+          />
+        </v-form>
+      </v-card-text>
+      <v-card-actions>
+        <v-btn text color="red" @click="showEditModal = false">Cancel</v-btn>
+        <v-btn text color="green" @click="updateProfile">Save Changes</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
+  <!-- Posts section -->
+  <UsersPost />
 </template>
