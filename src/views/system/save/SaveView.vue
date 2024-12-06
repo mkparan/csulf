@@ -79,35 +79,44 @@ const fetchSavedPosts = async () => {
   <DashboardLayout>
     <template #content>
       <v-container>
-        <!-- <SaveLayout :posts="savedPosts" /> -->
          <SaveLayout/>
+      <!-- Display message when there are no saved posts and have -->
+        <v-row justify="center" align="center" class="my-4">
+          <v-col cols="auto" class="text-center">
+            <v-divider class="">
+              <span v-if="savedPosts.length === 0">--------------------------------------------NO SAVED POST--------------------------------------------</span>
+              <span v-else>--------------------------------------------SAVED POSTS--------------------------------------------</span>
+            </v-divider>
+          </v-col>
+        </v-row>
+
         <v-row dense>
           <v-col cols="12" sm="8" md="6" v-for="post in savedPosts" :key="post.post_id">
-            <v-card class="mb-0 rounded-xl" max-width="4000" outlined elevation="10">
-                <v-list-item class="pb-2">
-                      <v-row class="w-100" align="center" no-gutters>
-                        <!-- Post Owner Image -->
-                        <v-col cols="auto">
-                          <v-avatar size="50" class="mx-2" color="black">
-                            <v-img
-                              :src="`${profileUrl}${post.post_owner.profile_pic}`"
-                              alt="Post Owner Picture"
-                              height="50"
-                              width="50"
-                            />
-                          </v-avatar>
-                        </v-col>
+            <v-card class="mb-4 rounded-xl" max-width="4000" outlined elevation="10">
+              <v-list-item class="pb-2">
+                <v-row class="w-100" align="center" no-gutters>
+                  <!-- Post Owner Image -->
+                  <v-col cols="auto">
+                    <v-avatar size="50" class="mx-2" color="black">
+                      <v-img
+                        :src="`${profileUrl}${post.post_owner.profile_pic}`"
+                        alt="Post Owner Picture"
+                        height="50"
+                        width="50"
+                      />
+                    </v-avatar>
+                  </v-col>
 
-                        <!-- Post Owner Name -->
-                        <v-col class="d-flex align-center">
-                          <v-list-item-content>
-                            <h3 class="text-light-green-darken-3 font-weight-bold">
-                                {{ post.post_owner.first_name }} {{ post.post_owner.last_name }}
-                            </h3>
-                          </v-list-item-content>
-                        </v-col>
-                      </v-row>
-                </v-list-item>
+                  <!-- Post Owner Name -->
+                  <v-col class="d-flex align-center">
+                    <v-list-item-content>
+                      <h3 class="text-light-green-darken-3 font-weight-bold">
+                        {{ post.post_owner.first_name }} {{ post.post_owner.last_name }}
+                      </h3>
+                    </v-list-item-content>
+                  </v-col>
+                </v-row>
+              </v-list-item>
               <v-img
                 v-if="post.image"
                 height="200"
@@ -115,25 +124,25 @@ const fetchSavedPosts = async () => {
                 cover
                 :alt="post.item_name || 'Post Image'"
               />
-              <v-card-title class="">{{ post.item_name }}</v-card-title>
+              <v-card-title>{{ post.item_name }}</v-card-title>
               <v-card-subtitle>{{ post.description }}</v-card-subtitle>
 
               <v-card-actions>
-                      <v-row class="w-100" justify="space-between">
-                        <!-- "Remove" button positioned on the left -->
-                        <v-col cols="auto">
-                          <v-btn color="primary" @click="removeFromSaved(post.post_id)" class="text-center">
-                            Remove
-                          </v-btn>
-                        </v-col>
+                <v-row class="w-100" justify="space-between">
+                  <!-- "Remove" button -->
+                  <v-col cols="auto">
+                    <v-btn color="primary" @click="removeFromSaved(post.post_id)" class="text-center">
+                      Remove
+                    </v-btn>
+                  </v-col>
 
-                        <!-- "Message" button positioned on the right -->
-                        <v-col cols="auto">
-                          <v-btn color="primary" :href="post.post_owner.facebook_link" target="_blank" rel="noopener" class="text-center">
-                            Message
-                          </v-btn>
-                        </v-col>
-                      </v-row>
+                  <!-- "Message" button -->
+                  <v-col cols="auto">
+                    <v-btn color="primary" :href="post.post_owner.facebook_link" target="_blank" rel="noopener" class="text-center">
+                      Message
+                    </v-btn>
+                  </v-col>
+                </v-row>
               </v-card-actions>
             </v-card>
           </v-col>
