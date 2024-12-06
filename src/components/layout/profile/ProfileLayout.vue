@@ -141,7 +141,6 @@ onMounted(() => {
 </script>
 
 <template>
-  <v-app>
     <br />
     <br />
     <v-row justify="center">
@@ -184,8 +183,6 @@ onMounted(() => {
             <v-btn class="rounded-pill bg-light-green-darken-3" block> Post Now! </v-btn>
           </v-card-actions>
         </v-card>
-
-        <v-divider>You Have No Posts Yet</v-divider>
       </v-col>
     </v-row>
 
@@ -223,5 +220,4 @@ onMounted(() => {
 
     <!-- Posts section -->
     <UsersPost />
-  </v-app>
 </template>

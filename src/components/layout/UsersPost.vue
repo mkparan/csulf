@@ -159,6 +159,15 @@ const updatePost = async () => {
     :form-error-message="formAction.formErrorMessage"
   ></AlertNotification>
   <v-container>
+         <!-- Display message when there are no posts and have -->
+        <v-row justify="center" align="center" class="my-4">
+          <v-col cols="auto" class="text-center">
+            <v-divider class="">
+              <span v-if="posts.length === 0">--------------------------------------------NO POST--------------------------------------------</span>
+              <span v-else>--------------------------------------------YOUR POSTS--------------------------------------------</span>
+            </v-divider>
+          </v-col>
+        </v-row>
     <v-row dense>
       <v-col cols="12" sm="8" md="6" v-for="post in posts" :key="post.id">
         <v-card class="mb-4 rounded-xl" max-width="4000" outlined elevation="10">
