@@ -1,8 +1,8 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { supabase } from '@/utils/supabase.js'
 import ShowItemDetails from './ShowItemDetails.vue'
 import AlertNotification from '../common/AlertNotification.vue'
+import { supabase } from '@/utils/supabase.js'
 
 const posts = ref([]) // Array to store posts
 const firstName = ref('') // First name of the user
@@ -135,7 +135,7 @@ const updatePost = async () => {
 
   if (error) {
     console.error('Error updating post:', error);
-    formAction.value.formErrorMessage = 'Post update failed';
+    formAction.formErrorMessage = 'Post Not Updated';
   } else {
     // Update the local data
     const index = posts.value.findIndex((p) => p.id === id);
@@ -143,7 +143,7 @@ const updatePost = async () => {
       posts.value[index] = { ...editPostData.value };
     }
     console.log('Post updated successfully');
-    formAction.value.formSuccessMessage = 'Post updated successfully';
+    formAction.value.formSuccessMessage = 'Post Updated Successfully '
     isEditModalVisible.value = false; // Close the modal
   }
 

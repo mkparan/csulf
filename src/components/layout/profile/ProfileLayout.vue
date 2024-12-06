@@ -2,6 +2,14 @@
 import { ref, onMounted } from 'vue'
 import { supabase } from '@/utils/supabase'
 import UsersPost from '@/components/layout/UsersPost.vue' // Adjust the path as necessary
+import AlertNotification from '../../common/AlertNotification.vue'
+
+// Define state for success and error messages
+const formAction = ref({
+  formSuccessMessage: '',
+  formErrorMessage: '',
+  formProcess: false
+})
 
 // Define component properties here
 const firstName = ref('')
@@ -39,100 +47,62 @@ const updateProfile = async () => {
     return
   }
 
-  console.log('Updating profile...')
-
   let uploadedFileName = profile_pic.value
 
-  // Handle image upload if the profile_pic is a file
   if (profile_pic.value instanceof File) {
-    // Use the file name as the file name in storage
     uploadedFileName = `public/${profile_pic.value.name}`
 
-    // Upload the image to Supabase storage
-    const { data, error: uploadError } = await supabase.storage
+    // Attempt to upload or overwrite the file if it already exists
+    const { error: uploadError } = await supabase.storage
       .from('images')
-      .upload(uploadedFileName, profile_pic.value)
+      .upload(uploadedFileName, profile_pic.value, {
+        upsert: true // Correctly include the upsert option here
+      })
 
     if (uploadError) {
-      console.error('Error uploading image:', uploadError.message || uploadError)
+      console.error('Error uploading image:', uploadError)
       return
     }
 
-    // After uploading, you can get the public URL (if needed for display purposes)
-    console.log('Uploaded File Name:', uploadedFileName)
+    console.log('Image uploaded successfully!')
   }
 
-  // Construct new user metadata with the uploaded image file name
   const updatedMetadata = {
     firstname: firstName.value,
     lastname: lastName.value,
-    profile_pic: uploadedFileName, // Store just the file name here
+    profile_pic: uploadedFileName,
     facebook_link: facebook_link.value
   }
 
-  // Update user_metadata in auth.users
-  const { error: updateUserError } = await supabase.auth.updateUser({
-    data: updatedMetadata
-  })
-
+  const { error: updateUserError } = await supabase.auth.updateUser({ data: updatedMetadata })
   if (updateUserError) {
-    console.error('Error updating user metadata in auth.users:', updateUserError.message)
+    console.error('Error updating user metadata in auth.users:', updateUserError)
     return
   }
 
-  console.log('Profile updated successfully in auth.users')
-
-  // Update the 'raw_user_meta_data' column in auth.users directly
   const { error: updateRawMetadataError } = await supabase
     .from('auth.users')
     .update({
-      raw_user_meta_data: {
-        firstname: firstName.value,
-        lastname: lastName.value,
-        profile_pic: uploadedFileName, // Use the file name here
-        facebook_link: facebook_link.value
-      }
+      raw_user_meta_data: updatedMetadata
     })
     .eq('id', user.id)
 
-  if (updateRawMetadataError) {
-    console.error(
-      'Error updating raw_user_meta_data in auth.users:',
-      updateRawMetadataError.message || updateRawMetadataError
-    )
-    return
+  if (updateRawMetadataError && Object.keys(updateRawMetadataError).length > 0) {
+    console.error('Error updating raw_user_meta_data in auth.users:', updateRawMetadataError)
   }
 
-  console.log('raw_user_meta_data column updated successfully')
-
-  // Optionally update the posts table or other tables
   const { error: updatePostsError } = await supabase
     .from('posts')
-    .update({
-      profile_pic: uploadedFileName, // Use the file name here
-      firstname: firstName.value,
-      lastname: lastName.value,
-      facebook_link: facebook_link.value
-    })
+    .update(updatedMetadata)
     .eq('user_id', user.id)
 
   if (updatePostsError) {
-    console.error('Error updating posts table:', updatePostsError.message || updatePostsError)
-  } else {
-    console.log('Posts table updated successfully')
+    console.error('Error updating posts table:', updatePostsError)
   }
 
-  // Re-fetch user details to update UI
   fetchUserDetails()
+  formAction.value.formSuccessMessage = 'Post successfully updated'
   showEditModal.value = false
-}
-
-// Generate the full URL for the profile picture (if needed for display purposes)
-const getProfilePicUrl = () => {
-  if (profile_pic.value && !profile_pic.value.startsWith('http')) {
-    return supabase.storage.from('images').getPublicUrl(profile_pic.value).publicURL
-  }
-  return profile_pic.value
 }
 
 onMounted(() => {
@@ -141,83 +111,85 @@ onMounted(() => {
 </script>
 
 <template>
-    <br />
-    <br />
-    <v-row justify="center">
-      <v-col cols="12" sm="12" md="8">
-        <v-card class="rounded-xl mb-4" max-width="1000" elevation="4">
-          <v-list class="text-center pt-5">
-            <div class="profile-section">
-              <v-avatar size="150" class="mx-auto" color="black">
-                <v-img
-                  :src="profileUrl + profile_pic"
-                  alt="User Avatar"
-                  class="mx-auto"
-                  height="200"
-                  width="200"
-                />
-              </v-avatar>
-              <p class="text-center font-weight-bold mt-2">{{ firstName }} {{ lastName }}</p>
-            </div>
-          </v-list>
+  <AlertNotification
+    :form-success-message="formAction.formSuccessMessage"
+    :form-error-message="formAction.formErrorMessage"
+  ></AlertNotification>
+  <v-row justify="center">
+    <v-col cols="12" sm="12" md="8">
+      <v-card class="rounded-xl mb-4" max-width="1000" elevation="4">
+        <v-list class="text-center pt-5">
+          <div class="profile-section">
+            <v-avatar size="150" class="mx-auto" color="black">
+              <v-img
+                :src="profileUrl + profile_pic"
+                alt="User Avatar"
+                class="mx-auto"
+                height="200"
+                width="200"
+              />
+            </v-avatar>
+            <p class="text-center font-weight-bold mt-2">{{ firstName }} {{ lastName }}</p>
+          </div>
+        </v-list>
 
-          <!-- Center the Facebook button -->
-          <v-card-actions class="text-center justify-center">
-            <v-btn
-              class="rounded-pill bg-light-green-darken-3"
-              icon="mdi-facebook"
-              :href="facebook_link"
-              target="_blank"
-              rel="noopener"
-            >
-            </v-btn>
-          </v-card-actions>
+        <!-- Center the Facebook button -->
+        <v-card-actions class="text-center justify-center">
+          <v-btn
+            class="rounded-pill bg-light-green-darken-3"
+            icon="mdi-facebook"
+            :href="facebook_link"
+            target="_blank"
+            rel="noopener"
+          >
+          </v-btn>
+        </v-card-actions>
 
-          <!-- Other buttons, already centered -->
-          <v-card-actions class="mx-auto">
-            <v-btn class="rounded-pill bg-light-green-darken-3" block @click="showEditModal = true">
-              Edit Profile
-            </v-btn>
-          </v-card-actions>
-          <v-card-actions class="mx-auto">
-            <v-btn class="rounded-pill bg-light-green-darken-3" block> Post Now! </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-col>
-    </v-row>
-
-    <!-- Modal for editing profile -->
-    <v-dialog v-model="showEditModal" max-width="500px">
-      <v-card class="rounded-xl">
-        <v-card-title class="text-center">Edit Profile</v-card-title>
-        <v-card-text>
-          <v-form>
-            <v-text-field v-model="firstName" label="First Name" variant="solo" rounded outlined />
-            <v-text-field v-model="lastName" label="Last Name" variant="solo" rounded outlined />
-            <v-file-input
-              v-model="profile_pic"
-              label="Upload Profile Image"
-              accept="image/*"
-              variant="solo"
-              rounded
-              outlined
-            />
-            <v-text-field
-              v-model="facebook_link"
-              label="Facebook Profile Link"
-              variant="solo"
-              rounded
-              outlined
-            />
-          </v-form>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn text color="red" @click="showEditModal = false">Cancel</v-btn>
-          <v-btn text color="green" @click="updateProfile">Save Changes</v-btn>
+        <!-- Other buttons, already centered -->
+        <v-card-actions class="mx-auto">
+          <v-btn class="rounded-pill bg-light-green-darken-3" block @click="showEditModal = true">
+            Edit Profile
+          </v-btn>
+        </v-card-actions>
+        <v-card-actions class="mx-auto">
+          <v-btn class="rounded-pill bg-light-green-darken-3" block> Post Now! </v-btn>
         </v-card-actions>
       </v-card>
-    </v-dialog>
+    </v-col>
+  </v-row>
 
-    <!-- Posts section -->
-    <UsersPost />
+  <!-- Modal for editing profile -->
+  <v-dialog v-model="showEditModal" max-width="500px">
+    <v-card class="rounded-xl">
+      <v-card-title class="text-center">Edit Profile</v-card-title>
+      <v-card-text>
+        <v-form>
+          <v-text-field v-model="firstName" label="First Name" variant="solo" rounded outlined />
+          <v-text-field v-model="lastName" label="Last Name" variant="solo" rounded outlined />
+          <v-file-input
+            v-model="profile_pic"
+            label="Upload Profile Image"
+            accept="image/*"
+            variant="solo"
+            rounded
+            outlined
+          />
+          <v-text-field
+            v-model="facebook_link"
+            label="Facebook Profile Link"
+            variant="solo"
+            rounded
+            outlined
+          />
+        </v-form>
+      </v-card-text>
+      <v-card-actions>
+        <v-btn text color="red" @click="showEditModal = false">Cancel</v-btn>
+        <v-btn text color="green" @click="updateProfile">Save Changes</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
+  <!-- Posts section -->
+  <UsersPost />
 </template>

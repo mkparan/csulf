@@ -43,25 +43,29 @@ const handlePost = async () => {
   formAction.value.formProcess = true // Indicate process start
 
   let imageUrl = ''
-  if (image.value) {
-    try {
-      const { data, error } = await supabase.storage
-        .from('items')
-        .upload(`public/${image.value.name}`, image.value)
+        if (image.value) {
+        try {
+          // Attempt to upload or overwrite the file if it already exists
+          const { data, error } = await supabase.storage
+            .from('items')
+            .upload(`public/${image.value.name}`, image.value, {
+              upsert: true, // Pass upsert as an option here
+            })
 
-      if (error) {
-        console.error('Image upload error:', error)
-        formAction.value.formErrorMessage = 'Failed to upload the image.'
-        return
+          if (error) {
+            console.error('Image upload error:', error)
+            formAction.value.formErrorMessage = 'Failed to upload the image.'
+            return
+          }
+          imageUrl = data?.path
+          console.log('Image uploaded successfully:', imageUrl)
+        } catch (error) {
+          console.error('Error uploading image:', error)
+          formAction.value.formErrorMessage = 'Unexpected error during image upload.'
+          return
+        }
       }
-      imageUrl = data?.path
-      console.log('Image uploaded successfully:', imageUrl)
-    } catch (error) {
-      console.error('Error uploading image:', error)
-      formAction.value.formErrorMessage = 'Unexpected error during image upload.'
-      return
-    }
-  }
+
 
   try {
     const {
