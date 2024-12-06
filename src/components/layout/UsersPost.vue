@@ -162,40 +162,47 @@ const updatePost = async () => {
     <v-row dense>
       <v-col cols="12" sm="8" md="6" v-for="post in posts" :key="post.id">
         <v-card class="mb-4 rounded-xl" max-width="4000" outlined elevation="10">
-          <v-list-item>
-            <!-- Poster Image-->
-            <v-row align="center" justify="space-between" class="mx-1 my-2">
-              <!-- Avatar -->
-              <v-avatar size="50" color="black">
-                <v-img
-                  :src="profileUrl + profilePic"
-                  alt="User Avatar"
-                  class="mx-auto"
-                  height="200"
-                  width="200"
-                />
-              </v-avatar>
-
-              <!-- Options Icon with Menu -->
-              <v-menu offset-y>
-                <template v-slot:activator="{ props }">
-                  <v-icon icon="mdi-format-list-bulleted" class="ml-auto" v-bind="props"></v-icon>
-                </template>
-                <v-list>
-                  <v-list-item @click="editPost(post)">
-                    <v-list-item-title>Edit Post</v-list-item-title>
-                  </v-list-item>
-                  <v-list-item @click="deletePost(post)">
-                    <v-list-item-title>Delete Post</v-list-item-title>
-                  </v-list-item>
-                </v-list>
-              </v-menu>
-            </v-row>
-            <v-list-item-content>
-              <h3>{{ firstName }} {{ lastName }}</h3>
-            </v-list-item-content>
-          </v-list-item>
-
+              <v-list-item>
+                        <!-- Poster Image -->
+                        <v-row align="center" class="mx-1 my-2">
+                          <!-- Avatar Column -->
+                          <v-col cols="2" class="d-flex align-center justify-center">
+                            <v-avatar size="50" color="black">
+                              <v-img
+                                :src="profileUrl + profilePic"
+                                alt="User Avatar"
+                                class="mx-auto"
+                                height="200"
+                                width="200"
+                              />
+                            </v-avatar>
+                          </v-col>
+                          <!-- Name Column -->
+                          <v-col cols="8" class="d-flex align-center text-light-green-darken-3">
+                            <h3 class="m-0">{{ firstName }} {{ lastName }}</h3>
+                          </v-col>
+                          <!-- Menu Column -->
+                          <v-col cols="2" class="d-flex align-center justify-end">
+                            <v-menu offset-y>
+                              <template v-slot:activator="{ props }">
+                                <v-icon
+                                  icon="mdi-format-list-bulleted"
+                                  class="ml-auto"
+                                  v-bind="props"
+                                ></v-icon>
+                              </template>
+                              <v-list>
+                                <v-list-item @click="editPost(post)">
+                                  <v-list-item-title>Edit Post</v-list-item-title>
+                                </v-list-item>
+                                <v-list-item @click="deletePost(post)">
+                                  <v-list-item-title>Delete Post</v-list-item-title>
+                                </v-list-item>
+                              </v-list>
+                            </v-menu>
+                          </v-col>
+                        </v-row>
+                </v-list-item>
           <!-- Post Image -->
           <v-img
             v-if="post.image"
@@ -204,8 +211,8 @@ const updatePost = async () => {
             cover
             :alt="post.item_name || 'Post Image'"
           />
-          <v-card-title>{{ post.item_name }}</v-card-title>
-          <v-card-subtitle>{{ post.description }}</v-card-subtitle>
+          <v-card-title class="text-light-green-darken-3">{{ post.item_name }}</v-card-title>
+          <v-card-subtitle class="text-light-green-darken-3">{{ post.description }}</v-card-subtitle>
           <v-card-actions>
             <v-btn color="primary" @click="showDetails(post)"> View Details</v-btn>
           </v-card-actions>
