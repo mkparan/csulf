@@ -35,101 +35,63 @@ const resetForm = () => {
 
  const formAction = ref({ ...formActionDefault })
 
-
-
-// Handle Post Submission
 const handlePost = async () => {
-  // Reset messages
   formAction.value = { ...formActionDefault }
 
-  // Validate required fields
   if (!item_name.value || !image.value || !description.value) {
     formAction.value.formErrorMessage = 'All fields are required.'
-    console.error('Validation error: Some fields are empty.')
     return
   }
 
-  formAction.value.formProcess = true // Indicate process start
+  formAction.value.formProcess = true
 
   let imageUrl = ''
   if (image.value) {
-    try {
-      // Attempt to upload or overwrite the file if it already exists
-      const { data, error } = await supabase.storage
-        .from('items')
-        .upload(`public/${image.value.name}`, image.value, {
-          upsert: true // Pass upsert as an option here
-        })
+    const { data, error } = await supabase.storage
+      .from('items')
+      .upload(`public/${image.value.name}`, image.value, { upsert: true })
 
-      if (error) {
-        console.error('Image upload error:', error)
-        formAction.value.formErrorMessage = 'Failed to upload the image.'
-        return
-      }
-      imageUrl = data?.path
-      console.log('Image uploaded successfully:', imageUrl)
-    } catch (error) {
-      console.error('Error uploading image:', error)
-      formAction.value.formErrorMessage = 'Unexpected error during image upload.'
+    if (error) {
+      formAction.value.formErrorMessage = 'Failed to upload the image.'
       return
     }
+    imageUrl = data?.path
   }
 
   try {
     const {
       data: { user },
-      error: authError
     } = await supabase.auth.getUser()
 
-    if (authError) {
-      console.error('Auth error:', authError)
-      formAction.value.formErrorMessage = 'Failed to retrieve user information.'
-      return
-    }
-
     const userId = user?.id
-
-    const { error: insertError } = await supabase.from('posts').insert([
+    const { data: newPost, error: insertError } = await supabase.from('posts').insert([
       {
         item_name: item_name.value,
         image: imageUrl,
         description: description.value,
-        user_id: userId
-      }
-    ])
+        user_id: userId,
+      },
+    ]).select()
 
     if (insertError) {
-      console.error('Insert error:', insertError)
       formAction.value.formErrorMessage = 'Failed to create the post.'
       return
     }
 
+    posts.value.unshift(newPost[0]) // Add the new post
+    posts.value = [...posts.value] // Ensure reactivity triggers
     formAction.value.formSuccessMessage = 'Post created successfully!'
-
-    // Fetch the new list of posts, filtering by userId for UsersPost.vue
-    const { data: postsData, error: fetchError } = await supabase
-      .from('posts')
-      .select()
-      .eq('user_id', userId) // Fetch only the logged-in user's posts
-
-    if (fetchError) {
-      console.error('Fetch error:', fetchError)
-      formAction.value.formErrorMessage = 'Failed to fetch updated posts.'
-      return
-    }
-
-    posts.value = postsData // Update posts with user's posts
-    console.log('Posts fetched:', posts.value)
-
-    resetForm() // Clear the form fields
-    showModal.value = false // Close the modal
+    resetForm()
+    showModal.value = false
   } catch (error) {
-    console.error('Error during post creation:', error)
     formAction.value.formErrorMessage = 'Unexpected error during post creation.'
   } finally {
-    formAction.value.formProcess = false // Indicate process end
+    formAction.value.formProcess = false
   }
 }
+
+
+
 
 const handleCancel = () => {
   resetForm()
