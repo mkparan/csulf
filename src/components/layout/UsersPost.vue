@@ -94,62 +94,60 @@ const uploadImage = async (file) => {
       .from('items') // Your Supabase storage bucket
       .upload(`public/${file.name}`, file, {
         cacheControl: '3600',
-        upsert: true, // Prevent overwriting existing files
-      });
+        upsert: true // Prevent overwriting existing files
+      })
 
     if (error) {
-      throw error;
+      throw error
     }
 
     // Return the file path on successful upload
-    return data.path;
+    return data.path
   } catch (error) {
-    console.error('Error uploading image:', error);
-    return null;
+    console.error('Error uploading image:', error)
+    return null
   }
-};
-
+}
 
 const updatePost = async () => {
-  formAction.value = { ...formActionDefault, formProcess: true };
+  formAction.value = { ...formActionDefault, formProcess: true }
 
   // Check if a new image is selected
   if (editPostData.value.imageFile) {
-    const uploadedImagePath = await uploadImage(editPostData.value.imageFile);
+    const uploadedImagePath = await uploadImage(editPostData.value.imageFile)
 
     if (!uploadedImagePath) {
-      formAction.value.formErrorMessage = 'Image upload failed';
-      formAction.value.formProcess = false;
-      return;
+      formAction.value.formErrorMessage = 'Image upload failed'
+      formAction.value.formProcess = false
+      return
     }
 
-    editPostData.value.image = uploadedImagePath; // Use uploaded image path
+    editPostData.value.image = uploadedImagePath // Use uploaded image path
   }
 
-  const { id, image, item_name, description } = editPostData.value;
+  const { id, image, item_name, description } = editPostData.value
 
   const { error } = await supabase
     .from('posts')
     .update({ image, item_name, description })
-    .eq('id', id);
+    .eq('id', id)
 
   if (error) {
-    console.error('Error updating post:', error);
-    formAction.formErrorMessage = 'Post Not Updated';
+    console.error('Error updating post:', error)
+    formAction.formErrorMessage = 'Post Not Updated'
   } else {
     // Update the local data
-    const index = posts.value.findIndex((p) => p.id === id);
+    const index = posts.value.findIndex((p) => p.id === id)
     if (index !== -1) {
-      posts.value[index] = { ...editPostData.value };
+      posts.value[index] = { ...editPostData.value }
     }
-    console.log('Post updated successfully');
+    console.log('Post updated successfully')
     formAction.value.formSuccessMessage = 'Post Updated Successfully '
-    isEditModalVisible.value = false; // Close the modal
+    isEditModalVisible.value = false // Close the modal
   }
 
-  formAction.value.formProcess = false;
-};
-
+  formAction.value.formProcess = false
+}
 </script>
 
 <template>
@@ -159,59 +157,62 @@ const updatePost = async () => {
     :form-error-message="formAction.formErrorMessage"
   ></AlertNotification>
   <v-container>
-         <!-- Display message when there are no posts and have -->
-        <v-row justify="center" align="center" class="my-4">
-          <v-col cols="auto" class="text-center">
-            <v-divider class="">
-              <span v-if="posts.length === 0">--------------------------------------------NO POST--------------------------------------------</span>
-              <span v-else>--------------------------------------------YOUR POSTS--------------------------------------------</span>
-            </v-divider>
-          </v-col>
-        </v-row>
+    <!-- Display message when there are no posts and have -->
+    <v-row justify="center" align="center" class="">
+      <v-col cols="8" class="text-center">
+        <v-divider class="">
+          <p v-if="posts.length === 0">No Posts</p>
+          <p v-else>Your Posts</p>
+        </v-divider>
+      </v-col>
+    </v-row>
     <v-row dense>
       <v-col cols="12" sm="8" md="6" v-for="post in posts" :key="post.id">
-        <v-card class="mb-4 rounded-xl" max-width="4000" outlined elevation="10" link @click="showDetails(post)">
-              <v-list-item>
-                        <!-- Poster Image -->
-                        <v-row align="center" class="mx-1 my-2">
-                          <!-- Avatar Column -->
-                          <v-col cols="2" class="d-flex align-center justify-center">
-                            <v-avatar size="50" color="black">
-                              <v-img
-                                :src="profileUrl + profilePic"
-                                alt="User Avatar"
-                                class="mx-auto"
-                                height="200"
-                                width="200"
-                              />
-                            </v-avatar>
-                          </v-col>
-                          <!-- Name Column -->
-                          <v-col cols="8" class="d-flex align-center text-light-green-darken-3">
-                            <h3 class="m-0">{{ firstName }} {{ lastName }}</h3>
-                          </v-col>
-                          <!-- Menu Column -->
-                          <v-col cols="2" class="d-flex align-center justify-end">
-                            <v-menu offset-y>
-                              <template v-slot:activator="{ props }">
-                                <v-icon
-                                  icon="mdi-format-list-bulleted"
-                                  class="ml-auto"
-                                  v-bind="props"
-                                ></v-icon>
-                              </template>
-                              <v-list>
-                                <v-list-item @click="editPost(post)">
-                                  <v-list-item-title>Edit Post</v-list-item-title>
-                                </v-list-item>
-                                <v-list-item @click="deletePost(post)">
-                                  <v-list-item-title>Delete Post</v-list-item-title>
-                                </v-list-item>
-                              </v-list>
-                            </v-menu>
-                          </v-col>
-                        </v-row>
-                </v-list-item>
+        <v-card
+          class="mb-4 rounded-xl"
+          max-width="4000"
+          outlined
+          elevation="10"
+          link
+          @click="showDetails(post)"
+        >
+          <v-list-item>
+            <!-- Poster Image -->
+            <v-row align="center" class="mx-1 my-2">
+              <!-- Avatar Column -->
+              <v-col cols="2" class="d-flex align-center justify-center">
+                <v-avatar size="50" color="black">
+                  <v-img
+                    :src="profileUrl + profilePic"
+                    alt="User Avatar"
+                    class="mx-auto"
+                    height="200"
+                    width="200"
+                  />
+                </v-avatar>
+              </v-col>
+              <!-- Name Column -->
+              <v-col cols="8" class="d-flex align-center text-light-green-darken-3">
+                <h3 class="m-0">{{ firstName }} {{ lastName }}</h3>
+              </v-col>
+              <!-- Menu Column -->
+              <v-col cols="2" class="d-flex align-center justify-end">
+                <v-menu offset-y>
+                  <template v-slot:activator="{ props }">
+                    <v-icon icon="mdi-format-list-bulleted" class="ml-auto" v-bind="props"></v-icon>
+                  </template>
+                  <v-list>
+                    <v-list-item @click="editPost(post)">
+                      <v-list-item-title>Edit Post</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @click="deletePost(post)">
+                      <v-list-item-title>Delete Post</v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
+              </v-col>
+            </v-row>
+          </v-list-item>
           <!-- Post Image -->
           <v-img
             v-if="post.image"
@@ -221,7 +222,9 @@ const updatePost = async () => {
             :alt="post.item_name || 'Post Image'"
           />
           <v-card-title class="text-light-green-darken-3">{{ post.item_name }}</v-card-title>
-          <v-card-subtitle class="text-light-green-darken-3">{{ post.description }}</v-card-subtitle>
+          <v-card-subtitle class="text-light-green-darken-3">{{
+            post.description
+          }}</v-card-subtitle>
         </v-card>
       </v-col>
     </v-row>
@@ -234,38 +237,38 @@ const updatePost = async () => {
     </v-dialog>
 
     <!-- Edit Post Modal -->
-  <v-dialog v-model="isEditModalVisible" max-width="600">
-    <template v-slot:default>
-      <v-card>
-        <v-card-title>Edit Post</v-card-title>
-        <v-card-text>
-          <v-form>
-            <v-text-field
-              v-model="editPostData.item_name"
-              label="Item Name"
-              outlined
-              dense
-            ></v-text-field>
-            <v-textarea
-              v-model="editPostData.description"
-              label="Description"
-              outlined
-              dense
-            ></v-textarea>
-            <v-file-input
+    <v-dialog v-model="isEditModalVisible" max-width="600">
+      <template v-slot:default>
+        <v-card>
+          <v-card-title>Edit Post</v-card-title>
+          <v-card-text>
+            <v-form>
+              <v-text-field
+                v-model="editPostData.item_name"
+                label="Item Name"
+                outlined
+                dense
+              ></v-text-field>
+              <v-textarea
+                v-model="editPostData.description"
+                label="Description"
+                outlined
+                dense
+              ></v-textarea>
+              <v-file-input
                 label="Upload Image"
                 v-model="editPostData.imageFile"
                 accept="image/*"
                 show-size
-            ></v-file-input>
-          </v-form>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn color="primary" @click="updatePost">Save</v-btn>
-          <v-btn color="secondary" @click="isEditModalVisible = false">Cancel</v-btn>
-        </v-card-actions>
-      </v-card>
-    </template>
-  </v-dialog>
+              ></v-file-input>
+            </v-form>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn color="primary" @click="updatePost">Save</v-btn>
+            <v-btn color="secondary" @click="isEditModalVisible = false">Cancel</v-btn>
+          </v-card-actions>
+        </v-card>
+      </template>
+    </v-dialog>
   </v-container>
 </template>

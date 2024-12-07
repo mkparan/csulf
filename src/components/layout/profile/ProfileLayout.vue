@@ -3,13 +3,14 @@ import { ref, onMounted } from 'vue'
 import { supabase } from '@/utils/supabase'
 import UsersPost from '@/components/layout/UsersPost.vue' // Adjust the path as necessary
 import AlertNotification from '../../common/AlertNotification.vue'
+import { requiredValidator } from '../../../utils/validators' // Assuming this is defined correctly
 
-// Define state for success and error messages
-const formAction = ref({
+// Manage form action states
+const formActionDefault = {
   formSuccessMessage: '',
   formErrorMessage: '',
   formProcess: false
-})
+}
 
 // Define component properties here
 const firstName = ref('')
@@ -17,8 +18,87 @@ const lastName = ref('')
 const profile_pic = ref('') // File name of the profile image
 const facebook_link = ref('') // Reactive reference for Facebook link
 const showEditModal = ref(false) // Control modal visibility
+const showModal = ref(false) // Modal visibility
+const item_name = ref('') // Item name input
+const image = ref(null) // Image file input
+const description = ref('') // Description input
+const posts = ref([]) // Array to store posts
 
 const profileUrl = 'https://bvflfwricxabodytryee.supabase.co/storage/v1/object/public/images/'
+
+// Reset form fields
+const resetForm = () => {
+  item_name.value = ''
+  image.value = null
+  description.value = ''
+}
+
+ const formAction = ref({ ...formActionDefault })
+
+const handlePost = async () => {
+  formAction.value = { ...formActionDefault }
+
+  if (!item_name.value || !image.value || !description.value) {
+    formAction.value.formErrorMessage = 'All fields are required.'
+    return
+  }
+
+  formAction.value.formProcess = true
+
+  let imageUrl = ''
+  if (image.value) {
+    const { data, error } = await supabase.storage
+      .from('items')
+      .upload(`public/${image.value.name}`, image.value, { upsert: true })
+
+    if (error) {
+      formAction.value.formErrorMessage = 'Failed to upload the image.'
+      return
+    }
+    imageUrl = data?.path
+  }
+
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    const userId = user?.id
+    const { data: newPost, error: insertError } = await supabase.from('posts').insert([
+      {
+        item_name: item_name.value,
+        image: imageUrl,
+        description: description.value,
+        user_id: userId,
+      },
+    ]).select()
+
+    if (insertError) {
+      formAction.value.formErrorMessage = 'Failed to create the post.'
+      return
+    }
+
+    posts.value.unshift(newPost[0]) // Add the new post
+    posts.value = [...posts.value] // Ensure reactivity triggers
+    formAction.value.formSuccessMessage = 'Post created successfully!'
+    resetForm()
+    showModal.value = false
+  } catch (error) {
+    formAction.value.formErrorMessage = 'Unexpected error during post creation.'
+  } finally {
+    formAction.value.formProcess = false
+  }
+}
+
+
+
+
+const handleCancel = () => {
+  resetForm()
+  formAction.value = { ...formActionDefault } // Reset form action state
+  showModal.value = false // Close the modal
+}
+
 
 // Fetch user details from Supabase
 const fetchUserDetails = async () => {
@@ -111,10 +191,9 @@ onMounted(() => {
 </script>
 
 <template>
-  <AlertNotification
-    :form-success-message="formAction.formSuccessMessage"
-    :form-error-message="formAction.formErrorMessage"
-  ></AlertNotification>
+  <br />
+  <br />
+
   <v-row justify="center">
     <v-col cols="12" sm="12" md="8">
       <v-card class="rounded-xl mb-4" max-width="1000" elevation="4">
@@ -129,7 +208,9 @@ onMounted(() => {
                 width="200"
               />
             </v-avatar>
-            <p class="text-center font-weight-bold mt-2">{{ firstName }} {{ lastName }}</p>
+            <p class="text-center font-weight-bold mt-2 text-light-green-darken-3">
+              {{ firstName }} {{ lastName }}
+            </p>
           </div>
         </v-list>
 
@@ -152,9 +233,13 @@ onMounted(() => {
           </v-btn>
         </v-card-actions>
         <v-card-actions class="mx-auto">
-          <v-btn class="rounded-pill bg-light-green-darken-3" block> Post Now! </v-btn>
+          <v-btn class="rounded-pill bg-light-green-darken-3" block @click="showModal = true"> Post Now! </v-btn>
         </v-card-actions>
       </v-card>
+      <AlertNotification
+        :form-success-message="formAction.formSuccessMessage"
+        :form-error-message="formAction.formErrorMessage"
+      ></AlertNotification>
     </v-col>
   </v-row>
 
@@ -189,6 +274,51 @@ onMounted(() => {
       </v-card-actions>
     </v-card>
   </v-dialog>
+
+    <!-- Modal for Create Post -->
+    <v-dialog v-model="showModal" max-width="500px">
+      <v-card class="rounded-xl">
+        <v-card-title class="text-center">
+          <span class="text-h5 pa-2">Create Post</span>
+        </v-card-title>
+        <v-card-text>
+          <v-form>
+            <v-text-field
+              v-model="item_name"
+              label="Item Name"
+              variant="solo"
+              rounded
+              outlined
+              :rules="[requiredValidator]"
+            />
+            <v-file-input
+              v-model="image"
+              label="Upload Image"
+              accept="image/*"
+              variant="solo"
+              rounded
+              outlined
+              :rules="[requiredValidator]"
+            />
+            <v-textarea
+              v-model="description"
+              label="Description"
+              variant="solo"
+              rounded
+              outlined
+              rows="3"
+              :rules="[requiredValidator]"
+            />
+          </v-form>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn text color="red" @click="handleCancel">Cancel</v-btn>
+          <v-btn :disabled="formAction.formProcess" text color="green" @click="handlePost">
+            Post
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
 
   <!-- Posts section -->
   <UsersPost />
