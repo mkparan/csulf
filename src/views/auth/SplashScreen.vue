@@ -1,34 +1,3 @@
-<template>
-  <v-app>
-    <v-container fluid class="d-flex align-center justify-center splash-screen">
-      <v-row>
-        <v-col class="text-center">
-          <!-- Show image once it's loaded -->
-          <v-img
-            v-if="isLoaded"
-            src="/images/splashcsulf.png"
-            max-width="400"
-            class="mx-auto"
-            alt="Logo"
-            elevation="16"
-            transition="fade-transition"
-          />
-          <!-- Show loading spinner until image is loaded -->
-          <v-progress-circular
-            v-if="!isLoaded"
-            :size="70"
-            :width="7"
-            color="amber"
-            indeterminate
-            transition="fade-transition"
-            max-width="400"
-          ></v-progress-circular>
-        </v-col>
-      </v-row>
-    </v-container>
-  </v-app>
-</template>
-
 <script>
 export default {
   name: 'SplashScreen',
@@ -52,6 +21,27 @@ export default {
   }
 }
 </script>
+
+<template>
+  <v-app>
+    <v-container fluid class="d-flex align-center justify-center splash-screen">
+      <v-row>
+        <v-col class="text-center">
+          <!-- Show image once it's loaded -->
+          <v-img
+            v-if="isLoaded"
+            src="/images/splashcsulf.png"
+            max-width="400"
+            class="mx-auto"
+            alt="Logo"
+            elevation="16"
+            transition="fade-transition"
+          />
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-app>
+</template>
 
 <style scoped>
 .splash-screen {

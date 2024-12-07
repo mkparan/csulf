@@ -15,12 +15,13 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      redirect: '/splash' // Set the root to redirect to splash screen
+      redirect: '/splash' // Redirect root to splash screen
     },
     {
       path: '/splash',
       name: 'splash',
-      component: SplashScreen
+      component: SplashScreen,
+      meta: { requiresAuth: false }
     },
     {
       path: '/login',
@@ -66,28 +67,38 @@ const router = createRouter({
   ]
 })
 
+// Add a flag to check if the splash screen was shown in this session
+let splashShown = false
+
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore() // Correct store initialization
   const isLoggedIn = await authStore.checkAuth() // Ensure you're using the store's method
 
   console.log('Route Guard Debug:', { isLoggedIn, routeName: to.name })
 
-  // If user is logged in, prevent accessing login or register pages
-  if (isLoggedIn && (to.name === 'login' || to.name === 'register' || to.name === 'splash')) {
-    return next({ name: 'dashboard' }) // Redirect logged-in users to dashboard
-  }
+  // If the splash screen has already been shown, proceed to the next route
+  if (splashShown) {
+    // If user is logged in, redirect them to the dashboard (skip login/register)
+    if (isLoggedIn && (to.name === 'login' || to.name === 'register')) {
+      return next({ name: 'dashboard' })
+    }
 
-  // If the user is not logged in and tries to access a protected route (like dashboard)
-  if (!isLoggedIn && to.path.startsWith('/system')) {
-    return next({ name: 'login' }) // Redirect unauthenticated users to login
+    // If the user is not logged in and tries to access a protected route (like dashboard)
+    if (!isLoggedIn && to.path.startsWith('/system')) {
+      return next({ name: 'login' }) // Redirect unauthenticated users to login
+    }
+
+    next() // Allow the route to proceed
+  } else {
+    // If the splash screen has not been shown yet, show it first
+    splashShown = true
+    next({ name: 'splash' }) // Redirect to splash screen
   }
 
   // Handle unknown routes
   if (router.resolve(to).matched.length === 0) {
     return next({ name: 'not-found' }) // Redirect unknown routes to not-found
   }
-
-  next() // Allow the route to proceed
 })
 
 export default router

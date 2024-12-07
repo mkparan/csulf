@@ -1,15 +1,9 @@
-<script setup>
-import { ref } from 'vue'
-
-const theme = ref('light')
-</script>
-
 <template>
   <v-responsive class="border rounded">
-    <v-app :theme="theme">
+    <v-app>
       <!-- Background image container -->
-      <div class="background-image" transition="fade-transition">
-        <v-main class="d-flex align-center justify-center fill-height">
+      <div class="background-image">
+        <v-main class="d-flex align-center justify-center fill-height" transition="fade-transition">
           <v-container>
             <slot name="content"></slot>
           </v-container>
