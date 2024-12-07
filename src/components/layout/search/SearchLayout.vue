@@ -36,7 +36,6 @@ onMounted(() => {
 </script>
 
 <template>
-  <v-app>
     <br />
     <br />
     <v-row justify="center">
@@ -113,5 +112,4 @@ onMounted(() => {
         </v-card>
       </v-col>
     </v-row>
-  </v-app>
 </template>
