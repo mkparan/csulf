@@ -3,6 +3,18 @@ import { useDisplay } from 'vuetify'
 
 // Get mobile status from Vuetify's useDisplay
 const { mobile } = useDisplay()
+
+// Props
+defineProps({
+  modelValue: {
+    type: Boolean,
+    required: true
+  },
+  permanent: {
+    type: Boolean,
+    default: false
+  }
+})
 </script>
 
 <template>
@@ -11,6 +23,9 @@ const { mobile } = useDisplay()
     class="bg-white rounded-s-xl pa-6"
     :width="350"
     elevation="16"
+    :model-value="modelValue"
+    :permanent="permanent"
+    @update:modelValue="emit('update:modelValue', $event)"
   >
     <v-container>
       <v-row>

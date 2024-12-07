@@ -1,9 +1,35 @@
+<script>
+export default {
+  name: 'SplashScreen',
+  data() {
+    return {
+      isLoaded: false
+    }
+  },
+  mounted() {
+    // Check if the splash image has loaded
+    const img = new Image()
+    img.src = '/images/splashcsulf.png'
+    img.onload = () => {
+      this.isLoaded = true
+    }
+
+    // Redirect to login after 5 seconds or when image is loaded
+    setTimeout(() => {
+      this.$router.push({ name: 'login' })
+    }, 5000)
+  }
+}
+</script>
+
 <template>
   <v-app>
     <v-container fluid class="d-flex align-center justify-center splash-screen">
       <v-row>
         <v-col class="text-center">
+          <!-- Show image once it's loaded -->
           <v-img
+            v-if="isLoaded"
             src="/images/splashcsulf.png"
             max-width="400"
             class="mx-auto"
@@ -11,32 +37,11 @@
             elevation="16"
             transition="fade-transition"
           />
-          <!-- splash loading -->
-          <v-progress-circular
-            :size="70"
-            :width="7"
-            color="amber"
-            indeterminate
-            transition="fade-transition"
-            max-width="400"
-          ></v-progress-circular>
         </v-col>
       </v-row>
     </v-container>
   </v-app>
 </template>
-
-<script>
-export default {
-  name: 'SplashScreen',
-  mounted() {
-    // Redirect to login after 5 seconds (adjust timing as needed)
-    setTimeout(() => {
-      this.$router.push({ name: 'login' })
-    }, 5000)
-  }
-}
-</script>
 
 <style scoped>
 .splash-screen {

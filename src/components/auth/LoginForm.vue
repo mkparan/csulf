@@ -103,7 +103,7 @@ const onFormSubmit = () => {
       >Sign in</v-btn
     >
     <!-- <h4 class="text-center">OR</h4> -->
-    <v-divider class="my-5"><h4 class="text-white">or</h4></v-divider>
+    <!-- <v-divider class="my-5"><h4 class="text-white">or</h4></v-divider>
     <v-btn
       rounded
       class="mt-2 font-weight-medium text-capitalize google-btn"
@@ -118,7 +118,7 @@ const onFormSubmit = () => {
         class="me-2"
       />
       <p class="py-1 font-weight-medium">Continue with Google</p>
-    </v-btn>
+    </v-btn> -->
 
     <v-divider class="my-5"></v-divider>
   </v-form>

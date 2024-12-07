@@ -9,84 +9,84 @@ const profileUrl = 'https://bvflfwricxabodytryee.supabase.co/storage/v1/object/p
 
 // Fetching saved posts
 const fetchSavedPosts = async () => {
-    try {
-      const {
-        data: { user },
-        error: userError
-      } = await supabase.auth.getUser()
+  try {
+    const {
+      data: { user },
+      error: userError
+    } = await supabase.auth.getUser()
 
-      if (userError || !user) {
-        console.error('User not logged in or error fetching user:', userError?.message)
-        return
-      }
-
-      // Call the custom PostgreSQL function to get saved posts without filtering by user_id
-      const { data, error } = await supabase.rpc('get_saved_posts') // Calls the function
-
-      if (error) {
-        console.error('Error fetching saved posts:', error.message)
-      } else {
-        savedPosts.value = data.map((savedPost) => ({
-          post_id: savedPost.post_id,
-          item_name: savedPost.item_name,
-          description: savedPost.description,
-          image: savedPost.image,
-          post_owner: {
-            first_name: savedPost.post_owner_firstname,
-            last_name: savedPost.post_owner_lastname,
-            profile_pic: savedPost.post_owner_profile_pic,
-            facebook_link: savedPost.post_owner_facebook_link
-          },
-          saved_by: {
-            first_name: savedPost.saved_by_firstname,
-            last_name: savedPost.saved_by_lastname,
-            profile_pic: savedPost.saved_by_profile_pic,
-            facebook_link: savedPost.saved_by_facebook_link
-          }
-        }))
-      }
-    } catch (err) {
-      console.error('Unexpected error fetching saved posts:', err.message)
+    if (userError || !user) {
+      console.error('User not logged in or error fetching user:', userError?.message)
+      return
     }
+
+    // Call the custom PostgreSQL function to get saved posts without filtering by user_id
+    const { data, error } = await supabase.rpc('get_saved_posts') // Calls the function
+
+    if (error) {
+      console.error('Error fetching saved posts:', error.message)
+    } else {
+      savedPosts.value = data.map((savedPost) => ({
+        post_id: savedPost.post_id,
+        item_name: savedPost.item_name,
+        description: savedPost.description,
+        image: savedPost.image,
+        post_owner: {
+          first_name: savedPost.post_owner_firstname,
+          last_name: savedPost.post_owner_lastname,
+          profile_pic: savedPost.post_owner_profile_pic,
+          facebook_link: savedPost.post_owner_facebook_link
+        },
+        saved_by: {
+          first_name: savedPost.saved_by_firstname,
+          last_name: savedPost.saved_by_lastname,
+          profile_pic: savedPost.saved_by_profile_pic,
+          facebook_link: savedPost.saved_by_facebook_link
+        }
+      }))
+    }
+  } catch (err) {
+    console.error('Unexpected error fetching saved posts:', err.message)
+  }
 }
 
-        // Method to remove a post from saved
-      const removeFromSaved = async (postId) => {
-            try {
-              // Delete the post from saved_posts table
-              const { error } = await supabase
-                .from('saved_posts')
-                .delete()
-                .eq('post_id', postId)
+// Method to remove a post from saved
+const removeFromSaved = async (postId) => {
+  try {
+    // Delete the post from saved_posts table
+    const { error } = await supabase.from('saved_posts').delete().eq('post_id', postId)
 
-              if (error) {
-                console.error('Error removing post from saved:', error.message)
-              } else {
-                // Update the local list of saved posts to reflect the removal
-                savedPosts.value = savedPosts.value.filter(post => post.post_id !== postId)
-                console.log(`Post with ID ${postId} removed from saved posts.`)
-              }
-            } catch (err) {
-              console.error('Unexpected error while removing post from saved:', err.message)
-            }
-      }
+    if (error) {
+      console.error('Error removing post from saved:', error.message)
+    } else {
+      // Update the local list of saved posts to reflect the removal
+      savedPosts.value = savedPosts.value.filter((post) => post.post_id !== postId)
+      console.log(`Post with ID ${postId} removed from saved posts.`)
+    }
+  } catch (err) {
+    console.error('Unexpected error while removing post from saved:', err.message)
+  }
+}
 
-    // Fetch data on component mount
-    onMounted(fetchSavedPosts)
+// Fetch data on component mount
+onMounted(fetchSavedPosts)
 </script>
 
 <template>
   <DashboardLayout>
     <template #content>
       <v-container>
-         <SaveLayout/>
-      <!-- Display message when there are no saved posts and have -->
-        <v-row justify="center" align="center" class="my-4">
-          <v-col cols="auto" class="text-center">
-            <v-divider class="">
-              <span v-if="savedPosts.length === 0">--------------------------------------------NO SAVED POST--------------------------------------------</span>
-              <span v-else>--------------------------------------------SAVED POSTS--------------------------------------------</span>
-            </v-divider>
+        <SaveLayout />
+        <!-- Display message when there are no saved posts and have -->
+        <v-row justify="center">
+          <v-col cols="12" sm="12" md="8" class=""
+            ><v-img
+              v-if="savedPosts.length === 0"
+              class=""
+              src="/images/empty.svg"
+              width="800"
+            ></v-img>
+            <v-divider v-else>Saved Posts</v-divider>
           </v-col>
         </v-row>
 
@@ -131,14 +131,24 @@ const fetchSavedPosts = async () => {
                 <v-row class="w-100" justify="space-between">
                   <!-- "Remove" button -->
                   <v-col cols="auto">
-                    <v-btn color="primary" @click="removeFromSaved(post.post_id)" class="text-center">
+                    <v-btn
+                      color="primary"
+                      @click="removeFromSaved(post.post_id)"
+                      class="text-center"
+                    >
                       Remove
                     </v-btn>
                   </v-col>
 
                   <!-- "Message" button -->
                   <v-col cols="auto">
-                    <v-btn color="primary" :href="post.post_owner.facebook_link" target="_blank" rel="noopener" class="text-center">
+                    <v-btn
+                      color="primary"
+                      :href="post.post_owner.facebook_link"
+                      target="_blank"
+                      rel="noopener"
+                      class="text-center"
+                    >
                       Message
                     </v-btn>
                   </v-col>
