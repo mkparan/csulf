@@ -111,10 +111,9 @@ onMounted(() => {
 </script>
 
 <template>
-  <AlertNotification
-    :form-success-message="formAction.formSuccessMessage"
-    :form-error-message="formAction.formErrorMessage"
-  ></AlertNotification>
+  <br />
+  <br />
+
   <v-row justify="center">
     <v-col cols="12" sm="12" md="8">
       <v-card class="rounded-xl mb-4" max-width="1000" elevation="4">
@@ -155,6 +154,10 @@ onMounted(() => {
           <v-btn class="rounded-pill bg-light-green-darken-3" block> Post Now! </v-btn>
         </v-card-actions>
       </v-card>
+      <AlertNotification
+        :form-success-message="formAction.formSuccessMessage"
+        :form-error-message="formAction.formErrorMessage"
+      ></AlertNotification>
     </v-col>
   </v-row>
 
@@ -186,6 +189,53 @@ onMounted(() => {
       <v-card-actions>
         <v-btn text color="red" @click="showEditModal = false">Cancel</v-btn>
         <v-btn text color="green" @click="updateProfile">Save Changes</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
+  <!-- Modal for post -->
+
+  <!-- Modal for Create Post -->
+  <v-dialog v-model="showModal" max-width="500px">
+    <v-card class="rounded-xl">
+      <v-card-title class="text-center">
+        <span class="text-h6">Create Post</span>
+      </v-card-title>
+      <v-card-text>
+        <v-form>
+          <v-text-field
+            v-model="item_name"
+            label="Item Name"
+            variant="solo"
+            rounded
+            outlined
+            :rules="[requiredValidator]"
+          />
+          <v-file-input
+            v-model="image"
+            label="Upload Image"
+            accept="image/*"
+            variant="solo"
+            rounded
+            outlined
+            :rules="[requiredValidator]"
+          />
+          <v-textarea
+            v-model="description"
+            label="Description"
+            variant="solo"
+            rounded
+            outlined
+            rows="3"
+            :rules="[requiredValidator]"
+          />
+        </v-form>
+      </v-card-text>
+      <v-card-actions>
+        <v-btn text color="red" @click="handleCancel">Cancel</v-btn>
+        <v-btn :disabled="formAction.formProcess" text color="green" @click="handlePost">
+          Post
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
