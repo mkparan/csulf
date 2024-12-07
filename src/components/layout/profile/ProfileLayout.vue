@@ -101,7 +101,7 @@ const updateProfile = async () => {
   }
 
   fetchUserDetails()
-  formAction.value.formSuccessMessage = 'Post successfully updated'
+  formAction.value.formSuccessMessage = 'Profile Updated Successfully'
   showEditModal.value = false
 }
 
