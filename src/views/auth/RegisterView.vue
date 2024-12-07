@@ -14,7 +14,7 @@ const { mobile } = useDisplay()
           <v-card class="blur-card mx-auto" elevation="16">
             <v-card-title class="text-center">
               <v-img class="mx-auto" src="/images/logo.png" :width="mobile ? '60%' : '20%'"></v-img>
-              <h3 class="text-orange-lighten-5 font-weight-black">CREATE A NEW ACCOUNT</h3>
+              <h3 class="text-orange-lighten-5 font-weight-black">CREATE NEW ACCOUNT</h3>
             </v-card-title>
 
             <v-card-text>

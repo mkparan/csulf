@@ -25,46 +25,46 @@ const closeCard = () => {
   <v-col cols="12" sm="12" md="12">
     <v-card v-show="visible" class="mx-auto text-white rounded-xl">
       <!-- Close Button -->
-      <v-btn
+      <!-- <v-btn
         icon
         @click="closeCard"
         class="close-btn"
         style="position: absolute; top: 16px; right: 16px; z-index: 1"
       >
         <v-icon>mdi-close</v-icon>
-      </v-btn>
+      </v-btn> -->
 
       <!-- Card Actions -->
       <v-card-actions>
-             <v-list-item class="pb-3 w-100">
-                      <v-row class="w-100" align="center" no-gutters>
-                        <!-- Post Owner Image -->
-                        <v-col cols="auto">
-                          <v-avatar size="50" class="mx-2" color="black">
-                            <v-img
-                                    :src="`${profileUrl}${post.profile_pic}`"
-                                    alt="User Picture"
-                                    class="mx-auto"
-                                    height="200"
-                                    width="200"
-                            />
-                          </v-avatar>
-                        </v-col>
+        <v-list-item class="pb-3 w-100">
+          <v-row class="w-100" align="center" no-gutters>
+            <!-- Post Owner Image -->
+            <v-col cols="auto">
+              <v-avatar size="50" class="mx-2" color="black">
+                <v-img
+                  :src="`${profileUrl}${post.profile_pic}`"
+                  alt="User Picture"
+                  class="mx-auto"
+                  height="200"
+                  width="200"
+                />
+              </v-avatar>
+            </v-col>
 
-                        <!-- Post Owner Name -->
-                        <v-col class="d-flex align-center">
-                          <v-list-item-content>
-                            <h2 class="text-light-green-darken-3 font-weight-bold pa-1">
-                                {{ post.firstname }} {{ post.lastname }}
-                            </h2>
-                          </v-list-item-content>
-                        </v-col>
-                      </v-row>
-             </v-list-item>
+            <!-- Post Owner Name -->
+            <v-col class="d-flex align-center">
+              <v-list-item-content>
+                <h2 class="text-light-green-darken-3 font-weight-bold pa-1">
+                  {{ post.firstname }} {{ post.lastname }}
+                </h2>
+              </v-list-item-content>
+            </v-col>
+          </v-row>
+        </v-list-item>
       </v-card-actions>
 
       <!-- Card Title -->
-      <v-card-title class="text-h5 font-weight-bold text-center text-light-green-darken-3">
+      <v-card-title class="text-h5 font-weight-bold text-light-green-darken-3">
         {{ post.item_name }}
       </v-card-title>
 

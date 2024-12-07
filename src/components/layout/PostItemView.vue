@@ -43,29 +43,28 @@ const handlePost = async () => {
   formAction.value.formProcess = true // Indicate process start
 
   let imageUrl = ''
-        if (image.value) {
-        try {
-          // Attempt to upload or overwrite the file if it already exists
-          const { data, error } = await supabase.storage
-            .from('items')
-            .upload(`public/${image.value.name}`, image.value, {
-              upsert: true, // Pass upsert as an option here
-            })
+  if (image.value) {
+    try {
+      // Attempt to upload or overwrite the file if it already exists
+      const { data, error } = await supabase.storage
+        .from('items')
+        .upload(`public/${image.value.name}`, image.value, {
+          upsert: true // Pass upsert as an option here
+        })
 
-          if (error) {
-            console.error('Image upload error:', error)
-            formAction.value.formErrorMessage = 'Failed to upload the image.'
-            return
-          }
-          imageUrl = data?.path
-          console.log('Image uploaded successfully:', imageUrl)
-        } catch (error) {
-          console.error('Error uploading image:', error)
-          formAction.value.formErrorMessage = 'Unexpected error during image upload.'
-          return
-        }
+      if (error) {
+        console.error('Image upload error:', error)
+        formAction.value.formErrorMessage = 'Failed to upload the image.'
+        return
       }
-
+      imageUrl = data?.path
+      console.log('Image uploaded successfully:', imageUrl)
+    } catch (error) {
+      console.error('Error uploading image:', error)
+      formAction.value.formErrorMessage = 'Unexpected error during image upload.'
+      return
+    }
+  }
 
   try {
     const {
@@ -155,10 +154,10 @@ onMounted(() => {
     <v-row justify="center">
       <v-col cols="12" sm="8" md="8">
         <v-card
-          class="rounded-xl mb-4"
+          class="rounded-xl mb-4 text-light-green-darken-3"
           max-width="1000"
           elevation="4"
-          :title="`Hello!! ${firstName} ${lastName}`"
+          :title="`Hello ${firstName} ${lastName}!`"
           subtitle="Found Something?"
         >
           <v-card-actions class="mx-auto">
@@ -174,7 +173,7 @@ onMounted(() => {
     <v-dialog v-model="showModal" max-width="500px">
       <v-card class="rounded-xl">
         <v-card-title class="text-center">
-          <span class="text-h6">Create Post</span>
+          <span class="text-h5 pa-2">Create Post</span>
         </v-card-title>
         <v-card-text>
           <v-form>

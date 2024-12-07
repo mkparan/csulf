@@ -158,8 +158,8 @@ const updatePost = async () => {
   ></AlertNotification>
   <v-container>
     <!-- Display message when there are no posts and have -->
-    <v-row justify="center" align="center" class="my-4">
-      <v-col cols="auto" class="text-center">
+    <v-row justify="center" align="center" class="">
+      <v-col cols="8" class="text-center">
         <v-divider class="">
           <p v-if="posts.length === 0">No Posts</p>
           <p v-else>Your Posts</p>

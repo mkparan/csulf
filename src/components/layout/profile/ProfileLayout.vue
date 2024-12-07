@@ -128,7 +128,9 @@ onMounted(() => {
                 width="200"
               />
             </v-avatar>
-            <p class="text-center font-weight-bold mt-2">{{ firstName }} {{ lastName }}</p>
+            <p class="text-center font-weight-bold mt-2 text-light-green-darken-3">
+              {{ firstName }} {{ lastName }}
+            </p>
           </div>
         </v-list>
 
