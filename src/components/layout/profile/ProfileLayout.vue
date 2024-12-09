@@ -33,7 +33,7 @@ const resetForm = () => {
   description.value = ''
 }
 
- const formAction = ref({ ...formActionDefault })
+const formAction = ref({ ...formActionDefault })
 
 const handlePost = async () => {
   formAction.value = { ...formActionDefault }
@@ -60,18 +60,21 @@ const handlePost = async () => {
 
   try {
     const {
-      data: { user },
+      data: { user }
     } = await supabase.auth.getUser()
 
     const userId = user?.id
-    const { data: newPost, error: insertError } = await supabase.from('posts').insert([
-      {
-        item_name: item_name.value,
-        image: imageUrl,
-        description: description.value,
-        user_id: userId,
-      },
-    ]).select()
+    const { data: newPost, error: insertError } = await supabase
+      .from('posts')
+      .insert([
+        {
+          item_name: item_name.value,
+          image: imageUrl,
+          description: description.value,
+          user_id: userId
+        }
+      ])
+      .select()
 
     if (insertError) {
       formAction.value.formErrorMessage = 'Failed to create the post.'
@@ -90,15 +93,11 @@ const handlePost = async () => {
   }
 }
 
-
-
-
 const handleCancel = () => {
   resetForm()
   formAction.value = { ...formActionDefault } // Reset form action state
   showModal.value = false // Close the modal
 }
-
 
 // Fetch user details from Supabase
 const fetchUserDetails = async () => {
@@ -201,8 +200,17 @@ onMounted(() => {
           <div class="profile-section">
             <v-avatar size="150" class="mx-auto" color="black">
               <v-img
+                v-if="profile_pic"
                 :src="profileUrl + profile_pic"
                 alt="User Avatar"
+                class="mx-auto"
+                height="200"
+                width="200"
+              />
+              <v-img
+                v-else
+                src="/images/profile-default.png"
+                alt="Default Avatar"
                 class="mx-auto"
                 height="200"
                 width="200"
@@ -233,7 +241,9 @@ onMounted(() => {
           </v-btn>
         </v-card-actions>
         <v-card-actions class="mx-auto">
-          <v-btn class="rounded-pill bg-light-green-darken-3" block @click="showModal = true"> Post Now! </v-btn>
+          <v-btn class="rounded-pill bg-light-green-darken-3" block @click="showModal = true">
+            Post Now!
+          </v-btn>
         </v-card-actions>
       </v-card>
       <AlertNotification
@@ -275,50 +285,50 @@ onMounted(() => {
     </v-card>
   </v-dialog>
 
-    <!-- Modal for Create Post -->
-    <v-dialog v-model="showModal" max-width="500px">
-      <v-card class="rounded-xl">
-        <v-card-title class="text-center">
-          <span class="text-h5 pa-2">Create Post</span>
-        </v-card-title>
-        <v-card-text>
-          <v-form>
-            <v-text-field
-              v-model="item_name"
-              label="Item Name"
-              variant="solo"
-              rounded
-              outlined
-              :rules="[requiredValidator]"
-            />
-            <v-file-input
-              v-model="image"
-              label="Upload Image"
-              accept="image/*"
-              variant="solo"
-              rounded
-              outlined
-              :rules="[requiredValidator]"
-            />
-            <v-textarea
-              v-model="description"
-              label="Description"
-              variant="solo"
-              rounded
-              outlined
-              rows="3"
-              :rules="[requiredValidator]"
-            />
-          </v-form>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn text color="red" @click="handleCancel">Cancel</v-btn>
-          <v-btn :disabled="formAction.formProcess" text color="green" @click="handlePost">
-            Post
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+  <!-- Modal for Create Post -->
+  <v-dialog v-model="showModal" max-width="500px">
+    <v-card class="rounded-xl">
+      <v-card-title class="text-center">
+        <span class="text-h5 pa-2">Create Post</span>
+      </v-card-title>
+      <v-card-text>
+        <v-form>
+          <v-text-field
+            v-model="item_name"
+            label="Item Name"
+            variant="solo"
+            rounded
+            outlined
+            :rules="[requiredValidator]"
+          />
+          <v-file-input
+            v-model="image"
+            label="Upload Image"
+            accept="image/*"
+            variant="solo"
+            rounded
+            outlined
+            :rules="[requiredValidator]"
+          />
+          <v-textarea
+            v-model="description"
+            label="Description"
+            variant="solo"
+            rounded
+            outlined
+            rows="3"
+            :rules="[requiredValidator]"
+          />
+        </v-form>
+      </v-card-text>
+      <v-card-actions>
+        <v-btn text color="red" @click="handleCancel">Cancel</v-btn>
+        <v-btn :disabled="formAction.formProcess" text color="green" @click="handlePost">
+          Post
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 
   <!-- Posts section -->
   <UsersPost />

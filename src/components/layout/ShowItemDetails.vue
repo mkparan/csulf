@@ -17,7 +17,7 @@ const visible = ref(true)
 
 // Methods
 const closeCard = () => {
-  visible.value = false // Hides the card immediately without any effect
+  visible.value = false // Hides the card immediately
 }
 </script>
 
