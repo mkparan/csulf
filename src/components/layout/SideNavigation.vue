@@ -132,3 +132,15 @@ onMounted(fetchUserDetails)
     </template>
   </v-navigation-drawer>
 </template>
+
+<style scoped>
+.active-item {
+  background-color: rgba(255, 255, 255, 0.196); /* Light background for active item */
+  padding: 0.5rem 1rem; /* Optional: add some padding for better appearance */
+  transition: background-color 0.3s ease; /* Smooth transition on hover or activation */
+}
+/*  hover effect for better interactivity */
+.active-item:hover {
+  background-color: rgba(255, 255, 255, 0.3); /* Slightly brighter on hover */
+}
+</style>

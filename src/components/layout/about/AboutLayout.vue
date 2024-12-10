@@ -56,7 +56,7 @@
               <!-- Developer 1 -->
               <v-col cols="12" sm="4" md="4" lg="3" class="text-center">
                 <v-avatar size="100" class="mx-auto" color="black">
-                  <v-img src="/images/mkdp.jpg" alt="Mark Kenth Paran" class="rounded" />
+                  <v-img src="/images/mkdp1.jpg" alt="Mark Kenth Paran" class="rounded" />
                 </v-avatar>
                 <p class="text-light-green-darken-3 font-weight-bold mt-2">Mark Kenth Paran</p>
                 <p class="text-light-green-darken-3 text-caption">
@@ -67,7 +67,7 @@
               <!-- Developer 2 -->
               <v-col cols="12" sm="4" md="4" lg="3" class="text-center">
                 <v-avatar size="100" class="mx-auto" color="black">
-                  <v-img src="/path/to/andrie_photo.png" alt="Andrie Ignacio" class="rounded" />
+                  <v-img src="/images/alignacio.png" alt="Andrie Ignacio" class="rounded" />
                 </v-avatar>
                 <p class="text-light-green-darken-3 font-weight-bold mt-2">Andrie Ignacio</p>
                 <p class="text-light-green-darken-3 text-caption">Frontend Developer</p>
