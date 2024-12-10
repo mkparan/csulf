@@ -100,6 +100,7 @@ const onFormSubmit = () => {
       type="submit"
       block
       color="orange-darken-3"
+      :loading="formAction.formProcess"
       >Sign in</v-btn
     >
     <!-- <h4 class="text-center">OR</h4> -->
