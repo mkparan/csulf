@@ -64,8 +64,8 @@ const onFormSubmit = () => {
 }
 
  //google login
-     const onGoogleSignIn = async () => {
-  const authStore = useAuthStore();
+      const onGoogleSignIn = async () => {
+  const authStore = useAuthStore(); // Access your auth store
   formAction.value = { ...formActionDefault }; // Reset form states
   formAction.value.formProcess = true;
 
@@ -83,44 +83,18 @@ const onFormSubmit = () => {
       formAction.value.formStatus = error.status;
     } else if (data) {
       console.log('Google Login Success:', data);
-      const userMetaData = data.user?.user_metadata;
-
-      // Extract and log user info for verification
-      const userinfo = {
-        email: userMetaData?.email || '',
-        first_name: userMetaData?.given_name || '', // Same as PHP
-        last_name: userMetaData?.family_name || '', // Same as PHP
-        full_name: userMetaData?.name || '', // Full name
-        picture: userMetaData?.picture || '', // Profile picture URL
-        verifiedEmail: userMetaData?.email_verified || false, // Verified email
-      };
-
-      console.log('Extracted Google User Info:', userinfo);
-
-      // Save this data into your Supabase database table
-      const { error: dbError } = await supabase.from('auth.users').upsert({
-        email: userinfo.email,
-        firstname: userinfo.first_name,
-        lastname: userinfo.last_name,
-        profile_pic: userinfo.picture,
-      });
-
-      if (dbError) {
-        console.error('Database Error:', dbError.message);
-      } else {
-        console.log('User info stored successfully in the database!');
-      }
-
       formAction.value.formSuccessMessage = 'Successfully Logged in with Google';
 
-      // Update auth store and navigate
+      // Update the auth store with user and session details
       authStore.login(data.user, data.session.access_token);
+
+      // Navigate to the dashboard immediately
       router.replace('/system/dashboard');
     }
   } catch (err) {
     console.error('Unexpected Error:', err);
   } finally {
-    formAction.value.formProcess = false;
+    formAction.value.formProcess = false; // Stop loading spinner
   }
 };
 
