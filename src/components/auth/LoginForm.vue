@@ -64,18 +64,22 @@ const onFormSubmit = () => {
 }
 
  //google login
-      const onGoogleSignIn = async () => {
+        const onGoogleSignIn = async () => {
   const authStore = useAuthStore(); // Access your auth store
   formAction.value = { ...formActionDefault }; // Reset form states
   formAction.value.formProcess = true;
+
+  console.log('Google Sign-In started');
 
   try {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/system/dashboard`, // Redirect URI
+        redirectTo: `https://csulf.vercel.app/system/dashboard`, // Redirect URI
       },
     });
+
+    console.log('Google OAuth response:', data);
 
     if (error) {
       console.error('Google Login Error:', error.message);
@@ -88,16 +92,23 @@ const onFormSubmit = () => {
       // Update the auth store with user and session details
       authStore.login(data.user, data.session.access_token);
 
+      console.log('Auth Store updated with user data');
+
+      // Log session state after successful login
+      const session = supabase.auth.session();
+      console.log('Supabase Session:', session);
+
       // Navigate to the dashboard immediately
       router.replace('/system/dashboard');
+      console.log('Redirecting to /system/dashboard');
     }
   } catch (err) {
     console.error('Unexpected Error:', err);
   } finally {
     formAction.value.formProcess = false; // Stop loading spinner
+    console.log('Form process completed');
   }
 };
-
 
 
 </script>
