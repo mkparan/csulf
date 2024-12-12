@@ -12,6 +12,8 @@ const description = ref('') // Description input
 const posts = ref([]) // Array to store posts
 const firstName = ref('') // User's first name
 const lastName = ref('') // User's last name
+const full_name = ref('')
+const avatar_url = ref('')
 
 // Manage form action states
 const formActionDefault = {
@@ -137,8 +139,10 @@ const fetchUserDetails = async () => {
   if (error) {
     console.error(error)
   } else {
-    firstName.value = user?.user_metadata?.firstname || 'Firstname'
-    lastName.value = user?.user_metadata?.lastname || 'Lastname'
+    firstName.value = user?.user_metadata?.firstname
+    lastName.value = user?.user_metadata?.lastname
+    full_name.value = user?.user_metadata?.full_name
+    avatar_url.value = user?.user_metadata?.avatar_url
   }
 }
 
@@ -157,7 +161,7 @@ onMounted(() => {
           class="rounded-xl mb-4 text-light-green-darken-3"
           max-width="1000"
           elevation="4"
-          :title="`Hello ${firstName} ${lastName}!`"
+          :title="`Hello ${firstName && lastName ? firstName + ' ' + lastName : full_name || 'Guest'}!`"
           subtitle="Found Something?"
         >
           <v-card-actions class="mx-auto">
