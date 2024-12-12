@@ -35,6 +35,8 @@ const onLogout = async () => {
 }
 
 // Fetch user details
+const full_name = ref('')
+const avatar_url = ref('')
 const firstName = ref('')
 const lastName = ref('')
 const profile_pic = ref('')
@@ -48,9 +50,11 @@ const fetchUserDetails = async () => {
   if (error) {
     console.error(error)
   } else {
-    firstName.value = user?.user_metadata?.firstname || 'Firstname'
-    lastName.value = user?.user_metadata?.lastname || 'Lastname'
-    profile_pic.value = user?.user_metadata?.profile_pic || '/images/profile-default.png'
+    full_name.value = user?.user_metadata?.full_name
+    avatar_url.value = user?.user_metadata?.avatar_url
+    firstName.value = user?.user_metadata?.firstname 
+    lastName.value = user?.user_metadata?.lastname 
+    profile_pic.value = user?.user_metadata?.profile_pic
   }
 }
 
@@ -80,14 +84,15 @@ onMounted(fetchUserDetails)
             />
             <v-img
               v-else
-              src="/images/profile-default.png"
+              :src="avatar_url || '/images/profile-default.png'"
               alt="Default Avatar"
               class="mx-auto"
               height="200"
               width="200"
             />
           </v-avatar>
-          <p class="text-center font-weight-bold mt-2">{{ firstName }} {{ lastName }}</p>
+          <!-- <p class="text-center font-weight-bold mt-2">{{ firstName }} {{ lastName }}</p> -->
+           <p class="text-center font-weight-bold mt-2">{{ firstName && lastName ? firstName + ' ' + lastName : full_name }}</p>         
         </div>
       </v-list>
 

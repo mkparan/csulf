@@ -92,6 +92,7 @@ const onGoogleSignIn = async () => {
       given_name: firstname,
       family_name: lastname,
       picture,
+      full_name,
       email
     } = user.user_metadata || {}
 
@@ -104,7 +105,7 @@ const onGoogleSignIn = async () => {
     // Step 3: Prepare data for insertion into the database
     const updateData = {
       user_id: user.id,
-      firstname: firstname || 'Unknown',
+      firstname: full_name || 'Unknown',
       lastname: lastname || 'Unknown',
       profile_pic: picture || 'default-profile-pic.jpg',
       verifiedEmail: !!user.email_confirmed_at,
@@ -131,7 +132,7 @@ const onGoogleSignIn = async () => {
         .from('auth.users') // Target the correct schema and table
         .update({
           raw_user_meta_data: {
-            firstname: firstname || 'Unknown',
+            firstname: full_name || 'Unknown',
             lastname: lastname || 'Unknown',
             profile_pic: picture || 'default-profile-pic.jpg',
             verifiedEmail: user.email_confirmed_at ? true : false,
@@ -152,7 +153,7 @@ const onGoogleSignIn = async () => {
           {
             email, // Ensure required fields like `email` are included
             raw_user_meta_data: {
-              firstname: firstname || 'Unknown',
+              firstname: full_name || 'Unknown',
               lastname: lastname || 'Unknown',
               profile_pic: picture || 'default-profile-pic.jpg'
             }
@@ -170,6 +171,9 @@ const onGoogleSignIn = async () => {
     console.error('Unexpected Error:', err)
   }
 }
+
+
+
 </script>
 
 <template>
