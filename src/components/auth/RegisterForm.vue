@@ -24,7 +24,7 @@ const FormDataDefault = {
   email: '',
   password: '',
   passwordConfirmation: '',
-  profile_pic: 'https://drive.google.com/file/d/1gqnbKp7xU0rS3DSWLOZwB9an8VQwtPFk/view?usp=sharing' // Default profile picture
+  profile_pic: 'https://bvflfwricxabodytryee.supabase.co/storage/v1/object/public/profile/public/profile-default.png' // Default profile picture
 }
 
 const formData = ref({
