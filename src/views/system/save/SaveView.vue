@@ -90,7 +90,8 @@ onMounted(fetchSavedPosts)
               src="/images/empty.svg"
               width="800"
             ></v-img>
-            <v-divider v-else>Saved Posts</v-divider>
+            <!-- <v-divider v-else>Saved Posts</v-divider> -->
+             <v-divider>{{ savedPosts.length === 0 ? 'No Saved Posts' : 'Saved Posts' }}</v-divider>
           </v-col>
         </v-row>
 
