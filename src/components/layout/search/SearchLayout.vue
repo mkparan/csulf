@@ -77,12 +77,21 @@ onMounted(() => {
                         <v-col cols="auto">
                           <v-avatar size="50" class="mx-2" color="black">
                             <v-img
-                                    :src="`${profileUrl}${post.profile_pic}`"
-                                    alt="User Picture"
-                                    class="mx-auto"
-                                    height="200"
-                                    width="200"
-                            />
+                                v-if="post.profile_pic"
+                                :src="`${profileUrl}${post.profile_pic}`"
+                                alt="User Avatar"
+                                class="mx-auto"
+                                height="200"
+                                width="200"
+                              />
+                              <v-img
+                                v-else
+                                :src="post.avatar_url || '/images/profile-default.png'"
+                                alt="Default Avatar"
+                                class="mx-auto"
+                                height="200"
+                                width="200"
+                              />
                           </v-avatar>
                         </v-col>
 
@@ -90,7 +99,7 @@ onMounted(() => {
                         <v-col class="d-flex align-center">
                           <v-list-item-content>
                             <h3 class="text-light-green-darken-3 font-weight-bold pa-1">
-                                {{ post.firstname }} {{ post.lastname }}
+                                {{ post.firstname && post.lastname ? post.firstname + ' ' + post.lastname : post.full_name }}
                             </h3>
                           </v-list-item-content>
                         </v-col>
