@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref} from 'vue'
 
 //url of the image
 const profileUrl = 'https://bvflfwricxabodytryee.supabase.co/storage/v1/object/public/images/'
@@ -19,6 +19,7 @@ const visible = ref(true)
 const closeCard = () => {
   visible.value = false // Hides the card immediately
 }
+
 </script>
 
 <template>

@@ -73,26 +73,29 @@ onMounted(fetchUserDetails)
     <v-list color="transparent">
       <v-list class="text-center">
         <div class="profile-section">
-          <v-avatar size="150" class="mx-auto" color="white">
-            <v-img
-              v-if="profile_pic"
-              :src="profileUrl + profile_pic"
-              alt="User Avatar"
-              class="mx-auto"
-              height="200"
-              width="200"
-            />
-            <v-img
-              v-else
-              :src="avatar_url || '/images/profile-default.png'"
-              alt="Default Avatar"
-              class="mx-auto"
-              height="200"
-              width="200"
-            />
-          </v-avatar>
+            <v-avatar size="150" class="mx-auto" color="white">
+              <!-- If profile_pic exists and is not null or empty, or if it's a file name -->
+              <v-img
+                v-if="profile_pic && profile_pic !== '' && profile_pic !== null"
+                :src="profile_pic.startsWith('http') ? profile_pic : profileUrl + profile_pic"
+                alt="User Avatar"
+                class="mx-auto"
+                height="200"
+                width="200"
+              />
+
+              <!-- Fallback image if profile_pic is not provided or is invalid -->
+              <v-img
+                v-else
+                :src="avatar_url"
+                alt="User Avatar"
+                class="mx-auto"
+                height="200"
+                width="200"
+              />
+            </v-avatar>
           <!-- <p class="text-center font-weight-bold mt-2">{{ firstName }} {{ lastName }}</p> -->
-           <p class="text-center font-weight-bold mt-2">{{ firstName && lastName ? firstName + ' ' + lastName : full_name }}</p>         
+           <p class="text-center font-weight-bold mt-2">{{ firstName && lastName ? firstName + ' ' + lastName : full_name }}</p>            
         </div>
       </v-list>
 

@@ -42,7 +42,7 @@ const fetchUserData = async () => {
   }
 
   // Fetch the profile data (first name, last name, profile picture)
-  firstName.value = user.user_metadata?.firstname 
+  firstName.value = user.user_metadata?.firstname
   lastName.value = user.user_metadata?.lastname
   profilePic.value = user.user_metadata?.profile_pic
   full_name.value = user?.user_metadata?.full_name
@@ -186,27 +186,29 @@ const updatePost = async () => {
               <!-- Avatar Column -->
               <v-col cols="2" class="d-flex align-center justify-center">
                 <v-avatar size="50" color="black">
-                      <v-img
-                          v-if="profilePic"
-                          :src="profileUrl + profilePic"
-                          alt="User Avatar"
-                          class="mx-auto"
-                          height="200"
-                          width="200"
-                        />
-                    <v-img
-                      v-else
-                      :src="avatar_url || '/images/profile-default.png'"
-                      alt="Default Avatar"
-                      class="mx-auto"
-                      height="200"
-                      width="200"
-                    />
+                  <v-img
+                    v-if="profilePic"
+                    :src="profileUrl + profilePic"
+                    alt="User Avatar"
+                    class="mx-auto"
+                    height="200"
+                    width="200"
+                  />
+                  <v-img
+                    v-else
+                    :src="avatar_url || '/images/profile-default.png'"
+                    alt="Default Avatar"
+                    class="mx-auto"
+                    height="200"
+                    width="200"
+                  />
                 </v-avatar>
               </v-col>
               <!-- Name Column -->
               <v-col cols="8" class="d-flex align-center text-light-green-darken-3">
-                <h3 class="m-0">{{ firstName && lastName ? firstName + ' ' + lastName : full_name }}</h3>
+                <h3 class="m-0">
+                  {{ firstName && lastName ? firstName + ' ' + lastName : full_name }}
+                </h3>
               </v-col>
               <!-- Menu Column -->
               <v-col cols="2" class="d-flex align-center justify-end">
