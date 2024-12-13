@@ -34,14 +34,18 @@ const fetchSavedPosts = async () => {
         post_owner: {
           first_name: savedPost.post_owner_firstname,
           last_name: savedPost.post_owner_lastname,
-          profile_pic: savedPost.post_owner_profile_pic,
-          facebook_link: savedPost.post_owner_facebook_link
+          profile_pic: savedPost.post_owner_profile_pic,         
+          facebook_link: savedPost.post_owner_facebook_link,
+          full_name: savedPost.post_owner_full_name,
+          avatar_url: savedPost.post_owner_avatar_url
         },
         saved_by: {
           first_name: savedPost.saved_by_firstname,
           last_name: savedPost.saved_by_lastname,
           profile_pic: savedPost.saved_by_profile_pic,
-          facebook_link: savedPost.saved_by_facebook_link
+          facebook_link: savedPost.saved_by_facebook_link,
+          full_name: savedPost.saved_by_full_name,
+          avatar_url: savedPost.saved_by_avatar_url
         }
       }))
     }
@@ -99,11 +103,21 @@ onMounted(fetchSavedPosts)
                   <v-col cols="auto">
                     <v-avatar size="50" class="mx-2" color="black">
                       <v-img
-                        :src="`${profileUrl}${post.post_owner.profile_pic}`"
-                        alt="Post Owner Picture"
-                        height="50"
-                        width="50"
-                      />
+                                v-if="post.post_owner.profile_pic"
+                                :src="`${profileUrl}${post.post_owner.profile_pic}`"
+                                alt="Post Owner Picture"
+                                class="mx-auto"
+                                height="200"
+                                width="200"
+                              />
+                              <v-img
+                                v-else
+                                :src="post.post_owner.avatar_url || '/images/profile-default.png'"
+                                alt="Default Avatar"
+                                class="mx-auto"
+                                height="200"
+                                width="200"
+                              />
                     </v-avatar>
                   </v-col>
 
@@ -111,7 +125,9 @@ onMounted(fetchSavedPosts)
                   <v-col class="d-flex align-center">
                     <v-list-item-content>
                       <h3 class="text-light-green-darken-3 font-weight-bold">
-                        {{ post.post_owner.first_name }} {{ post.post_owner.last_name }}
+                        {{ post.post_owner.first_name && post.post_owner.last_name 
+                            ? post.post_owner.first_name + ' ' + post.post_owner.last_name 
+                            : post.post_owner.full_name }}
                       </h3>
                     </v-list-item-content>
                   </v-col>

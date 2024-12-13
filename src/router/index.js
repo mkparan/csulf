@@ -65,26 +65,30 @@ const router = createRouter({
     }
   ]
 })
-
 router.beforeEach(async (to, from, next) => {
-  const authStore = useAuthStore() // Correct store initialization
-  const isLoggedIn = await authStore.checkAuth() // Ensure you're using the store's method
+  const authStore = useAuthStore() // Correctly initialize auth store
+  const isLoggedIn = await authStore.checkAuth() // Check session validity
 
-  console.log('Route Guard Debug:', { isLoggedIn, routeName: to.name })
+  console.log('Route Guard Debug:', {
+    isLoggedIn,
+    from: from.name,
+    to: to.name,
+    path: to.path
+  })
 
-  // If user is logged in, prevent accessing login or register pages
-  if (isLoggedIn && (to.name === 'login' || to.name === 'register' || to.name === 'splash')) {
-    return next({ name: 'dashboard' }) // Redirect logged-in users to dashboard
+  // Redirect logged-in users away from auth routes
+  if (isLoggedIn && ['login', 'register', 'splash'].includes(to.name)) {
+    return next({ name: 'dashboard' })
   }
 
-  // If the user is not logged in and tries to access a protected route (like dashboard)
+  // Redirect unauthenticated users away from protected routes
   if (!isLoggedIn && to.path.startsWith('/system')) {
-    return next({ name: 'login' }) // Redirect unauthenticated users to login
+    return next({ name: 'login' })
   }
 
-  // Handle unknown routes
-  if (router.resolve(to).matched.length === 0) {
-    return next({ name: 'not-found' }) // Redirect unknown routes to not-found
+  // Redirect unknown routes to not-found page (handled by Vue Router)
+  if (!to.matched.length) {
+    return next({ name: 'not-found' })
   }
 
   next() // Allow the route to proceed

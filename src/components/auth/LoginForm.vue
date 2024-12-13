@@ -63,52 +63,115 @@ const onFormSubmit = () => {
   })
 }
 
- //google login
-        const onGoogleSignIn = async () => {
-  const authStore = useAuthStore(); // Access your auth store
-  formAction.value = { ...formActionDefault }; // Reset form states
-  formAction.value.formProcess = true;
-
-  console.log('Google Sign-In started');
-
+////google login
+const onGoogleSignIn = async () => {
   try {
-    const { data, error } = await supabase.auth.signInWithOAuth({
+    // Step 1: Google Login (OAuth)
+    const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `https://csulf.vercel.app/system/dashboard`, // Redirect URI
-      },
-    });
-
-    console.log('Google OAuth response:', data);
+        redirectTo: `${window.location.origin}/system/dashboard` // Redirect URI
+      }
+    })
 
     if (error) {
-      console.error('Google Login Error:', error.message);
-      formAction.value.formErrorMessage = error.message;
-      formAction.value.formStatus = error.status;
-    } else if (data) {
-      console.log('Google Login Success:', data);
-      formAction.value.formSuccessMessage = 'Successfully Logged in with Google';
-
-      // Update the auth store with user and session details
-      authStore.login(data.user, data.session.access_token);
-
-      console.log('Auth Store updated with user data');
-
-      // Log session state after successful login
-      const session = supabase.auth.session();
-      console.log('Supabase Session:', session);
-
-      // Navigate to the dashboard immediately
-      router.replace('/system/dashboard');
-      console.log('Redirecting to /system/dashboard');
+      console.error('Google Login Error:', error.message)
+      return
     }
+
+    // Step 2: Wait for session data
+    const sessionData = await sessionWait()
+
+    if (!sessionData?.session?.user) {
+      console.error('Session not received from Google login.')
+      return
+    }
+
+    const user = sessionData.session.user
+    const {
+      given_name: firstname,
+      family_name: lastname,
+      picture,
+      full_name,
+      email
+    } = user.user_metadata || {}
+
+    // Ensure required user data is available
+    if (!email) {
+      console.error('Email is required but not available.')
+      return
+    }
+
+    // Step 3: Prepare data for insertion into the database
+    const updateData = {
+      user_id: user.id,
+      firstname: full_name || 'Unknown',
+      lastname: lastname || 'Unknown',
+      profile_pic: picture || 'default-profile-pic.jpg',
+      verifiedEmail: !!user.email_confirmed_at,
+      token: user.id // This might not be a token, consider renaming
+    }
+
+    // Step 4: Check if user already exists
+    const { data: existingUser, error: existingUserError } = await supabase
+      .from('auth.users') // Adjust the schema and table name here if needed
+      .select('id') // Only select the ID to minimize payload
+      .eq('email', email)
+      .single() // Expect a single result
+
+    if (existingUserError && existingUserError.code !== 'PGRST116') {
+      // PGRST116 = no rows returned
+      console.error('Error checking existing user:', existingUserError.message)
+      return
+    }
+
+    // Step 5: Insert or Update user data
+    if (existingUser && existingUser.length > 0) {
+      // Step 5: Update the existing user's `raw_user_meta_data`
+      const { error: updateError } = await supabase
+        .from('auth.users') // Target the correct schema and table
+        .update({
+          raw_user_meta_data: {
+            firstname: full_name || 'Unknown',
+            lastname: lastname || 'Unknown',
+            profile_pic: picture || 'default-profile-pic.jpg',
+            verifiedEmail: user.email_confirmed_at ? true : false,
+            token: user.id
+          }
+        })
+        .eq('email', email) // Update based on the user's email
+
+      if (updateError) {
+        console.error('Error updating user:', updateError.message)
+        return
+      }
+    } else {
+      // Step 6: Insert new user with `raw_user_meta_data`
+      const { error: insertError } = await supabase
+        .from('auth.users') // Target the correct schema and table
+        .insert([
+          {
+            email, // Ensure required fields like `email` are included
+            raw_user_meta_data: {
+              firstname: full_name || 'Unknown',
+              lastname: lastname || 'Unknown',
+              profile_pic: picture || 'default-profile-pic.jpg'
+            }
+          }
+        ])
+
+      if (insertError) {
+        console.error('Error inserting new user:', insertError.message)
+        return
+      }
+    }
+
+    console.log('User data successfully inserted or updated.')
   } catch (err) {
-    console.error('Unexpected Error:', err);
-  } finally {
-    formAction.value.formProcess = false; // Stop loading spinner
-    console.log('Form process completed');
+    console.error('Unexpected Error:', err)
   }
-};
+}
+
 
 
 </script>
@@ -153,7 +216,7 @@ const onFormSubmit = () => {
       >Sign in</v-btn
     >
     <!-- <h4 class="text-center">OR</h4> -->
-     <v-divider class="my-5"><h4 class="text-white">or</h4></v-divider>
+    <v-divider class="my-5"><h4 class="text-white">or</h4></v-divider>
     <v-btn
       rounded
       class="mt-2 font-weight-medium text-capitalize google-btn"
@@ -161,7 +224,6 @@ const onFormSubmit = () => {
       block
       color="grey-lighten-4"
       @click="onGoogleSignIn"
-      :loading="formAction.formProcess"
     >
       <img
         src="/images/google.png"
@@ -170,7 +232,7 @@ const onFormSubmit = () => {
         class="me-2"
       />
       <p class="py-1 font-weight-medium">Continue with Google</p>
-    </v-btn> 
+    </v-btn>
 
     <v-divider class="my-5"></v-divider>
   </v-form>

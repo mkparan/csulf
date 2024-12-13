@@ -23,6 +23,8 @@ const item_name = ref('') // Item name input
 const image = ref(null) // Image file input
 const description = ref('') // Description input
 const posts = ref([]) // Array to store posts
+const full_name = ref('')
+const avatar_url = ref('')
 
 const profileUrl = 'https://bvflfwricxabodytryee.supabase.co/storage/v1/object/public/images/'
 
@@ -108,10 +110,12 @@ const fetchUserDetails = async () => {
   if (error) {
     console.error(error)
   } else {
-    firstName.value = user?.user_metadata?.firstname || 'Firstname'
-    lastName.value = user?.user_metadata?.lastname || 'Lastname'
-    profile_pic.value = user?.user_metadata?.profile_pic || '/images/profile-default.png' // Just the file name
+    firstName.value = user?.user_metadata?.firstname
+    lastName.value = user?.user_metadata?.lastname 
+    profile_pic.value = user?.user_metadata?.profile_pic
     facebook_link.value = user?.user_metadata?.facebook_link || ''
+    full_name.value = user?.user_metadata?.full_name
+    avatar_url.value = user?.user_metadata?.avatar_url
   }
 }
 
@@ -209,7 +213,7 @@ onMounted(() => {
               />
               <v-img
                 v-else
-                src="/images/profile-default.png"
+                :src="avatar_url || '/images/profile-default.png'"
                 alt="Default Avatar"
                 class="mx-auto"
                 height="200"
@@ -217,7 +221,7 @@ onMounted(() => {
               />
             </v-avatar>
             <p class="text-center font-weight-bold mt-2 text-light-green-darken-3">
-              {{ firstName }} {{ lastName }}
+               {{ firstName && lastName ? firstName + ' ' + lastName : full_name }}
             </p>
           </div>
         </v-list>
