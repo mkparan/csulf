@@ -4,6 +4,10 @@ import { useRouter } from 'vue-router'
 import { supabase } from '@/utils/supabase'
 import { useAuthStore } from '@/stores/authUser'
 
+
+//profile url in supabase
+const profileUrl = 'https://bvflfwricxabodytryee.supabase.co/storage/v1/object/public/images/'
+
 // Props
 defineProps({
   modelValue: {
@@ -34,29 +38,40 @@ const onLogout = async () => {
   router.replace('/login')
 }
 
-// Fetch user details
+// Fetch user details from user_profiles_view
 const full_name = ref('')
 const avatar_url = ref('')
 const firstName = ref('')
 const lastName = ref('')
 const profile_pic = ref('')
-const profileUrl = 'https://bvflfwricxabodytryee.supabase.co/storage/v1/object/public/images/'
 
 const fetchUserDetails = async () => {
-  const {
-    data: { user },
-    error
-  } = await supabase.auth.getUser()
-  if (error) {
-    console.error(error)
-  } else {
-    full_name.value = user?.user_metadata?.full_name
-    avatar_url.value = user?.user_metadata?.avatar_url
-    firstName.value = user?.user_metadata?.firstname 
-    lastName.value = user?.user_metadata?.lastname 
-    profile_pic.value = user?.user_metadata?.profile_pic
+  // Step 1: Get the current authenticated user
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  
+  if (authError) {
+    console.error(authError);
+    return;
   }
-}
+
+  // Step 2: Use the user_id from the authenticated user to fetch profile data
+  const { data, error: dbError } = await supabase
+    .from('user_profiles_view') //user_profiles_view
+    .select('full_name, avatar_url, firstname, lastname, profile_pic')
+    .eq('user_id', user.id)  // Use the user ID from the auth data
+    .single();  // Ensure only one row is returned
+
+  if (dbError) {
+    console.error(dbError);
+  } else {
+    full_name.value = data?.full_name;
+    avatar_url.value = data?.avatar_url;
+    firstName.value = data?.firstname;
+    lastName.value = data?.lastname;
+    profile_pic.value = data?.profile_pic;
+  }
+};
+
 
 onMounted(fetchUserDetails)
 </script>
@@ -73,29 +88,27 @@ onMounted(fetchUserDetails)
     <v-list color="transparent">
       <v-list class="text-center">
         <div class="profile-section">
-            <v-avatar size="150" class="mx-auto" color="white">
-              <!-- If profile_pic exists and is not null or empty, or if it's a file name -->
-              <v-img
-                v-if="profile_pic && profile_pic !== '' && profile_pic !== null"
-                :src="profile_pic.startsWith('http') ? profile_pic : profileUrl + profile_pic"
-                alt="User Avatar"
-                class="mx-auto"
-                height="200"
-                width="200"
-              />
-
-              <!-- Fallback image if profile_pic is not provided or is invalid -->
-              <v-img
-                v-else
-                :src="avatar_url"
-                alt="User Avatar"
-                class="mx-auto"
-                height="200"
-                width="200"
-              />
-            </v-avatar>
-          <!-- <p class="text-center font-weight-bold mt-2">{{ firstName }} {{ lastName }}</p> -->
-           <p class="text-center font-weight-bold mt-2">{{ firstName && lastName ? firstName + ' ' + lastName : full_name }}</p>            
+          <v-avatar size="150" class="mx-auto" color="white">
+            <!-- If profile_pic exists and is not null or empty, or if it's a file name -->
+            <v-img
+               v-if="profile_pic && typeof profile_pic === 'string' && profile_pic !== '' && profile_pic !== null"
+                      :src="profile_pic.startsWith('http') ? profile_pic : profileUrl + profile_pic"
+                      alt="User Avatar"
+                      class="mx-auto"
+                      height="200"
+                      width="200"
+                />
+            <!-- Fallback image if profile_pic is not provided or is invalid -->
+            <v-img
+              v-else
+              :src="avatar_url"
+              alt="User Avatar"
+              class="mx-auto"
+              height="200"
+              width="200"
+            />
+          </v-avatar>
+          <p class="text-center font-weight-bold mt-2">{{ firstName && lastName ? firstName + ' ' + lastName : full_name }}</p>
         </div>
       </v-list>
 
@@ -143,12 +156,12 @@ onMounted(fetchUserDetails)
 
 <style scoped>
 .active-item {
-  background-color: rgba(255, 255, 255, 0.196); /* Light background for active item */
-  padding: 0.5rem 1rem; /* Optional: add some padding for better appearance */
-  transition: background-color 0.3s ease; /* Smooth transition on hover or activation */
+  background-color: rgba(255, 255, 255, 0.196);
+  padding: 0.5rem 1rem;
+  transition: background-color 0.3s ease;
 }
-/*  hover effect for better interactivity */
+
 .active-item:hover {
-  background-color: rgba(255, 255, 255, 0.3); /* Slightly brighter on hover */
+  background-color: rgba(255, 255, 255, 0.3);
 }
 </style>
