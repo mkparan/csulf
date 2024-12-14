@@ -25,7 +25,7 @@ const fetchUserId = async () => {
 // Fetch posts with user info
 const fetchPostsWithUsers = async () => {
   try {
-    const { data, error } = await supabase.rpc('get_posts_with_user_info')
+    const { data, error } = await supabase.rpc('get_posts_with_user_info') //functions for get_posts_with_user_info
     if (error) {
       console.error('Error fetching posts with user info:', error.message)
       return

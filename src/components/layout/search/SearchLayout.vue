@@ -10,8 +10,8 @@ const profileUrl = 'https://bvflfwricxabodytryee.supabase.co/storage/v1/object/p
 
 const fetchPosts = async () => {
   const { data, error } = await supabase
-    .from('posts_with_user_data') // Access the view instead of posts table
-    .select('*') // Select all columns from the view
+    .rpc('get_posts_with_user_info') // Access the function
+    .select('*') // Select all columns from the function table
 
   if (error) {
     console.error('Error fetching posts:', error)
