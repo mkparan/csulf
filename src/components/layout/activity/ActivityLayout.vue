@@ -17,8 +17,7 @@ const fetchUserCount = async () => {
 }
 
 // Fetch activity logs with user information using eq for filtering
-const fetchActivityLogs = async () => {
-  // Get the current logged-in user
+  const fetchActivityLogs = async () => {
   const { data: user, error: userError } = await supabase.auth.getUser()
 
   if (userError) {
@@ -40,15 +39,42 @@ const fetchActivityLogs = async () => {
   if (error) {
     console.error('Error fetching activity logs:', error)
   } else {
-    activityLogs.value = data.map((log) => ({
-      id: log.id,
-      activity: log.action, // Display the action (activity)
-      tableName: log.table_name, // Display the table name
-      date: new Date(log.created_at).toLocaleString(), // Format the date
-      user: 'Current User', // Placeholder since we already filter by current user
-    }))
+    // Fetch user details (if not already stored in logs table)
+    const users = await Promise.all(
+      data.map(async (log) => {
+        const { data: userData } = await supabase
+          .from('users') // Assuming you have a 'users' table
+          .select('name')  // Adjust the field if necessary
+          .eq('id', log.user_id)
+          .single()
+
+        return {
+          ...log,
+          user: userData ? userData.name : 'Current User'
+        }
+      })
+    )
+
+    // Sort the logs by `created_at` in descending order
+    users.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+
+    // Now format and assign the sorted logs
+    activityLogs.value = users.map((log) => {
+      const date = new Date(log.created_at); // Convert string to Date object
+      // Manila is UTC +8, so add 8 hours to the UTC time
+      const manilaDate = new Date(date.getTime() + (8 * 60 * 60 * 1000)); // Adjust to Manila time
+      
+      return {
+        id: log.id,
+        activity: log.action,
+        tableName: log.table_name,
+        date: manilaDate.toLocaleString('en-PH'), // Format the Manila date
+        user: log.user, // Use the fetched user name
+      };
+    });
   }
 }
+
 
 onMounted(() => {
   fetchUserCount()
