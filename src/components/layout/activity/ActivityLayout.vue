@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import { supabase } from '@/utils/supabase'
 
 const userCount = ref(0)
+const activityLogs = ref([])
 
 // Fetch user count (existing logic)
 const fetchUserCount = async () => {
@@ -15,16 +16,44 @@ const fetchUserCount = async () => {
   }
 }
 
-// Dummy activity log data (can be replaced with actual API later)
-const activityLogs = ref([
-  { id: 1, activity: 'Created a post', date: '2024-04-25 10:00 AM' },
-  { id: 2, activity: 'Deleted a post', date: '2024-04-25 11:15 AM' },
-  { id: 3, activity: 'Created a post', date: '2024-04-26 01:00 PM' },
-  { id: 4, activity: 'Deleted a post', date: '2024-04-26 03:45 PM' },
-  { id: 5, activity: 'Created a post', date: '2024-04-27 09:30 AM' }
-])
+// Fetch activity logs with user information using eq for filtering
+const fetchActivityLogs = async () => {
+  // Get the current logged-in user
+  const { data: user, error: userError } = await supabase.auth.getUser()
 
-onMounted(fetchUserCount)
+  if (userError) {
+    console.error('Error fetching user:', userError)
+    return
+  }
+
+  if (!user || !user.user) {
+    console.error('No user is logged in')
+    return
+  }
+
+  // Use Supabase query to filter activity logs by user_id
+  const { data, error } = await supabase
+    .from('logs') // Query the `logs` table
+    .select('id, action, table_name, created_at, user_id') // Adjust fields as needed
+    .eq('user_id', user.user.id) // Filter activity logs by user_id
+
+  if (error) {
+    console.error('Error fetching activity logs:', error)
+  } else {
+    activityLogs.value = data.map((log) => ({
+      id: log.id,
+      activity: log.action, // Display the action (activity)
+      tableName: log.table_name, // Display the table name
+      date: new Date(log.created_at).toLocaleString(), // Format the date
+      user: 'Current User', // Placeholder since we already filter by current user
+    }))
+  }
+}
+
+onMounted(() => {
+  fetchUserCount()
+  fetchActivityLogs() // Fetch activity logs on mount
+})
 </script>
 
 <template>
@@ -57,14 +86,18 @@ onMounted(fetchUserCount)
             <thead>
               <tr>
                 <th class="text-left">#</th>
+                <th class="text-left">User</th>
                 <th class="text-left">Activity</th>
+                <th class="text-left">Table Name</th>
                 <th class="text-left">Date</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="(log, index) in activityLogs" :key="log.id">
                 <td>{{ index + 1 }}</td>
+                <td>{{ log.user }}</td> <!-- Current User Placeholder -->
                 <td>{{ log.activity }}</td>
+                <td>{{ log.tableName }}</td>
                 <td>{{ log.date }}</td>
               </tr>
             </tbody>
@@ -74,16 +107,3 @@ onMounted(fetchUserCount)
     </v-row>
   </v-app>
 </template>
-
-<style scoped>
-.v-card-title {
-  padding: 16px;
-}
-.v-table {
-  font-size: 1rem;
-}
-th {
-  background-color: #e8f5e9; /* Light green background for headers */
-  color: #388e3c; /* Dark green text */
-}
-</style>

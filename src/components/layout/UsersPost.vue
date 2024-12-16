@@ -66,22 +66,23 @@ const fetchUserData = async () => {
 
 const deletePost = async (post) => {
   // Confirm deletion
-  const confirmed = confirm('Are you sure you want to delete this post?')
-  if (!confirmed) return
+  const confirmed = confirm('Are you sure you want to delete this post?');
+  if (!confirmed) return;
 
   // Attempt to delete the post from the database
-  const { error } = await supabase.from('posts').delete().eq('id', post.id)
+  const { error } = await supabase.from('posts').delete().eq('id', post.id);
 
   if (error) {
-    console.error('Error deleting post:', error)
-    formAction.formErrorMessage = 'Post not deleted'
+    console.error('Error deleting post:', error);
+    formAction.formErrorMessage = 'Post not deleted';
   } else {
     // Remove the post from the `posts` array to update the UI
-    posts.value = posts.value.filter((p) => p.id !== post.id)
-    console.log('Post deleted successfully')
-    formAction.value.formSuccessMessage = 'Successfully Deleted'
+    posts.value = posts.value.filter((p) => p.id !== post.id);
+    console.log('Post deleted successfully');
+    formAction.value.formSuccessMessage = 'Successfully Deleted';
   }
-}
+};
+
 
 onMounted(fetchUserData) // Fetch user data and posts when the component is mounted
 
@@ -115,7 +116,7 @@ const uploadImage = async (file) => {
   }
 }
 
-const updatePost = async () => {
+  const updatePost = async () => {
   formAction.value = { ...formActionDefault, formProcess: true }
 
   // Check if a new image is selected
@@ -154,6 +155,7 @@ const updatePost = async () => {
 
   formAction.value.formProcess = false
 }
+
 </script>
 
 <template>

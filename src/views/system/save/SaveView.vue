@@ -5,8 +5,6 @@ import DashboardLayout from '@/components/layout/DashboardLayout.vue'
 import SaveLayout from '@/components/layout/save/SaveLayout.vue'
 import ShowItemDetails from '../../../components/layout/ShowItemDetails.vue'
 
-
-
 const selectedPostDetails = ref(null)
 const isModalVisible = ref(false)
 const savedPosts = ref([])
@@ -17,7 +15,6 @@ const showDetails = (post) => {
   selectedPostDetails.value = post // Set the selected post details
   isModalVisible.value = true // Open the modal
 }
-
 
 // Fetching saved posts from the materialized view
 const fetchSavedPosts = async () => {
@@ -111,7 +108,13 @@ onMounted(fetchSavedPosts)
         </v-row>
         <v-row dense>
           <v-col cols="12" sm="8" md="6" v-for="post in savedPosts" :key="post.post_id">
-            <v-card class="mb-4 rounded-xl" max-width="4000" outlined elevation="10" @click="showDetails(post)">
+            <v-card
+              class="mb-4 rounded-xl"
+              max-width="4000"
+              outlined
+              elevation="10"
+              @click="showDetails(post)"
+            >
               <v-list-item class="pb-2">
                 <v-row class="w-100" align="center" no-gutters>
                   <!-- Post Owner Image -->
@@ -195,14 +198,13 @@ onMounted(fetchSavedPosts)
           </v-col>
         </v-row>
 
-            <!-- Modal for Post Details to resolve the undefined post-id -->
+        <!-- Modal for Post Details to resolve the undefined post-id -->
         <v-dialog v-model="isModalVisible" max-width="600">
           <template v-slot:default>
             <!-- Pass postId from selectedPostDetails to ShowItemDetails -->
             <ShowItemDetails :postId="selectedPostDetails?.post_id" />
           </template>
         </v-dialog>
-
       </v-container>
     </template>
   </DashboardLayout>
