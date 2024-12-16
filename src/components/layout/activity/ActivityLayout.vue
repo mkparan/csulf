@@ -89,7 +89,7 @@ onMounted(() => {
                 <th class="text-left">User</th>
                 <th class="text-left">Activity</th>
                 <th class="text-left">Table Name</th>
-                <th class="text-left">Date</th>
+                <th class="text-left">Date & Time</th>
               </tr>
             </thead>
             <tbody>
