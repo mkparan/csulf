@@ -204,7 +204,7 @@ onMounted(async () => {
       </v-card>
     </v-dialog>
 
-            <!-- Modal for Post Details -->
+            <!-- Modal for Post Details to resolve the undefined post-id -->
         <v-dialog v-model="isModalVisible" max-width="600">
           <template v-slot:default>
             <!-- Pass postId from selectedPostDetails to ShowItemDetails -->
