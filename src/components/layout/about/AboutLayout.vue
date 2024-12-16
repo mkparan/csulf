@@ -1,31 +1,28 @@
 <script setup>
-  import { ref, onMounted } from 'vue';
-  import { supabase } from '@/utils/supabase';
+import { ref, onMounted } from 'vue'
+import { supabase } from '@/utils/supabase'
 
-  const userCount = ref(0);
+const userCount = ref(0)
 
-  const fetchUserCount = async () => {
-    const { data, error } = await supabase.rpc('count_users'); // Use the rpc method to call the function
-    
-    if (error) {
-      console.error('Error fetching user count:', error);
-    } else {
-      userCount.value = data; // Set the result to the userCount ref
-    }
-};
+const fetchUserCount = async () => {
+  const { data, error } = await supabase.rpc('count_users') // Use the rpc method to call the function
 
-onMounted(fetchUserCount);
+  if (error) {
+    console.error('Error fetching user count:', error)
+  } else {
+    userCount.value = data // Set the result to the userCount ref
+  }
+}
 
+onMounted(fetchUserCount)
 </script>
-
-
 
 <template>
   <v-app>
     <br />
     <v-row justify="center">
       <v-col cols="12" sm="12" md="8">
-         <br><br>
+        <br /><br />
         <v-card class="rounded-xl mb-4" max-width="1000" elevation="4">
           <v-list class="text-center pt-5">
             <div>
@@ -33,7 +30,7 @@ onMounted(fetchUserCount);
             </div>
             <div>
               <p class="text-light-green-darken-3 ma-6">
-                The total number of users currently in the system is: 
+                The total number of users currently in the system is:
                 <span class="font-weight-bold">{{ userCount }}</span>
               </p>
             </div>

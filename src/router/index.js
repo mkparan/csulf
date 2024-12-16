@@ -9,6 +9,7 @@ import ProfileView from '@/views/system/profile/ProfileView.vue'
 import SaveView from '@/views/system/save/SaveView.vue'
 import AboutView from '@/views/system/about/AboutView.vue'
 import SearchView from '@/views/system/search/SearchView.vue'
+import ActivityView from '@/views/system/activity/ActivityView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -56,6 +57,11 @@ const router = createRouter({
       path: '/system/search',
       name: 'search',
       component: SearchView
+    },
+    {
+      path: '/system/activity',
+      name: 'activity',
+      component: ActivityView
     },
     // Errors Pages
     {
