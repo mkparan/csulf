@@ -34,7 +34,7 @@ const fetchSavedPosts = async () => {
 
     // Call the materialized view query with the logged-in user's ID
     const { data, error } = await supabase
-      .from('saved_posts_mv') // Query the materialized view
+      .from('saved_posts_view') // Query the materialized view
       .select('*')
       .eq('saved_by_user_id', user.id) // Filter by user ID
 
