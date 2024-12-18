@@ -36,6 +36,7 @@ export default {
 </script>
 
 <template>
+  <!-- Made by Mark -->
   <meta name="google-site-verification" content="uL_1ADd0NeWFNDOHJ84bD57sXg94Cdj92NnnSmbiZwo" />
   <DashboardLayout>
     <template #content>
