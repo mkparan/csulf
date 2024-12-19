@@ -5,9 +5,10 @@ import ShowItemDetails from './ShowItemDetails.vue'
 
 const postsWithUsers = ref([])
 const savedPosts = ref([]) // Track saved posts
-const selectedPost = ref(null)
 const userId = ref(null) // Current user's ID
 const showSuccessModal = ref(false) // Controls success modal
+const selectedPostDetails = ref(null)
+const isModalVisible = ref(false)
 
 // URL of the image
 const profileUrl = 'https://bvflfwricxabodytryee.supabase.co/storage/v1/object/public/images/'
@@ -95,10 +96,12 @@ const savePost = async (postId) => {
   }
 }
 
-// Show item details in a modal
+// Show details of a specific post
 const showDetails = (post) => {
-  selectedPost.value = post
+  selectedPostDetails.value = post // Set the selected post details
+  isModalVisible.value = true // Open the modal
 }
+
 
 // Fetch data on component mount
 onMounted(async () => {
@@ -201,12 +204,13 @@ onMounted(async () => {
       </v-card>
     </v-dialog>
 
-    <!-- Details Modal -->
-    <v-dialog v-model="selectedPost" max-width="600">
-      <template v-slot:default>
-        <ShowItemDetails :post="selectedPost" />
-      </template>
-    </v-dialog>
+            <!-- Modal for Post Details to resolve the undefined post-id -->
+        <v-dialog v-model="isModalVisible" max-width="600">
+          <template v-slot:default>
+            <!-- Pass postId from selectedPostDetails to ShowItemDetails -->
+            <ShowItemDetails :postId="selectedPostDetails?.post_id" />
+          </template>
+        </v-dialog>
   </v-container>
 </template>
 

@@ -1,65 +1,89 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, watch } from 'vue'
+import { supabase } from '@/utils/supabase.js' // Ensure supabase is correctly initialized
 
-//url of the image
 const profileUrl = 'https://bvflfwricxabodytryee.supabase.co/storage/v1/object/public/images/'
-
-// Props
-defineProps({
-  post: {
-    type: Object,
+// Define the postId prop to receive it from the parent
+const props = defineProps({
+  postId: {
+    type: Number,
     required: true
   }
 })
 
-// Reactive state
-const visible = ref(true)
+const post = ref(null)
+const loading = ref(true) // Add a loading state
 
-// Methods
-const closeCard = () => {
-  visible.value = false // Hides the card immediately
+// Watch for changes to the postId prop and fetch post details accordingly
+watch(
+  () => props.postId,
+  async (newPostId) => {
+    if (newPostId) {
+      await fetchPostDetails(newPostId)
+    } else {
+      console.error('Post ID is undefined or invalid')
+    }
+  }
+)
+
+// Fetch post details based on the passed postId
+const fetchPostDetails = async (postId) => {
+  loading.value = true // Start loading
+  const { data, error } = await supabase
+    .from('show_item_details_view') // Query the view directly
+    .select()
+    .eq('post_id', postId) // Use the postId prop to filter the data
+
+  if (error) {
+    console.error('Error fetching post details:', error)
+  } else {
+    post.value = data[0] // Store the fetched post details (assuming it's an array with 1 item)
+    console.log('Fetched post:', post.value)
+  }
+  loading.value = false // Stop loading
 }
+
+onMounted(() => {
+  // Initial fetch if postId is already set
+  if (props.postId) {
+    fetchPostDetails(props.postId)
+  } else {
+    console.error('Post ID is undefined or invalid')
+  }
+})
 </script>
 
 <template>
   <v-col cols="12" sm="12" md="12">
-    <v-card v-show="visible" class="mx-auto text-white rounded-xl">
-      <!-- Close Button -->
-      <!-- <v-btn
-        icon
-        @click="closeCard"
-        class="close-btn"
-        style="position: absolute; top: 16px; right: 16px; z-index: 1"
-      >
-        <v-icon>mdi-close</v-icon>
-      </v-btn> -->
+    <!-- Show loading spinner while fetching data -->
+    <v-progress-circular
+      v-if="loading"
+      indeterminate
+      color="primary"
+      size="64"
+      width="6"
+      class="mx-auto"
+    ></v-progress-circular>
 
-      <!-- Card Actions -->
+    <!-- Show the post details once the data is loaded -->
+    <v-card v-show="!loading && post" class="mx-auto text-white rounded-xl">
       <v-card-actions>
         <v-list-item class="pb-3 w-100">
           <v-row class="w-100" align="center" no-gutters>
-            <!-- Post Owner Image -->
             <v-col cols="auto">
               <v-avatar size="50" class="mx-2" color="black">
-                <!-- Check if profile_pic exists and is not null or empty -->
                 <v-img
-                  v-if="post.profile_pic && post.profile_pic !== ''"
-                  :src="
-                    post.profile_pic.startsWith('http')
-                      ? post.profile_pic
-                      : profileUrl + post.profile_pic
-                  "
-                  alt="User Avatar and default profile"
+                  v-if="post?.profile_pic && post.profile_pic !== ''"
+                  :src="post.profile_pic.startsWith('http') ? post.profile_pic : profileUrl + post.profile_pic"
+                  alt="User Avatar"
                   class="mx-auto"
                   height="200"
                   width="200"
                 />
-
-                <!-- Fallback image if profile_pic is not available -->
                 <v-img
                   v-else
-                  :src="post.avatar_url || 'default-avatar-url.png'"
-                  alt="google profile"
+                  :src="post?.avatar_url || 'default-avatar-url.png'"
+                  alt="default avatar"
                   class="mx-auto"
                   height="200"
                   width="200"
@@ -67,15 +91,10 @@ const closeCard = () => {
               </v-avatar>
             </v-col>
 
-            <!-- Post Owner Name -->
             <v-col class="d-flex align-center">
               <v-list-item-content>
                 <h2 class="text-light-green-darken-3 font-weight-bold pa-1">
-                  {{
-                    post.firstname && post.lastname
-                      ? post.firstname + ' ' + post.lastname
-                      : post.full_name
-                  }}
+                  {{ post?.firstname && post?.lastname ? post.firstname + ' ' + post.lastname : post?.full_name }}
                 </h2>
               </v-list-item-content>
             </v-col>
@@ -83,13 +102,12 @@ const closeCard = () => {
         </v-list-item>
       </v-card-actions>
 
-      <!-- Card Title -->
       <v-card-title class="text-h5 font-weight-bold text-light-green-darken-3">
-        {{ post.item_name }}
+        {{ post?.item_name }}
       </v-card-title>
 
-      <!-- Item Image -->
       <v-img
+        v-if="post?.image"
         class="rounded-lg mb-3"
         height="auto"
         width="auto"
@@ -97,8 +115,8 @@ const closeCard = () => {
         cover
       ></v-img>
 
-      <!-- Description -->
       <v-card-text
+        v-if="post?.description"
         class="text-body-1 py-2 text-light-green-darken-3"
         style="max-height: 150px; overflow-y: auto"
       >
@@ -112,36 +130,19 @@ const closeCard = () => {
 .v-card {
   margin-top: 20px;
   padding: 16px;
-  position: relative; /* Allow positioning of the close button */
 }
 
 .v-card-title {
-  margin-bottom: 10px;
-  font-size: 1.5rem;
-  text-transform: capitalize;
+  font-size: 1.25rem;
+  font-weight: bold;
 }
 
 .v-img {
   border-radius: 10px;
 }
 
-.v-card-actions .v-list-item {
-  padding: 0;
-}
-
-.v-avatar {
-  border: 2px solid #ffffff;
-}
-
-.close-btn {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  z-index: 1;
-}
-
-.v-card-text {
-  max-height: 150px;
-  overflow-y: auto;
+.v-card-subtitle {
+  display: flex;
+  align-items: center;
 }
 </style>

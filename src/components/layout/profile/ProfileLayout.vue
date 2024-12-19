@@ -4,6 +4,14 @@ import { supabase } from '@/utils/supabase'
 import UsersPost from '@/components/layout/UsersPost.vue' // Adjust the path as necessary
 import AlertNotification from '../../common/AlertNotification.vue'
 import { requiredValidator } from '../../../utils/validators' // Assuming this is defined correctly
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+// Function to navigate
+const navigateTo = (routeName) => {
+  router.push({ name: routeName })
+}
 
 // Manage form action states
 const formActionDefault = {
@@ -111,7 +119,7 @@ const fetchUserDetails = async () => {
     console.error(error)
   } else {
     firstName.value = user?.user_metadata?.firstname
-    lastName.value = user?.user_metadata?.lastname 
+    lastName.value = user?.user_metadata?.lastname
     profile_pic.value = user?.user_metadata?.profile_pic
     facebook_link.value = user?.user_metadata?.facebook_link || ''
     full_name.value = user?.user_metadata?.full_name
@@ -203,28 +211,28 @@ onMounted(() => {
         <v-list class="text-center pt-5">
           <div class="profile-section">
             <v-avatar size="150" class="mx-auto" color="black">
-                  <!-- If profile_pic exists and is not null or empty, or if it's a file name -->
-                <v-img
-                  v-if="profile_pic && profile_pic !== '' && profile_pic !== null"
-                  :src="profile_pic.startsWith('http') ? profile_pic : profileUrl + profile_pic"
-                  alt="User Avatar"
-                  class="mx-auto"
-                  height="200"
-                  width="200"
-                />
+              <!-- If profile_pic exists and is not null or empty, or if it's a file name -->
+              <v-img
+                v-if="profile_pic && profile_pic !== '' && profile_pic !== null"
+                :src="profile_pic.startsWith('http') ? profile_pic : profileUrl + profile_pic"
+                alt="User Avatar"
+                class="mx-auto"
+                height="200"
+                width="200"
+              />
 
-                <!-- Fallback image if profile_pic is not provided or is invalid -->
-                <v-img
-                  v-else
-                  :src="avatar_url"
-                  alt="User Avatar"
-                  class="mx-auto"
-                  height="200"
-                  width="200"
-                />
+              <!-- Fallback image if profile_pic is not provided or is invalid -->
+              <v-img
+                v-else
+                :src="avatar_url"
+                alt="User Avatar"
+                class="mx-auto"
+                height="200"
+                width="200"
+              />
             </v-avatar>
             <p class="text-center font-weight-bold mt-2 text-light-green-darken-3">
-               {{ firstName && lastName ? firstName + ' ' + lastName : full_name }}
+              {{ firstName && lastName ? firstName + ' ' + lastName : full_name }}
             </p>
           </div>
         </v-list>
@@ -237,6 +245,13 @@ onMounted(() => {
             :href="facebook_link"
             target="_blank"
             rel="noopener"
+          >
+          </v-btn>
+          <!-- For activity log -->
+          <v-btn
+            class="rounded-pill bg-light-green-darken-3"
+            icon="mdi-history"
+            @click="navigateTo('activity')"
           >
           </v-btn>
         </v-card-actions>

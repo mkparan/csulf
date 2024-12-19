@@ -8,16 +8,18 @@ const posts = ref([]) // Array to store posts
 const firstName = ref('') // First name of the user
 const lastName = ref('') // Last name of the user
 const profilePic = ref('') // Profile picture of the user
-const selectedPost = ref(null)
+const selectedPostDetails = ref(null)
+const isModalVisible = ref(false)
 const full_name = ref('')
 const avatar_url = ref('')
 
 // URL for fetching the image
 const profileUrl = 'https://bvflfwricxabodytryee.supabase.co/storage/v1/object/public/images/'
 
-// Show item details in a modal
+// Show details of a specific post
 const showDetails = (post) => {
-  selectedPost.value = post
+  selectedPostDetails.value = post // Set the selected post details
+  isModalVisible.value = true // Open the modal
 }
 
 // Manage form action states
@@ -64,22 +66,23 @@ const fetchUserData = async () => {
 
 const deletePost = async (post) => {
   // Confirm deletion
-  const confirmed = confirm('Are you sure you want to delete this post?')
-  if (!confirmed) return
+  const confirmed = confirm('Are you sure you want to delete this post?');
+  if (!confirmed) return;
 
   // Attempt to delete the post from the database
-  const { error } = await supabase.from('posts').delete().eq('id', post.id)
+  const { error } = await supabase.from('posts').delete().eq('id', post.id);
 
   if (error) {
-    console.error('Error deleting post:', error)
-    formAction.formErrorMessage = 'Post not deleted'
+    console.error('Error deleting post:', error);
+    formAction.formErrorMessage = 'Post not deleted';
   } else {
     // Remove the post from the `posts` array to update the UI
-    posts.value = posts.value.filter((p) => p.id !== post.id)
-    console.log('Post deleted successfully')
-    formAction.value.formSuccessMessage = 'Successfully Deleted'
+    posts.value = posts.value.filter((p) => p.id !== post.id);
+    console.log('Post deleted successfully');
+    formAction.value.formSuccessMessage = 'Successfully Deleted';
   }
-}
+};
+
 
 onMounted(fetchUserData) // Fetch user data and posts when the component is mounted
 
@@ -113,7 +116,7 @@ const uploadImage = async (file) => {
   }
 }
 
-const updatePost = async () => {
+  const updatePost = async () => {
   formAction.value = { ...formActionDefault, formProcess: true }
 
   // Check if a new image is selected
@@ -152,6 +155,7 @@ const updatePost = async () => {
 
   formAction.value.formProcess = false
 }
+
 </script>
 
 <template>
@@ -185,19 +189,22 @@ const updatePost = async () => {
             <v-row align="center" class="mx-1 my-2">
               <!-- Avatar Column -->
               <v-col cols="2" class="d-flex align-center justify-center">
-                <v-avatar size="50" color="black">
+                <v-avatar size="50" class="mx-2" color="black">
+                  <!-- Check if profile_pic exists and is not null or empty -->
                   <v-img
-                    v-if="profilePic"
-                    :src="profileUrl + profilePic"
-                    alt="User Avatar"
+                    v-if="profilePic && profilePic !== ''"
+                    :src="profilePic.startsWith('http') ? profilePic : profileUrl + profilePic"
+                    alt="User Avatar and default profile"
                     class="mx-auto"
                     height="200"
                     width="200"
                   />
+
+                  <!-- Fallback image if profile_pic is not available -->
                   <v-img
                     v-else
-                    :src="avatar_url || '/images/profile-default.png'"
-                    alt="Default Avatar"
+                    :src="avatar_url || 'default-avatar-url.png'"
+                    alt="google profile"
                     class="mx-auto"
                     height="200"
                     width="200"
@@ -244,10 +251,11 @@ const updatePost = async () => {
       </v-col>
     </v-row>
 
-    <!-- Details Modal -->
-    <v-dialog v-model="selectedPost" max-width="600">
+    <!-- Modal for Post Details -->
+    <v-dialog v-model="isModalVisible" max-width="600">
       <template v-slot:default>
-        <ShowItemDetails :post="selectedPost" />
+        <!-- Pass postId from selectedPostDetails to ShowItemDetails -->
+        <ShowItemDetails :postId="selectedPostDetails?.id" />
       </template>
     </v-dialog>
 
