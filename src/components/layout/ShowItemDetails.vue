@@ -56,14 +56,16 @@ onMounted(() => {
 <template>
   <v-col cols="12" sm="12" md="12">
     <!-- Show loading spinner while fetching data -->
-    <v-progress-circular
-      v-if="loading"
-      indeterminate
-      color="primary"
-      size="64"
-      width="6"
-      class="mx-auto"
-    ></v-progress-circular>
+    <v-container class="d-flex justify-center align-center" fluid>
+      <v-progress-circular
+        v-if="loading"
+        indeterminate
+        color="light-green-darken-3"
+        size="64"
+        width="6"
+        class="text-center"
+      ></v-progress-circular>
+    </v-container>
 
     <!-- Show the post details once the data is loaded -->
     <v-card v-show="!loading && post" class="mx-auto text-white rounded-xl">
@@ -74,7 +76,11 @@ onMounted(() => {
               <v-avatar size="50" class="mx-2" color="black">
                 <v-img
                   v-if="post?.profile_pic && post.profile_pic !== ''"
-                  :src="post.profile_pic.startsWith('http') ? post.profile_pic : profileUrl + post.profile_pic"
+                  :src="
+                    post.profile_pic.startsWith('http')
+                      ? post.profile_pic
+                      : profileUrl + post.profile_pic
+                  "
                   alt="User Avatar"
                   class="mx-auto"
                   height="200"
@@ -94,7 +100,11 @@ onMounted(() => {
             <v-col class="d-flex align-center">
               <v-list-item-content>
                 <h2 class="text-light-green-darken-3 font-weight-bold pa-1">
-                  {{ post?.firstname && post?.lastname ? post.firstname + ' ' + post.lastname : post?.full_name }}
+                  {{
+                    post?.firstname && post?.lastname
+                      ? post.firstname + ' ' + post.lastname
+                      : post?.full_name
+                  }}
                 </h2>
               </v-list-item-content>
             </v-col>
