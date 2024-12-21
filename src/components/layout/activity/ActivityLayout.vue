@@ -1,9 +1,15 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { supabase } from '@/utils/supabase'
+import { useRouter } from 'vue-router'
 
 const userCount = ref(0)
 const activityLogs = ref([])
+const router = useRouter()
+
+const navigateTo = (routeName) => {
+  router.push({ name: routeName })
+}
 
 // Fetch user count (existing logic)
 const fetchUserCount = async () => {
@@ -17,7 +23,7 @@ const fetchUserCount = async () => {
 }
 
 // Fetch activity logs with user information using eq for filtering
-  const fetchActivityLogs = async () => {
+const fetchActivityLogs = async () => {
   const { data: user, error: userError } = await supabase.auth.getUser()
 
   if (userError) {
@@ -44,7 +50,7 @@ const fetchUserCount = async () => {
       data.map(async (log) => {
         const { data: userData } = await supabase
           .from('users') // Assuming you have a 'users' table
-          .select('name')  // Adjust the field if necessary
+          .select('name') // Adjust the field if necessary
           .eq('id', log.user_id)
           .single()
 
@@ -60,21 +66,20 @@ const fetchUserCount = async () => {
 
     // Now format and assign the sorted logs
     activityLogs.value = users.map((log) => {
-      const date = new Date(log.created_at); // Convert string to Date object
+      const date = new Date(log.created_at) // Convert string to Date object
       // Manila is UTC +8, so add 8 hours to the UTC time
-      const manilaDate = new Date(date.getTime() + (8 * 60 * 60 * 1000)); // Adjust to Manila time
-      
+      const manilaDate = new Date(date.getTime() + 8 * 60 * 60 * 1000) // Adjust to Manila time
+
       return {
         id: log.id,
         activity: log.action,
         tableName: log.table_name,
         date: manilaDate.toLocaleString('en-PH'), // Format the Manila date
-        user: log.user, // Use the fetched user name
-      };
-    });
+        user: log.user // Use the fetched user name
+      }
+    })
   }
 }
-
 
 onMounted(() => {
   fetchUserCount()
@@ -87,23 +92,17 @@ onMounted(() => {
     <br />
     <v-row justify="center">
       <v-col cols="12" sm="12" md="8">
-        <!-- User Count Card -->
-        <v-card class="rounded-xl mb-4" max-width="1000" elevation="4">
-          <v-list class="text-center pt-5">
-            <div>
-              <p class="text-light-green-darken-3 font-weight-bold text-h5">System User</p>
-            </div>
-            <div>
-              <p class="text-light-green-darken-3 ma-6">
-                The total number of users currently in the system is:
-                <span class="font-weight-bold">{{ userCount }}</span>
-              </p>
-            </div>
-          </v-list>
-        </v-card>
-
+        <br />
+        <br />
         <!-- Activity Log Table -->
         <v-card class="rounded-xl mb-4" max-width="1000" elevation="4">
+          <v-btn
+            class="ma-2"
+            icon="mdi-arrow-left"
+            color="light-green-darken-3"
+            @click="navigateTo('profile')"
+          ></v-btn>
+
           <v-card-title class="text-center font-weight-bold text-light-green-darken-3 text-h5">
             Activity Logs
           </v-card-title>
@@ -121,7 +120,8 @@ onMounted(() => {
             <tbody>
               <tr v-for="(log, index) in activityLogs" :key="log.id">
                 <td>{{ index + 1 }}</td>
-                <td>{{ log.user }}</td> <!-- Current User Placeholder -->
+                <td>{{ log.user }}</td>
+                <!-- Current User Placeholder -->
                 <td>{{ log.activity }}</td>
                 <td>{{ log.tableName }}</td>
                 <td>{{ log.date }}</td>
